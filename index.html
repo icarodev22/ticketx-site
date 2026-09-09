@@ -1,0 +1,1789 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TicketX — Seus ingressos, sem complicação</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --blue: #2d00ff;
+        --cyan: #00c8ff;
+        --magenta: #c800ff;
+        --white: #ffffff;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: 'Syne', sans-serif;
+        background: #000;
+        color: #fff;
+        overflow-x: hidden;
+        cursor: none;
+      }
+
+      /* CURSOR */
+      .cursor {
+        width: 12px;
+        height: 12px;
+        background: var(--cyan);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: exclusion;
+        transition: transform 0.1s ease;
+      }
+
+      .cursor-ring {
+        width: 36px;
+        height: 36px;
+        border: 1.5px solid var(--magenta);
+        border-radius: 50%;
+        position: fixed;
+        pointer-events: none;
+        z-index: 9998;
+        mix-blend-mode: exclusion;
+      }
+
+      /* NAV */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 40px;
+        backdrop-filter: blur(20px);
+        background: rgba(0, 0, 0, 0.4);
+        border-bottom: 1px solid rgba(0, 200, 255, 0.1);
+      }
+
+      .nav-logo {
+        font-family: 'Space Mono', monospace;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #fff;
+        text-decoration: none;
+      }
+
+      .nav-logo span {
+        color: var(--cyan);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 36px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover {
+        color: var(--cyan);
+      }
+
+      .nav-cta {
+        background: var(--blue);
+        color: #fff;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 999px;
+        font-family: 'Space Mono', monospace;
+        cursor: none;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      /* HERO */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        padding: 120px 40px 80px;
+        overflow: hidden;
+      }
+
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse 80% 60% at 50% 40%,
+          #1a00aa 0%,
+          #000 70%
+        );
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 900px;
+      }
+
+      .hero-badge {
+        display: inline-block;
+        border: 1px solid var(--cyan);
+        color: var(--cyan);
+        font-family: 'Space Mono', monospace;
+        font-size: 0.72rem;
+        letter-spacing: 3px;
+        padding: 6px 18px;
+        border-radius: 999px;
+        margin-bottom: 32px;
+      }
+
+      .hero-title {
+        font-size: clamp(3.5rem, 10vw, 8rem);
+        font-weight: 800;
+        line-height: 0.95;
+        letter-spacing: -4px;
+        margin-bottom: 32px;
+      }
+
+      .line-blue {
+        color: var(--cyan);
+      }
+
+      .line-mag {
+        background: linear-gradient(90deg, var(--cyan), var(--magenta));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-sub {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.65);
+        max-width: 560px;
+        margin: 0 auto 48px;
+        line-height: 1.7;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--blue), var(--magenta));
+        color: #fff;
+        border: none;
+        padding: 16px 40px;
+        border-radius: 999px;
+        font-family: 'Space Mono', monospace;
+        cursor: none;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 16px 40px;
+        border-radius: 999px;
+        font-family: 'Space Mono', monospace;
+        cursor: none;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      /* SECTION LABEL */
+      .section-label {
+        display: inline-flex;
+        border: 1px solid var(--cyan);
+        color: var(--cyan);
+        border-radius: 999px;
+        padding: 6px 18px;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.8rem;
+        margin-bottom: 24px;
+      }
+
+      section {
+        padding: 100px 40px;
+      }
+
+      /* SOBRE */
+      .sobre {
+        background: radial-gradient(
+          ellipse 70% 80% at 20% 50%,
+          #1500aa 0%,
+          #000 60%
+        );
+      }
+
+      .sobre-inner {
+        max-width: 1100px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+      }
+
+      .sobre-text h2 {
+        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -3px;
+        margin-bottom: 32px;
+      }
+
+      .sobre-text h2 em {
+        font-style: normal;
+        background: linear-gradient(90deg, var(--cyan), var(--magenta));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .sobre-text p {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.8;
+        margin-bottom: 20px;
+      }
+
+      .sobre-img {
+        width: 100%;
+        border-radius: 24px;
+      }
+
+      /* BENEFICIOS */
+      .conosco {
+        background: #000;
+      }
+
+      .conosco-inner {
+        max-width: 1100px;
+        margin: auto;
+      }
+
+      .conosco-inner h2 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        letter-spacing: -3px;
+        margin-bottom: 64px;
+      }
+
+      .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+
+      .benefit-card {
+        background: rgba(45, 0, 255, 0.1);
+        border: 1px solid rgba(0, 200, 255, 0.2);
+        border-radius: 24px;
+        padding: 40px 32px;
+        backdrop-filter: blur(20px);
+      }
+
+      .benefit-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+
+      .benefit-card p {
+        color: rgba(255, 255, 255, 0.6);
+        line-height: 1.6;
+      }
+
+      /* EVENTOS */
+      .eventos {
+        background: radial-gradient(
+          ellipse 70% 80% at 50% 50%,
+          #0b0b25 0%,
+          #000 70%
+        );
+      }
+
+      .eventos-inner {
+        max-width: 1200px;
+        margin: auto;
+      }
+
+      .eventos-inner h2 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        letter-spacing: -3px;
+        margin-bottom: 12px;
+      }
+
+      .eventos-inner h2 em {
+        font-style: normal;
+        background: linear-gradient(90deg, var(--cyan), var(--magenta));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .eventos-sub {
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 50px;
+      }
+
+      .eventos-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+      }
+
+      .evento-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 26px;
+        overflow: hidden;
+        transition:
+          transform 0.3s,
+          border-color 0.3s;
+        backdrop-filter: blur(12px);
+      }
+
+      .evento-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(0, 200, 255, 0.4);
+      }
+
+      .evento-card img {
+        width: 100%;
+        height: 420px;
+        object-fit: cover;
+      }
+
+      .evento-info {
+        padding: 24px;
+      }
+
+      .evento-info h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+
+      .evento-local {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 0.9rem;
+      }
+
+      .evento-bottom {
+        margin-top: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .evento-bottom > div:first-child {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+      }
+
+      .evento-bottom small {
+        display: block;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.75rem;
+      }
+
+      .evento-bottom strong {
+        font-size: 1.5rem;
+        color: var(--cyan);
+      }
+
+      .evento-acoes {
+        display: flex;
+        gap: 10px;
+      }
+
+      .evento-comprar {
+        flex: 1;
+        text-align: center;
+        background: linear-gradient(135deg, var(--blue), var(--magenta));
+        color: #fff;
+        text-decoration: none;
+        padding: 14px 20px;
+        border-radius: 999px;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.85rem;
+      }
+
+      .evento-duvida {
+        flex-shrink: 0;
+        text-align: center;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.75);
+        text-decoration: none;
+        padding: 14px 18px;
+        border-radius: 999px;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.85rem;
+        transition:
+          border-color 0.2s,
+          color 0.2s;
+      }
+
+      .evento-duvida:hover {
+        border-color: var(--cyan);
+        color: var(--cyan);
+      }
+
+      /* FAQ */
+      .faq {
+        background: radial-gradient(
+          ellipse 60% 70% at 80% 50%,
+          #1500aa 0%,
+          #000 60%
+        );
+      }
+
+      .faq-inner {
+        max-width: 800px;
+        margin: auto;
+      }
+
+      .faq-inner h2 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        letter-spacing: -3px;
+        margin-bottom: 48px;
+      }
+
+      .faq-item {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .faq-q {
+        width: 100%;
+        background: none;
+        border: none;
+        color: #fff;
+        text-align: left;
+        padding: 24px 0;
+        font-size: 1rem;
+        cursor: none;
+        display: flex;
+        justify-content: space-between;
+        font-family: 'Syne', sans-serif;
+      }
+
+      .faq-q span {
+        transition: transform 0.3s;
+      }
+
+      .faq-q.open span {
+        transform: rotate(180deg);
+      }
+
+      .faq-a {
+        max-height: 0;
+        overflow: hidden;
+        color: rgba(255, 255, 255, 0.6);
+        transition:
+          max-height 0.4s ease,
+          padding 0.4s ease;
+        line-height: 1.7;
+      }
+
+      .faq-a.open {
+        max-height: 280px;
+        padding-bottom: 24px;
+      }
+
+      /* FEEDBACKS */
+      .feedbacks {
+        background: #000;
+      }
+
+      .feedbacks-inner {
+        max-width: 1100px;
+        margin: auto;
+      }
+
+      .feedbacks-inner h2 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+        letter-spacing: -2px;
+        margin-bottom: 8px;
+      }
+
+      .feedback-track {
+        display: flex;
+        gap: 24px;
+        overflow-x: auto;
+        padding-top: 40px;
+        padding-bottom: 16px;
+      }
+
+      .feedback-card {
+        min-width: 320px;
+        background: rgba(45, 0, 255, 0.1);
+        border: 1px solid rgba(0, 200, 255, 0.2);
+        border-radius: 20px;
+        padding: 28px;
+      }
+
+      .feedback-card p {
+        color: rgba(255, 255, 255, 0.75);
+        line-height: 1.6;
+        margin: 14px 0;
+      }
+
+      /* CTA */
+      .cta-section {
+        text-align: center;
+        background: radial-gradient(
+          ellipse 80% 80% at 50% 50%,
+          #1500aa 0%,
+          #000 70%
+        );
+        padding: 100px 40px;
+      }
+
+      .cta-section h2 {
+        font-size: clamp(2.5rem, 6vw, 5.5rem);
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 24px;
+      }
+
+      .cta-section h2 em {
+        font-style: normal;
+        background: linear-gradient(90deg, var(--cyan), var(--magenta));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .cta-section p {
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 48px;
+      }
+
+      /* FOOTER */
+      footer {
+        background: #000;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 48px 40px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.4);
+        font-family: 'Space Mono', monospace;
+        font-size: 0.85rem;
+      }
+
+      /* VIP MARQUEE */
+      .vip-marquee {
+        position: relative;
+        background: linear-gradient(90deg, #0a0040, #14005c, #0a0040);
+        border-top: 1px solid rgba(0, 200, 255, 0.25);
+        border-bottom: 1px solid rgba(0, 200, 255, 0.25);
+        padding: 18px 0;
+        overflow: hidden;
+        cursor: pointer;
+      }
+
+      .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee-scroll 26s linear infinite;
+      }
+
+      .marquee-track span {
+        display: inline-flex;
+        align-items: center;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.85rem;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.85);
+        padding: 0 28px;
+        white-space: nowrap;
+      }
+
+      .marquee-track span.vip-highlight {
+        color: var(--cyan);
+        font-weight: 700;
+      }
+
+      .marquee-track span.dot {
+        color: var(--magenta);
+        padding: 0 4px;
+      }
+
+      @keyframes marquee-scroll {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .marquee-track {
+          animation: none;
+        }
+      }
+
+      /* OFERTAS */
+      .ofertas {
+        background: #000;
+      }
+
+      .ofertas-inner {
+        max-width: 1200px;
+        margin: auto;
+      }
+
+      .ofertas-inner h2 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        letter-spacing: -3px;
+        margin-bottom: 12px;
+      }
+
+      .ofertas-inner h2 em {
+        font-style: normal;
+        background: linear-gradient(90deg, var(--cyan), var(--magenta));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .ofertas-sub {
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 50px;
+        max-width: 500px;
+      }
+
+      .ofertas-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+
+      .oferta-card {
+        position: relative;
+        background: rgba(200, 0, 255, 0.07);
+        border: 1px solid rgba(200, 0, 255, 0.3);
+        border-radius: 24px;
+        padding: 28px;
+        overflow: hidden;
+      }
+
+      .oferta-selo {
+        display: inline-block;
+        background: var(--magenta);
+        color: #fff;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 1px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        margin-bottom: 18px;
+      }
+
+      .oferta-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 6px;
+      }
+
+      .oferta-card .evento-local {
+        display: block;
+        margin-bottom: 20px;
+      }
+
+      .oferta-acoes {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .oferta-card a {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--magenta), var(--blue));
+        color: #fff;
+        text-decoration: none;
+        padding: 12px 22px;
+        border-radius: 999px;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.85rem;
+      }
+
+      .oferta-duvida {
+        background: transparent !important;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.75) !important;
+      }
+
+      .oferta-duvida:hover {
+        border-color: var(--cyan);
+        color: var(--cyan) !important;
+      }
+
+      /* EVENTO SELO / DATA */
+      .evento-media {
+        position: relative;
+      }
+
+      .evento-selo {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background: var(--magenta);
+        color: #fff;
+        font-family: 'Space Mono', monospace;
+        font-size: 0.68rem;
+        letter-spacing: 1px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        z-index: 2;
+      }
+
+      .evento-data {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.85rem;
+        display: block;
+        margin-top: 4px;
+      }
+
+      /* VIP SECTION */
+      .vip-section {
+        background: radial-gradient(
+          ellipse 70% 80% at 80% 50%,
+          #2a0060 0%,
+          #000 65%
+        );
+      }
+
+      .vip-inner {
+        max-width: 900px;
+        margin: auto;
+        text-align: center;
+      }
+
+      .vip-inner h2 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        letter-spacing: -3px;
+        margin-bottom: 20px;
+      }
+
+      .vip-inner > p {
+        color: rgba(255, 255, 255, 0.65);
+        max-width: 560px;
+        margin: 0 auto 40px;
+        line-height: 1.7;
+      }
+
+      .vip-list {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        max-width: 600px;
+        margin: 0 auto 44px;
+        text-align: left;
+      }
+
+      .vip-list li {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 0.95rem;
+      }
+
+      .vip-check {
+        color: var(--cyan);
+        margin-right: 8px;
+      }
+
+      /* COMO FUNCIONA */
+      .como-funciona {
+        background: #000;
+      }
+
+      .como-inner {
+        max-width: 1100px;
+        margin: auto;
+      }
+
+      .como-inner h2 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        letter-spacing: -3px;
+        margin-bottom: 60px;
+      }
+
+      .passos-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+
+      .passo {
+        border-top: 1px solid rgba(0, 200, 255, 0.3);
+        padding-top: 20px;
+      }
+
+      .passo-num {
+        font-family: 'Space Mono', monospace;
+        color: var(--cyan);
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 14px;
+      }
+
+      .passo h3 {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+      }
+
+      .passo p {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      /* PARCEIROS */
+      .parceiros {
+        background: radial-gradient(
+          ellipse 70% 80% at 20% 50%,
+          #0b0b25 0%,
+          #000 60%
+        );
+      }
+
+      .parceiros-inner {
+        max-width: 1100px;
+        margin: auto;
+      }
+
+      .parceiros-inner h2 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        letter-spacing: -3px;
+        margin-bottom: 12px;
+      }
+
+      .parceiros-sub {
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 48px;
+      }
+
+      .parceiros-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+      }
+
+      .parceiro-slot {
+        aspect-ratio: 1;
+        border: 1px dashed rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        color: rgba(255, 255, 255, 0.25);
+        font-family: 'Space Mono', monospace;
+        font-size: 0.7rem;
+        text-align: center;
+      }
+
+      .parceiro-slot img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 12px;
+      }
+
+      /* WHATSAPP FLOATING */
+      .whatsapp-float {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 60px;
+        height: 60px;
+        background: #25d366;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        text-decoration: none;
+        font-size: 1.6rem;
+      }
+
+      /* FOOTER (expandido) */
+      .footer-inner {
+        max-width: 1100px;
+        margin: auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 32px;
+        text-align: left;
+        margin-bottom: 32px;
+      }
+
+      .footer-brand .nav-logo {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .footer-brand p {
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 0.9rem;
+      }
+
+      .footer-links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .footer-links a {
+        color: rgba(255, 255, 255, 0.55);
+        text-decoration: none;
+        font-size: 0.85rem;
+      }
+
+      .footer-links a:hover {
+        color: var(--cyan);
+      }
+
+      .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 24px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        max-width: 1100px;
+        margin: auto;
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 0.8rem;
+      }
+
+      .footer-bottom a {
+        color: rgba(255, 255, 255, 0.4);
+        text-decoration: none;
+      }
+
+      .footer-bottom a:hover {
+        color: var(--cyan);
+      }
+
+      .footer-bottom a.credit-link,
+      .footer-bottom a.credit-link:hover {
+        color: rgba(255, 255, 255, 0.35);
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      /* MOBILE */
+      @media (max-width: 900px) {
+        .sobre-inner,
+        .benefits-grid,
+        .eventos-grid,
+        .ofertas-grid,
+        .vip-list,
+        .passos-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .parceiros-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .footer-inner {
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          padding: 16px 20px;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        section {
+          padding: 70px 24px;
+        }
+
+        body {
+          cursor: auto;
+        }
+
+        .cursor,
+        .cursor-ring {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <nav>
+      <a href="#" class="nav-logo">Ticket<span>X</span></a>
+      <ul class="nav-links">
+        <li><a href="#sobre">Sobre nós</a></li>
+        <li><a href="#conosco">Benefícios</a></li>
+        <li><a href="#eventos">Eventos</a></li>
+        <li><a href="#vip">Grupo VIP</a></li>
+        <li><a href="#faq">Dúvidas</a></li>
+      </ul>
+      <a href="#eventos" class="nav-cta">Comprar ingresso</a>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          🎟 Comissário autorizado de grandes produtoras
+        </div>
+        <h1 class="hero-title">
+          <span class="line-blue">seus</span><br />
+          <span class="line-mag">ingressos_</span><br />
+          sem taxa.
+        </h1>
+        <p class="hero-sub">
+          A TicketX conecta você aos melhores eventos com praticidade, segurança
+          e benefícios exclusivos.
+        </p>
+        <div class="hero-actions">
+          <a class="btn-primary" href="#eventos">🎟 Garantir meu ingresso</a>
+          <a
+            class="btn-ghost"
+            href="#"
+            data-wa-msg="Olá, quero entrar no Grupo VIP da TicketX."
+            target="_blank"
+            rel="noreferrer"
+            >🎟 Entrar no Grupo VIP</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <section class="vip-marquee" id="vipMarquee">
+      <div class="marquee-track">
+        <span class="vip-highlight">🎟 GRUPO VIP TICKETX</span>
+        <span class="dot">•</span><span>DESCONTOS EXCLUSIVOS</span>
+        <span class="dot">•</span><span>PRÉ-VENDAS</span>
+        <span class="dot">•</span><span>EVENTOS EXCLUSIVOS</span>
+        <span class="dot">•</span><span>LINKS COM DESCONTO</span>
+        <span class="dot">•</span><span>BENEFÍCIOS VIP</span>
+        <span class="dot">•</span>
+        <span class="vip-highlight">🎟 GRUPO VIP TICKETX</span>
+        <span class="dot">•</span><span>DESCONTOS EXCLUSIVOS</span>
+        <span class="dot">•</span><span>PRÉ-VENDAS</span>
+        <span class="dot">•</span><span>EVENTOS EXCLUSIVOS</span>
+        <span class="dot">•</span><span>LINKS COM DESCONTO</span>
+        <span class="dot">•</span><span>BENEFÍCIOS VIP</span>
+        <span class="dot">•</span>
+      </div>
+    </section>
+
+    <section class="sobre" id="sobre">
+      <div class="sobre-inner">
+        <div class="sobre-text">
+          <div class="section-label">sobre nós_</div>
+          <h2>Conectando você às <em>melhores experiências</em></h2>
+          <p>
+            A TicketX atua na venda de ingressos conectando você aos melhores
+            eventos.
+          </p>
+          <p>Segurança, praticidade e suporte real.</p>
+        </div>
+        <img src="img/X_ticketX.png" alt="TicketX Mosaico" class="sobre-img" />
+      </div>
+    </section>
+
+    <section class="conosco" id="conosco">
+      <div class="conosco-inner">
+        <div class="section-label">conosco_</div>
+        <h2>Por que escolher a TicketX?</h2>
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <h3>⚡ Compra rápida</h3>
+            <p>Processo simples, direto e sem complicação.</p>
+          </div>
+          <div class="benefit-card">
+            <h3>🏷️ Ingressos sem taxa</h3>
+            <p>Compre pelo valor justo sempre que houver essa condição.</p>
+          </div>
+          <div class="benefit-card">
+            <h3>🔥 Descontos exclusivos</h3>
+            <p>
+              Acesso a links promocionais e condições especiais em eventos
+              selecionados.
+            </p>
+          </div>
+          <div class="benefit-card">
+            <h3>🎟️ Acesso antecipado</h3>
+            <p>
+              Membros do Grupo VIP recebem informações e oportunidades antes do
+              público geral.
+            </p>
+          </div>
+          <div class="benefit-card">
+            <h3>💬 Suporte direto</h3>
+            <p>Atendimento rápido pelo WhatsApp.</p>
+          </div>
+          <div class="benefit-card">
+            <h3>🔒 Compra segura</h3>
+            <p>Processo confiável e ingressos devidamente validados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ofertas" id="ofertas">
+      <div class="ofertas-inner">
+        <div class="section-label">ofertas_</div>
+        <h2>Eventos com <em>desconto</em></h2>
+        <p class="ofertas-sub">
+          Aproveite condições exclusivas e garanta seu ingresso pagando menos.
+        </p>
+
+        <div class="ofertas-grid">
+          <div class="oferta-card">
+            <span class="oferta-selo">🏷️ LINK COM 5% OFF</span>
+            <h3>SWAGG</h3>
+            <span class="evento-local">📍 Cachaçaria Carvalheira</span>
+            <div class="oferta-acoes">
+              <a
+                href="https://www.sympla.com.br/evento/swagg-v12026/3551630?d=ticketx"
+                target="_blank"
+                rel="noreferrer"
+                >Garantir desconto</a
+              >
+              <a
+                class="oferta-duvida"
+                href="#"
+                data-duvida="SWAGG"
+                target="_blank"
+                rel="noreferrer"
+                >Tirar dúvida</a
+              >
+            </div>
+          </div>
+
+          <div class="oferta-card">
+            <span class="oferta-selo">🏷️ LINK COM 5% OFF</span>
+            <h3>Réveillon Amoré 27</h3>
+            <span class="evento-local">📍 Praia de Maracaípe, PE</span>
+            <div class="oferta-acoes">
+              <a
+                href="https://www.sympla.com.br/evento/reveillon-amore-2027/3390641?d=MILTONV"
+                target="_blank"
+                rel="noreferrer"
+                >Garantir desconto</a
+              >
+              <a
+                class="oferta-duvida"
+                href="#"
+                data-duvida="Réveillon Amoré 27"
+                target="_blank"
+                rel="noreferrer"
+                >Tirar dúvida</a
+              >
+            </div>
+          </div>
+
+          <div class="oferta-card">
+            <span class="oferta-selo">🏷️ LINK COM 5% OFF</span>
+            <h3>Carvalheira na Ladeira</h3>
+            <span class="evento-local">📍 Olinda, PE</span>
+            <div class="oferta-acoes">
+              <a
+                href="https://www.sympla.com.br/carvalheira-na-ladeira-2027__3314458?afid=109062"
+                target="_blank"
+                rel="noreferrer"
+                >Garantir desconto</a
+              >
+              <a
+                class="oferta-duvida"
+                href="#"
+                data-duvida="Carvalheira na Ladeira"
+                target="_blank"
+                rel="noreferrer"
+                >Tirar dúvida</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="eventos" id="eventos">
+      <div class="eventos-inner">
+        <div class="section-label">eventos_</div>
+        <h2>Festas <em>disponíveis</em></h2>
+        <p class="eventos-sub">Garanta seu ingresso sem complicação.</p>
+
+        <div class="eventos-grid">
+          <div class="evento-card">
+            <div class="evento-media">
+              <img src="assets/surubim.jpg" alt="Vaquejada Surubim" />
+            </div>
+            <div class="evento-info">
+              <h3>Vaquejada Surubim</h3>
+              <span class="evento-local">📍 Surubim, PE</span>
+              <span class="evento-data">19 de setembro de 2026</span>
+              <div class="evento-bottom">
+                <div>
+                  <small>Ingresso</small><strong>Consultar valor</strong>
+                </div>
+                <div class="evento-acoes">
+                  <a
+                    class="evento-comprar"
+                    href="#"
+                    data-comprar="Vaquejada Surubim"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Comprar ingresso</a
+                  >
+                  <a
+                    class="evento-duvida"
+                    href="#"
+                    data-duvida="Vaquejada Surubim"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Tirar dúvida</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="evento-card">
+            <div class="evento-media">
+              <span class="evento-selo">🏷️ 5% OFF</span>
+              <img src="assets/swag.jpg" alt="SWAGG" />
+            </div>
+            <div class="evento-info">
+              <h3>SWAGG</h3>
+              <span class="evento-local">📍 Cachaçaria Carvalheira</span>
+              <span class="evento-data">26 de setembro de 2026</span>
+              <div class="evento-bottom">
+                <div>
+                  <small>Ingresso</small><strong>Link com 5% OFF</strong>
+                </div>
+                <div class="evento-acoes">
+                  <a
+                    class="evento-comprar"
+                    href="https://www.sympla.com.br/evento/swagg-v12026/3551630?d=ticketx"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Garantir com desconto</a
+                  >
+                  <a
+                    class="evento-duvida"
+                    href="#"
+                    data-duvida="SWAGG"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Tirar dúvida</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="evento-card">
+            <div class="evento-media">
+              <span class="evento-selo">🏷️ 5% OFF</span>
+              <img src="assets/amore.jpg" alt="Réveillon Amoré 27" />
+            </div>
+            <div class="evento-info">
+              <h3>Réveillon Amoré 27</h3>
+              <span class="evento-local">📍 Praia de Maracaípe, PE</span>
+              <span class="evento-data">27 a 31 de dezembro de 2026</span>
+              <div class="evento-bottom">
+                <div>
+                  <small>Ingresso</small><strong>Link com 5% OFF</strong>
+                </div>
+                <div class="evento-acoes">
+                  <a
+                    class="evento-comprar"
+                    href="https://www.sympla.com.br/evento/reveillon-amore-2027/3390641?d=MILTONV"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Garantir com desconto</a
+                  >
+                  <a
+                    class="evento-duvida"
+                    href="#"
+                    data-duvida="Réveillon Amoré 27"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Tirar dúvida</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="evento-card">
+            <div class="evento-media">
+              <img src="assets/wedo.jpg" alt="WeDo na Praia — 10 anos" />
+            </div>
+            <div class="evento-info">
+              <h3>WeDo na Praia — 10 anos</h3>
+              <span class="evento-local">📍 Maracaípe, PE</span>
+              <span class="evento-data">16 de janeiro de 2027</span>
+              <div class="evento-bottom">
+                <div>
+                  <small>Ingresso</small><strong>Consultar valor</strong>
+                </div>
+                <div class="evento-acoes">
+                  <a
+                    class="evento-comprar"
+                    href="#"
+                    data-comprar="WeDo na Praia — 10 anos"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Comprar ingresso</a
+                  >
+                  <a
+                    class="evento-duvida"
+                    href="#"
+                    data-duvida="WeDo na Praia — 10 anos"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Tirar dúvida</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="evento-card">
+            <div class="evento-media">
+              <span class="evento-selo">🏷️ 5% OFF</span>
+              <img src="assets/carvalheira.jpg" alt="Carvalheira na Ladeira" />
+            </div>
+            <div class="evento-info">
+              <h3>Carvalheira na Ladeira</h3>
+              <span class="evento-local">📍 Olinda, PE</span>
+              <span class="evento-data">6 a 9 de fevereiro de 2027</span>
+              <div class="evento-bottom">
+                <div>
+                  <small>Ingresso</small><strong>Link com 5% OFF</strong>
+                </div>
+                <div class="evento-acoes">
+                  <a
+                    class="evento-comprar"
+                    href="https://www.sympla.com.br/carvalheira-na-ladeira-2027__3314458?afid=109062"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Garantir com desconto</a
+                  >
+                  <a
+                    class="evento-duvida"
+                    href="#"
+                    data-duvida="Carvalheira na Ladeira"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Tirar dúvida</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="evento-card">
+            <div class="evento-media">
+              <img src="assets/boaviagem.jpg" alt="Carnaval Boa Viagem" />
+            </div>
+            <div class="evento-info">
+              <h3>Carnaval Boa Viagem</h3>
+              <span class="evento-local">📍 Arena Boa Viagem, Recife</span>
+              <span class="evento-data">7 a 9 de fevereiro de 2027</span>
+              <div class="evento-bottom">
+                <div>
+                  <small>Ingresso</small><strong>Consultar valor</strong>
+                </div>
+                <div class="evento-acoes">
+                  <a
+                    class="evento-comprar"
+                    href="#"
+                    data-comprar="Carnaval Boa Viagem"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Comprar ingresso</a
+                  >
+                  <a
+                    class="evento-duvida"
+                    href="#"
+                    data-duvida="Carnaval Boa Viagem"
+                    target="_blank"
+                    rel="noreferrer"
+                    >Tirar dúvida</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vip-section" id="vip">
+      <div class="vip-inner">
+        <div class="section-label">vip_</div>
+        <h2>Entre para o Grupo VIP TicketX</h2>
+        <p>
+          Receba primeiro os melhores eventos, descontos exclusivos, links
+          promocionais e oportunidades especiais.
+        </p>
+        <ul class="vip-list">
+          <li><span class="vip-check">✓</span>Descontos exclusivos</li>
+          <li><span class="vip-check">✓</span>Pré-vendas</li>
+          <li><span class="vip-check">✓</span>Links promocionais</li>
+          <li><span class="vip-check">✓</span>Avisos de novos eventos</li>
+          <li><span class="vip-check">✓</span>Condições especiais</li>
+        </ul>
+        <a
+          href="#"
+          data-wa-msg="Olá, quero entrar no Grupo VIP da TicketX."
+          target="_blank"
+          rel="noreferrer"
+        >
+          <button class="btn-primary" style="cursor: none; border: none">
+            🎟 Entrar no Grupo VIP
+          </button>
+        </a>
+      </div>
+    </section>
+
+    <section class="como-funciona" id="como-funciona">
+      <div class="como-inner">
+        <div class="section-label">como funciona_</div>
+        <h2>Comprar seu ingresso é simples.</h2>
+        <div class="passos-grid">
+          <div class="passo">
+            <span class="passo-num">01</span>
+            <h3>Escolha seu evento</h3>
+            <p>Encontre a festa que você quer curtir.</p>
+          </div>
+          <div class="passo">
+            <span class="passo-num">02</span>
+            <h3>Escolha sua condição</h3>
+            <p>
+              Compre pelo valor normal ou aproveite um link promocional quando
+              disponível.
+            </p>
+          </div>
+          <div class="passo">
+            <span class="passo-num">03</span>
+            <h3>Finalize sua compra</h3>
+            <p>Siga o processo indicado para garantir seu ingresso.</p>
+          </div>
+          <div class="passo">
+            <span class="passo-num">04</span>
+            <h3>Partiu evento</h3>
+            <p>Receba seu ingresso e aproveite.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="parceiros" id="parceiros">
+      <div class="parceiros-inner">
+        <div class="section-label">parcerias_</div>
+        <h2>Conectados aos melhores eventos.</h2>
+        <p class="parceiros-sub">
+          Espaço reservado para logos de produtoras, eventos e parceiros da
+          TicketX.
+        </p>
+        <div class="parceiros-grid">
+          <div class="parceiro-slot">
+            <img src="assets/delux.jpg" alt="Delux" />
+          </div>
+          <div class="parceiro-slot">
+            <img src="assets/carva.jpg" alt="Carvalheira" />
+          </div>
+          <div class="parceiro-slot">
+            <img src="assets/bg.jpg" alt="Bg.produções" />
+          </div>
+          <div class="parceiro-slot">
+            <img src="assets/super.jpg" alt="Super Nova" />
+          </div>
+          <div class="parceiro-slot">
+            <img src="assets/wedo.jpg" alt="Wedo Eventos" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="feedbacks" id="feedbacks">
+      <div class="feedbacks-inner">
+        <div class="section-label">feedbacks_</div>
+        <div class="feedback-track">
+          <div class="feedback-card">
+            ★★★★★
+            <p>"Comprei rápido e chegou na hora."</p>
+          </div>
+          <div class="feedback-card">
+            ★★★★★
+            <p>"Excelente serviço!"</p>
+          </div>
+          <div class="feedback-card">
+            ★★★★★
+            <p>"100% recomendado!"</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq" id="faq">
+      <div class="faq-inner">
+        <div class="section-label">dúvidas_</div>
+        <h2>Perguntas frequentes</h2>
+
+        <div class="faq-item">
+          <button class="faq-q">Como funciona a compra?<span>▾</span></button>
+          <div class="faq-a">
+            Escolha o evento, siga o processo de compra e receba seu ingresso
+            digitalmente.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Os ingressos são seguros?<span>▾</span></button>
+          <div class="faq-a">
+            Sim. Os ingressos comercializados pela TicketX passam pelo processo
+            de validação correspondente ao evento.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">A TicketX cobra taxa?<span>▾</span></button>
+          <div class="faq-a">
+            Sempre que houver a condição de ingresso sem taxa, ela será
+            informada no evento.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Como consigo descontos?<span>▾</span></button>
+          <div class="faq-a">
+            Entre no Grupo VIP TicketX e acompanhe os eventos que possuem links
+            promocionais e condições especiais.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Como entro no Grupo VIP?<span>▾</span></button>
+          <div class="faq-a">
+            Clique no botão "Entrar no Grupo VIP" e siga o link disponibilizado.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">
+            Posso comprar ingressos para mais de uma pessoa?<span>▾</span>
+          </button>
+          <div class="faq-a">
+            Sim, de acordo com as regras e disponibilidade de cada evento.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="section-label">garanta já_</div>
+      <h2>Bora pro próximo <em>evento?</em></h2>
+      <p>
+        Chama a TicketX, encontre seu próximo evento e garanta seu ingresso.
+      </p>
+      <div class="hero-actions">
+        <a
+          href="#"
+          data-wa-msg="Olá! Vim pelo site da TicketX e gostaria de saber mais sobre os ingressos."
+          target="_blank"
+          rel="noreferrer"
+        >
+          <button class="btn-primary" style="cursor: none; border: none">
+            Comprar ingresso
+          </button>
+        </a>
+        <a
+          href="#"
+          data-wa-msg="Olá, quero entrar no Grupo VIP da TicketX."
+          target="_blank"
+          rel="noreferrer"
+        >
+          <button class="btn-ghost" style="cursor: none">
+            Entrar no Grupo VIP
+          </button>
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo">Ticket<span>X</span></a>
+          <p>Ingressos, eventos e experiências.</p>
+        </div>
+
+        <ul class="footer-links">
+          <li><a href="#sobre">Sobre nós</a></li>
+          <li><a href="#conosco">Benefícios</a></li>
+          <li><a href="#eventos">Eventos</a></li>
+        </ul>
+
+        <ul class="footer-links">
+          <li><a href="#vip">Grupo VIP</a></li>
+          <li><a href="#faq">Dúvidas</a></li>
+          <li>
+            <a
+              href="https://wa.me/+5581991017226"
+              target="_blank"
+              rel="noreferrer"
+              >Contato</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 TicketX — Todos os direitos reservados.</span>
+        <a
+          href="https://www.instagram.com/results.ag/?utm_source=ig_web_button_share_sheet"
+          target="_blank"
+          rel="noreferrer"
+          class="credit-link"
+          >feito pela results.ag</a
+        >
+      </div>
+    </footer>
+
+    <a
+      class="whatsapp-float"
+      href="#"
+      data-wa-msg="Olá! Vim pelo site da TicketX e gostaria de saber mais sobre os ingressos."
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Fale conosco no WhatsApp"
+      >💬</a
+    >
+
+    <script>
+      // ── WhatsApp: base + helpers (mesma lógica do data.ts do projeto React) ──
+      const WHATSAPP_BASE = 'https://wa.me/+5581991017226'
+
+      function waLink(mensagem) {
+        return WHATSAPP_BASE + '?text=' + encodeURIComponent(mensagem)
+      }
+      function buyLink(nomeEvento) {
+        return waLink('Olá, gostaria de comprar o evento ' + nomeEvento + '?!')
+      }
+      function duvidaLink(nomeEvento) {
+        return waLink(
+          'Olá, tenho uma dúvida sobre o evento ' + nomeEvento + '?!',
+        )
+      }
+
+      document.querySelectorAll('[data-wa-msg]').forEach((el) => {
+        el.href = waLink(el.dataset.waMsg)
+      })
+      document.querySelectorAll('[data-comprar]').forEach((el) => {
+        el.href = buyLink(el.dataset.comprar)
+      })
+      document.querySelectorAll('[data-duvida]').forEach((el) => {
+        el.href = duvidaLink(el.dataset.duvida)
+      })
+
+      // ── VIP marquee: clicar em qualquer ponto abre o WhatsApp do VIP ──
+      document.getElementById('vipMarquee').addEventListener('click', () => {
+        window.open(
+          waLink('Olá, quero entrar no Grupo VIP da TicketX.'),
+          '_blank',
+        )
+      })
+
+      // ── FAQ accordion ──
+      document.querySelectorAll('.faq-q').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const answer = btn.nextElementSibling
+          const isOpen = btn.classList.contains('open')
+
+          document
+            .querySelectorAll('.faq-q')
+            .forEach((b) => b.classList.remove('open'))
+          document
+            .querySelectorAll('.faq-a')
+            .forEach((a) => a.classList.remove('open'))
+
+          if (!isOpen) {
+            btn.classList.add('open')
+            answer.classList.add('open')
+          }
+        })
+      })
+
+      // ── Cursor customizado (desktop apenas) ──
+      if (window.matchMedia('(pointer: fine)').matches) {
+        const cursor = document.getElementById('cursor')
+        const ring = document.getElementById('cursorRing')
+        let mx = 0,
+          my = 0,
+          rx = 0,
+          ry = 0
+
+        document.addEventListener('mousemove', (e) => {
+          mx = e.clientX
+          my = e.clientY
+          cursor.style.left = e.clientX - 6 + 'px'
+          cursor.style.top = e.clientY - 6 + 'px'
+        })
+
+        function animRing() {
+          rx += (mx - rx) * 0.12
+          ry += (my - ry) * 0.12
+          ring.style.left = rx - 18 + 'px'
+          ring.style.top = ry - 18 + 'px'
+          requestAnimationFrame(animRing)
+        }
+        requestAnimationFrame(animRing)
+      }
+    </script>
+  </body>
+</html>
