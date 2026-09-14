@@ -1017,12 +1017,30 @@
       /* MOBILE */
       @media (max-width: 900px) {
         .sobre-inner,
-        .benefits-grid,
-        .eventos-grid,
-        .ofertas-grid,
         .vip-list,
         .passos-grid {
           grid-template-columns: 1fr;
+        }
+
+        .ofertas-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        /* Cards de benefícios viram carrossel horizontal, igual aos feedbacks */
+        .benefits-grid {
+          display: flex;
+          grid-template-columns: unset;
+          gap: 16px;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          padding-bottom: 8px;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .benefit-card {
+          min-width: 82%;
+          flex-shrink: 0;
+          scroll-snap-align: start;
         }
 
         .parceiros-grid {
@@ -1055,6 +1073,130 @@
         .cursor-ring {
           display: none;
         }
+
+        .hero {
+          padding: 100px 20px 60px;
+        }
+
+        .hero-title {
+          font-size: clamp(2.1rem, 11vw, 3.2rem);
+          letter-spacing: -1.5px;
+        }
+
+        .hero-sub {
+          font-size: 0.95rem;
+        }
+
+        .benefit-card {
+          padding: 28px 24px;
+        }
+
+        .benefit-card h3 {
+          font-size: 1.25rem;
+        }
+
+        /* Ofertas em grid 2 colunas compacto no mobile */
+        .ofertas-grid {
+          gap: 12px;
+        }
+
+        .oferta-card {
+          padding: 14px;
+          border-radius: 16px;
+        }
+
+        .oferta-selo {
+          font-size: 0.6rem;
+          padding: 4px 10px;
+          margin-bottom: 10px;
+        }
+
+        .oferta-card h3 {
+          font-size: 0.95rem;
+          margin-bottom: 4px;
+          line-height: 1.2;
+        }
+
+        .oferta-card .evento-local {
+          font-size: 0.72rem;
+          margin-bottom: 12px;
+        }
+
+        .oferta-acoes {
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .oferta-card a {
+          padding: 10px 12px;
+          font-size: 0.72rem;
+          text-align: center;
+          width: 100%;
+        }
+
+        /* Grid de eventos: 2 colunas compactas no mobile */
+        .eventos-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+        }
+
+        .evento-card {
+          border-radius: 16px;
+        }
+
+        .evento-card img {
+          height: 140px;
+        }
+
+        .evento-info {
+          padding: 12px;
+        }
+
+        .evento-info h3 {
+          font-size: 0.95rem;
+          margin-bottom: 6px;
+          line-height: 1.2;
+        }
+
+        .evento-local {
+          font-size: 0.72rem;
+        }
+
+        .evento-bottom {
+          margin-top: 14px;
+          gap: 10px;
+        }
+
+        .evento-bottom small {
+          font-size: 0.62rem;
+        }
+
+        .evento-bottom strong {
+          font-size: 1rem;
+        }
+
+        .evento-bottom > div:first-child {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 2px;
+        }
+
+        .evento-acoes {
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .evento-comprar,
+        .evento-duvida {
+          padding: 10px 12px;
+          font-size: 0.7rem;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .hero-title {
+          font-size: clamp(1.9rem, 12vw, 2.6rem);
+        }
       }
     </style>
   </head>
@@ -1078,7 +1220,7 @@
       <div class="hero-bg"></div>
       <div class="hero-content">
         <div class="hero-badge">
-          🎟 Comissário autorizado de grandes produtoras
+          🎟 Ticketeira de venda de ingressos autorizada
         </div>
         <h1 class="hero-title">
           <span class="line-blue">seus</span><br />
