@@ -6,7 +6,7 @@
     <title>TicketX — Seus ingressos, sem complicação</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -34,31 +34,6 @@
         background: #000;
         color: #fff;
         overflow-x: hidden;
-        cursor: none;
-      }
-
-      /* CURSOR */
-      .cursor {
-        width: 12px;
-        height: 12px;
-        background: var(--cyan);
-        border-radius: 50%;
-        position: fixed;
-        pointer-events: none;
-        z-index: 9999;
-        mix-blend-mode: exclusion;
-        transition: transform 0.1s ease;
-      }
-
-      .cursor-ring {
-        width: 36px;
-        height: 36px;
-        border: 1.5px solid var(--magenta);
-        border-radius: 50%;
-        position: fixed;
-        pointer-events: none;
-        z-index: 9998;
-        mix-blend-mode: exclusion;
       }
 
       /* NAV */
@@ -78,7 +53,7 @@
       }
 
       .nav-logo {
-        font-family: 'Space Mono', monospace;
+        font-family: 'Syne', sans-serif;
         font-size: 1.4rem;
         font-weight: 700;
         color: #fff;
@@ -87,6 +62,20 @@
 
       .nav-logo span {
         color: var(--cyan);
+      }
+
+      .nav-logo-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+
+      .nav-mosaico {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        opacity: 0.9;
       }
 
       .nav-links {
@@ -114,11 +103,23 @@
         border: none;
         padding: 10px 24px;
         border-radius: 999px;
-        font-family: 'Space Mono', monospace;
-        cursor: none;
+        font-family: 'Syne', sans-serif;
         font-size: 0.85rem;
         text-decoration: none;
         display: inline-block;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .nav-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(45, 0, 255, 0.45);
+      }
+
+      .nav-cta:active {
+        transform: translateY(0);
       }
 
       /* HERO */
@@ -153,7 +154,7 @@
         display: inline-block;
         border: 1px solid var(--cyan);
         color: var(--cyan);
-        font-family: 'Space Mono', monospace;
+        font-family: 'Syne', sans-serif;
         font-size: 0.72rem;
         letter-spacing: 3px;
         padding: 6px 18px;
@@ -201,11 +202,22 @@
         border: none;
         padding: 16px 40px;
         border-radius: 999px;
-        font-family: 'Space Mono', monospace;
-        cursor: none;
+        font-family: 'Syne', sans-serif;
         font-size: 0.9rem;
         text-decoration: none;
         display: inline-block;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 26px rgba(45, 0, 255, 0.4);
+      }
+
+      .btn-primary:active {
+        transform: translateY(-1px);
       }
 
       .btn-ghost {
@@ -214,11 +226,20 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
         padding: 16px 40px;
         border-radius: 999px;
-        font-family: 'Space Mono', monospace;
-        cursor: none;
+        font-family: 'Syne', sans-serif;
         font-size: 0.9rem;
         text-decoration: none;
         display: inline-block;
+        transition:
+          border-color 0.2s ease,
+          color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .btn-ghost:hover {
+        border-color: var(--cyan);
+        color: var(--cyan);
+        transform: translateY(-3px);
       }
 
       /* SECTION LABEL */
@@ -228,7 +249,7 @@
         color: var(--cyan);
         border-radius: 999px;
         padding: 6px 18px;
-        font-family: 'Space Mono', monospace;
+        font-family: 'Syne', sans-serif;
         font-size: 0.8rem;
         margin-bottom: 24px;
       }
@@ -247,12 +268,9 @@
       }
 
       .sobre-inner {
-        max-width: 1100px;
+        max-width: 700px;
         margin: auto;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 80px;
-        align-items: center;
+        text-align: center;
       }
 
       .sobre-text h2 {
@@ -277,14 +295,13 @@
         margin-bottom: 20px;
       }
 
-      .sobre-img {
-        width: 100%;
-        border-radius: 24px;
-      }
-
       /* BENEFICIOS */
       .conosco {
-        background: #000;
+        background: radial-gradient(
+          ellipse 70% 80% at 80% 30%,
+          #170045 0%,
+          #000 65%
+        );
       }
 
       .conosco-inner {
@@ -302,25 +319,42 @@
       .benefits-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
+        grid-auto-rows: 1fr;
+        gap: 20px;
       }
 
       .benefit-card {
-        background: rgba(45, 0, 255, 0.1);
-        border: 1px solid rgba(0, 200, 255, 0.2);
-        border-radius: 24px;
-        padding: 40px 32px;
-        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 36px 30px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        transition:
+          border-color 0.25s ease,
+          transform 0.25s ease,
+          background 0.25s ease;
+      }
+
+      .benefit-card:hover {
+        border-color: rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.05);
+        transform: translateY(-4px);
       }
 
       .benefit-card h3 {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
+        font-weight: 700;
         margin-bottom: 10px;
+        line-height: 1.3;
       }
 
       .benefit-card p {
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(255, 255, 255, 0.55);
         line-height: 1.6;
+        font-size: 0.95rem;
       }
 
       /* EVENTOS */
@@ -366,17 +400,16 @@
       .evento-card {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 26px;
+        border-radius: 20px;
         overflow: hidden;
         transition:
           transform 0.3s,
           border-color 0.3s;
-        backdrop-filter: blur(12px);
       }
 
       .evento-card:hover {
-        transform: translateY(-8px);
-        border-color: rgba(0, 200, 255, 0.4);
+        transform: translateY(-6px);
+        border-color: rgba(255, 255, 255, 0.18);
       }
 
       .evento-card img {
@@ -436,8 +469,16 @@
         text-decoration: none;
         padding: 14px 20px;
         border-radius: 999px;
-        font-family: 'Space Mono', monospace;
+        font-family: 'Syne', sans-serif;
         font-size: 0.85rem;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .evento-comprar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(45, 0, 255, 0.4);
       }
 
       .evento-duvida {
@@ -449,7 +490,7 @@
         text-decoration: none;
         padding: 14px 18px;
         border-radius: 999px;
-        font-family: 'Space Mono', monospace;
+        font-family: 'Syne', sans-serif;
         font-size: 0.85rem;
         transition:
           border-color 0.2s,
@@ -494,7 +535,6 @@
         text-align: left;
         padding: 24px 0;
         font-size: 1rem;
-        cursor: none;
         display: flex;
         justify-content: space-between;
         font-family: 'Syne', sans-serif;
@@ -525,7 +565,11 @@
 
       /* FEEDBACKS */
       .feedbacks {
-        background: #000;
+        background: radial-gradient(
+          ellipse 70% 80% at 50% 50%,
+          #0b0b25 0%,
+          #000 65%
+        );
       }
 
       .feedbacks-inner {
@@ -550,8 +594,8 @@
 
       .feedback-card {
         min-width: 320px;
-        background: rgba(45, 0, 255, 0.1);
-        border: 1px solid rgba(0, 200, 255, 0.2);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 20px;
         padding: 28px;
       }
@@ -600,7 +644,7 @@
         padding: 48px 40px;
         text-align: center;
         color: rgba(255, 255, 255, 0.4);
-        font-family: 'Space Mono', monospace;
+        font-family: 'Syne', sans-serif;
         font-size: 0.85rem;
       }
 
@@ -624,7 +668,7 @@
       .marquee-track span {
         display: inline-flex;
         align-items: center;
-        font-family: 'Space Mono', monospace;
+        font-family: 'Syne', sans-serif;
         font-size: 0.85rem;
         letter-spacing: 2px;
         color: rgba(255, 255, 255, 0.85);
@@ -659,7 +703,11 @@
 
       /* OFERTAS */
       .ofertas {
-        background: #000;
+        background: radial-gradient(
+          ellipse 70% 80% at 20% 70%,
+          #170045 0%,
+          #000 65%
+        );
       }
 
       .ofertas-inner {
@@ -695,57 +743,41 @@
 
       .oferta-card {
         position: relative;
-        background: rgba(200, 0, 255, 0.07);
-        border: 1px solid rgba(200, 0, 255, 0.3);
+        display: block;
         border-radius: 24px;
-        padding: 28px;
         overflow: hidden;
+        text-decoration: none;
+        aspect-ratio: 3 / 4;
+        transition: transform 0.25s ease;
+      }
+
+      .oferta-card:hover {
+        transform: translateY(-4px);
+      }
+
+      .oferta-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
       }
 
       .oferta-selo {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 2;
         display: inline-block;
         background: var(--magenta);
         color: #fff;
-        font-family: 'Space Mono', monospace;
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
         font-size: 0.7rem;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
         padding: 6px 14px;
         border-radius: 999px;
-        margin-bottom: 18px;
       }
 
-      .oferta-card h3 {
-        font-size: 1.4rem;
-        margin-bottom: 6px;
-      }
-
-      .oferta-card .evento-local {
-        display: block;
-        margin-bottom: 20px;
-      }
-
-      .oferta-acoes {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .oferta-card a {
-        display: inline-block;
-        background: linear-gradient(135deg, var(--magenta), var(--blue));
-        color: #fff;
-        text-decoration: none;
-        padding: 12px 22px;
-        border-radius: 999px;
-        font-family: 'Space Mono', monospace;
-        font-size: 0.85rem;
-      }
-
-      .oferta-duvida {
-        background: transparent !important;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: rgba(255, 255, 255, 0.75) !important;
-      }
 
       .oferta-duvida:hover {
         border-color: var(--cyan);
@@ -763,7 +795,7 @@
         left: 16px;
         background: var(--magenta);
         color: #fff;
-        font-family: 'Space Mono', monospace;
+        font-family: 'Syne', sans-serif;
         font-size: 0.68rem;
         letter-spacing: 1px;
         padding: 6px 14px;
@@ -776,6 +808,23 @@
         font-size: 0.85rem;
         display: block;
         margin-top: 4px;
+      }
+
+      .evento-data-tag {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #fff;
+        font-family: 'Syne', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        z-index: 2;
       }
 
       /* VIP SECTION */
@@ -827,53 +876,6 @@
         margin-right: 8px;
       }
 
-      /* COMO FUNCIONA */
-      .como-funciona {
-        background: #000;
-      }
-
-      .como-inner {
-        max-width: 1100px;
-        margin: auto;
-      }
-
-      .como-inner h2 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 800;
-        letter-spacing: -3px;
-        margin-bottom: 60px;
-      }
-
-      .passos-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-      }
-
-      .passo {
-        border-top: 1px solid rgba(0, 200, 255, 0.3);
-        padding-top: 20px;
-      }
-
-      .passo-num {
-        font-family: 'Space Mono', monospace;
-        color: var(--cyan);
-        font-size: 0.85rem;
-        display: block;
-        margin-bottom: 14px;
-      }
-
-      .passo h3 {
-        font-size: 1.15rem;
-        margin-bottom: 8px;
-      }
-
-      .passo p {
-        color: rgba(255, 255, 255, 0.55);
-        font-size: 0.9rem;
-        line-height: 1.6;
-      }
-
       /* PARCEIROS */
       .parceiros {
         background: radial-gradient(
@@ -908,16 +910,22 @@
 
       .parceiro-slot {
         aspect-ratio: 1;
-        border: 1px dashed rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
         color: rgba(255, 255, 255, 0.25);
-        font-family: 'Space Mono', monospace;
+        font-family: 'Syne', sans-serif;
         font-size: 0.7rem;
         text-align: center;
+        transition: border-color 0.25s ease;
+      }
+
+      .parceiro-slot:hover {
+        border-color: rgba(255, 255, 255, 0.18);
       }
 
       .parceiro-slot img {
@@ -934,7 +942,7 @@
         right: 24px;
         width: 60px;
         height: 60px;
-        background: #25d366;
+        background: var(--blue);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -943,6 +951,46 @@
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
         text-decoration: none;
         font-size: 1.6rem;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .whatsapp-float:hover {
+        transform: scale(1.08) translateY(-2px);
+        box-shadow: 0 10px 28px rgba(45, 0, 255, 0.5);
+      }
+
+      .cupom-float {
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        z-index: 200;
+        background: rgba(20, 20, 20, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(8px);
+        color: #fff;
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        pointer-events: none;
+      }
+
+      .cupom-float .cupom-brand {
+        color: var(--blue);
+      }
+
+      @media (max-width: 768px) {
+        .cupom-float {
+          bottom: 88px;
+          left: 16px;
+          font-size: 0.62rem;
+          padding: 6px 12px;
+        }
       }
 
       /* FOOTER (expandido) */
@@ -989,13 +1037,15 @@
         border-top: 1px solid rgba(255, 255, 255, 0.08);
         padding-top: 24px;
         display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 12px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
         max-width: 1100px;
         margin: auto;
         color: rgba(255, 255, 255, 0.35);
         font-size: 0.8rem;
+        text-align: center;
       }
 
       .footer-bottom a {
@@ -1009,20 +1059,50 @@
 
       .footer-bottom a.credit-link,
       .footer-bottom a.credit-link:hover {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         color: rgba(255, 255, 255, 0.35);
         text-decoration: none;
         cursor: pointer;
       }
 
+      .credit-name {
+        color: #22c55e;
+        font-weight: 700;
+      }
+
+      .credit-icon {
+        width: 15px;
+        height: 15px;
+        fill: #22c55e;
+      }
+
       /* MOBILE */
       @media (max-width: 900px) {
-        .sobre-inner,
-        .benefits-grid,
-        .eventos-grid,
-        .ofertas-grid,
-        .vip-list,
-        .passos-grid {
+        .vip-list {
           grid-template-columns: 1fr;
+        }
+
+        .ofertas-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        /* Cards de benefícios viram carrossel horizontal, igual aos feedbacks */
+        .benefits-grid {
+          display: flex;
+          grid-template-columns: unset;
+          gap: 16px;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          padding-bottom: 8px;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .benefit-card {
+          min-width: 82%;
+          flex-shrink: 0;
+          scroll-snap-align: start;
         }
 
         .parceiros-grid {
@@ -1031,6 +1111,18 @@
 
         .footer-inner {
           flex-direction: column;
+        }
+
+        /* Grupo VIP centralizado no mobile */
+        .vip-list {
+          text-align: center;
+          justify-items: center;
+        }
+
+        .vip-list li {
+          display: flex;
+          align-items: center;
+          gap: 4px;
         }
       }
 
@@ -1047,23 +1139,111 @@
           padding: 70px 24px;
         }
 
-        body {
-          cursor: auto;
+        .hero {
+          padding: 100px 20px 60px;
         }
 
-        .cursor,
-        .cursor-ring {
-          display: none;
+        .hero-title {
+          font-size: clamp(2.1rem, 11vw, 3.2rem);
+          letter-spacing: -1.5px;
+        }
+
+        .hero-sub {
+          font-size: 0.95rem;
+        }
+
+        .benefit-card {
+          padding: 28px 24px;
+        }
+
+        .benefit-card h3 {
+          font-size: 1.25rem;
+        }
+
+        /* Ofertas em grid 2 colunas compacto no mobile */
+        .ofertas-grid {
+          gap: 12px;
+        }
+
+        .oferta-selo {
+          font-size: 0.6rem;
+          padding: 4px 10px;
+          top: 10px;
+          left: 10px;
+        }
+
+        /* Grid de eventos: 2 colunas compactas no mobile */
+        .eventos-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+        }
+
+        .evento-card {
+          border-radius: 16px;
+        }
+
+        .evento-card img {
+          height: 140px;
+        }
+
+        .evento-info {
+          padding: 12px;
+        }
+
+        .evento-info h3 {
+          font-size: 0.95rem;
+          margin-bottom: 6px;
+          line-height: 1.2;
+        }
+
+        .evento-local {
+          font-size: 0.72rem;
+        }
+
+        .evento-bottom {
+          margin-top: 14px;
+          gap: 10px;
+        }
+
+        .evento-bottom small {
+          font-size: 0.62rem;
+        }
+
+        .evento-bottom strong {
+          font-size: 1rem;
+        }
+
+        .evento-bottom > div:first-child {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 2px;
+        }
+
+        .evento-acoes {
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .evento-comprar,
+        .evento-duvida {
+          padding: 10px 12px;
+          font-size: 0.7rem;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .hero-title {
+          font-size: clamp(1.9rem, 12vw, 2.6rem);
         }
       }
     </style>
   </head>
   <body>
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
-
     <nav>
-      <a href="#" class="nav-logo">Ticket<span>X</span></a>
+      <a href="#" class="nav-logo-group">
+        <span class="nav-logo">Ticket<span>X</span></span>
+        <img src="img/X_ticketX.png" alt="TicketX Mosaico" class="nav-mosaico" />
+      </a>
       <ul class="nav-links">
         <li><a href="#sobre">Sobre nós</a></li>
         <li><a href="#conosco">Benefícios</a></li>
@@ -1078,7 +1258,7 @@
       <div class="hero-bg"></div>
       <div class="hero-content">
         <div class="hero-badge">
-          🎟 Comissário autorizado de grandes produtoras
+          🎟 Ticketeira de venda de ingressos autorizada
         </div>
         <h1 class="hero-title">
           <span class="line-blue">seus</span><br />
@@ -1125,7 +1305,7 @@
     <section class="sobre" id="sobre">
       <div class="sobre-inner">
         <div class="sobre-text">
-          <div class="section-label">sobre nós_</div>
+          <div class="section-label">sobre nós</div>
           <h2>Conectando você às <em>melhores experiências</em></h2>
           <p>
             A TicketX atua na venda de ingressos conectando você aos melhores
@@ -1133,13 +1313,12 @@
           </p>
           <p>Segurança, praticidade e suporte real.</p>
         </div>
-        <img src="img/X_ticketX.png" alt="TicketX Mosaico" class="sobre-img" />
       </div>
     </section>
 
     <section class="conosco" id="conosco">
       <div class="conosco-inner">
-        <div class="section-label">conosco_</div>
+        <div class="section-label">conosco</div>
         <h2>Por que escolher a TicketX?</h2>
         <div class="benefits-grid">
           <div class="benefit-card">
@@ -1178,91 +1357,56 @@
 
     <section class="ofertas" id="ofertas">
       <div class="ofertas-inner">
-        <div class="section-label">ofertas_</div>
+        <div class="section-label">ofertas</div>
         <h2>Eventos com <em>desconto</em></h2>
         <p class="ofertas-sub">
           Aproveite condições exclusivas e garanta seu ingresso pagando menos.
         </p>
 
         <div class="ofertas-grid">
-          <div class="oferta-card">
-            <span class="oferta-selo">🏷️ LINK COM 5% OFF</span>
-            <h3>SWAGG</h3>
-            <span class="evento-local">📍 Cachaçaria Carvalheira</span>
-            <div class="oferta-acoes">
-              <a
-                href="https://www.sympla.com.br/evento/swagg-v12026/3551630?d=ticketx"
-                target="_blank"
-                rel="noreferrer"
-                >Garantir desconto</a
-              >
-              <a
-                class="oferta-duvida"
-                href="#"
-                data-duvida="SWAGG"
-                target="_blank"
-                rel="noreferrer"
-                >Tirar dúvida</a
-              >
-            </div>
-          </div>
+          <a
+            class="oferta-card"
+            href="https://www.sympla.com.br/evento/swagg-v12026/3551630?d=ticketx"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span class="oferta-selo">🏷️ Link com 5% OFF</span>
+            <img src="assets/swag.jpg" alt="SWAGG" />
+          </a>
 
-          <div class="oferta-card">
-            <span class="oferta-selo">🏷️ LINK COM 5% OFF</span>
-            <h3>Réveillon Amoré 27</h3>
-            <span class="evento-local">📍 Praia de Maracaípe, PE</span>
-            <div class="oferta-acoes">
-              <a
-                href="https://www.sympla.com.br/evento/reveillon-amore-2027/3390641?d=MILTONV"
-                target="_blank"
-                rel="noreferrer"
-                >Garantir desconto</a
-              >
-              <a
-                class="oferta-duvida"
-                href="#"
-                data-duvida="Réveillon Amoré 27"
-                target="_blank"
-                rel="noreferrer"
-                >Tirar dúvida</a
-              >
-            </div>
-          </div>
+          <a
+            class="oferta-card"
+            href="https://www.sympla.com.br/evento/reveillon-amore-2027/3390641?d=MILTONV"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span class="oferta-selo">🏷️ Link com 5% OFF</span>
+            <img src="assets/amore.jpg" alt="Réveillon Amoré 27" />
+          </a>
 
-          <div class="oferta-card">
-            <span class="oferta-selo">🏷️ LINK COM 5% OFF</span>
-            <h3>Carvalheira na Ladeira</h3>
-            <span class="evento-local">📍 Olinda, PE</span>
-            <div class="oferta-acoes">
-              <a
-                href="https://www.sympla.com.br/carvalheira-na-ladeira-2027__3314458?afid=109062"
-                target="_blank"
-                rel="noreferrer"
-                >Garantir desconto</a
-              >
-              <a
-                class="oferta-duvida"
-                href="#"
-                data-duvida="Carvalheira na Ladeira"
-                target="_blank"
-                rel="noreferrer"
-                >Tirar dúvida</a
-              >
-            </div>
-          </div>
+          <a
+            class="oferta-card"
+            href="https://www.sympla.com.br/carvalheira-na-ladeira-2027__3314458?afid=109062"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span class="oferta-selo">🏷️ Link com 5% OFF</span>
+            <img src="assets/carvalheira.jpg" alt="Carvalheira na Ladeira" />
+          </a>
         </div>
       </div>
     </section>
 
     <section class="eventos" id="eventos">
       <div class="eventos-inner">
-        <div class="section-label">eventos_</div>
+        <div class="section-label">eventos</div>
         <h2>Festas <em>disponíveis</em></h2>
         <p class="eventos-sub">Garanta seu ingresso sem complicação.</p>
 
         <div class="eventos-grid">
           <div class="evento-card">
             <div class="evento-media">
+              <span class="evento-data-tag">19 SET</span>
               <img src="assets/surubim.jpg" alt="Vaquejada Surubim" />
             </div>
             <div class="evento-info">
@@ -1298,6 +1442,7 @@
           <div class="evento-card">
             <div class="evento-media">
               <span class="evento-selo">🏷️ 5% OFF</span>
+              <span class="evento-data-tag">26 SET</span>
               <img src="assets/swag.jpg" alt="SWAGG" />
             </div>
             <div class="evento-info">
@@ -1332,6 +1477,7 @@
           <div class="evento-card">
             <div class="evento-media">
               <span class="evento-selo">🏷️ 5% OFF</span>
+              <span class="evento-data-tag">27-31 DEZ</span>
               <img src="assets/amore.jpg" alt="Réveillon Amoré 27" />
             </div>
             <div class="evento-info">
@@ -1365,6 +1511,7 @@
 
           <div class="evento-card">
             <div class="evento-media">
+              <span class="evento-data-tag">16 JAN</span>
               <img src="assets/wedo.jpg" alt="WeDo na Praia — 10 anos" />
             </div>
             <div class="evento-info">
@@ -1400,6 +1547,7 @@
           <div class="evento-card">
             <div class="evento-media">
               <span class="evento-selo">🏷️ 5% OFF</span>
+              <span class="evento-data-tag">6-9 FEV</span>
               <img src="assets/carvalheira.jpg" alt="Carvalheira na Ladeira" />
             </div>
             <div class="evento-info">
@@ -1433,6 +1581,7 @@
 
           <div class="evento-card">
             <div class="evento-media">
+              <span class="evento-data-tag">7-9 FEV</span>
               <img src="assets/boaviagem.jpg" alt="Carnaval Boa Viagem" />
             </div>
             <div class="evento-info">
@@ -1470,7 +1619,7 @@
 
     <section class="vip-section" id="vip">
       <div class="vip-inner">
-        <div class="section-label">vip_</div>
+        <div class="section-label">vip</div>
         <h2>Entre para o Grupo VIP TicketX</h2>
         <p>
           Receba primeiro os melhores eventos, descontos exclusivos, links
@@ -1489,48 +1638,16 @@
           target="_blank"
           rel="noreferrer"
         >
-          <button class="btn-primary" style="cursor: none; border: none">
+          <button class="btn-primary" style="border: none">
             🎟 Entrar no Grupo VIP
           </button>
         </a>
       </div>
     </section>
 
-    <section class="como-funciona" id="como-funciona">
-      <div class="como-inner">
-        <div class="section-label">como funciona_</div>
-        <h2>Comprar seu ingresso é simples.</h2>
-        <div class="passos-grid">
-          <div class="passo">
-            <span class="passo-num">01</span>
-            <h3>Escolha seu evento</h3>
-            <p>Encontre a festa que você quer curtir.</p>
-          </div>
-          <div class="passo">
-            <span class="passo-num">02</span>
-            <h3>Escolha sua condição</h3>
-            <p>
-              Compre pelo valor normal ou aproveite um link promocional quando
-              disponível.
-            </p>
-          </div>
-          <div class="passo">
-            <span class="passo-num">03</span>
-            <h3>Finalize sua compra</h3>
-            <p>Siga o processo indicado para garantir seu ingresso.</p>
-          </div>
-          <div class="passo">
-            <span class="passo-num">04</span>
-            <h3>Partiu evento</h3>
-            <p>Receba seu ingresso e aproveite.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <section class="parceiros" id="parceiros">
       <div class="parceiros-inner">
-        <div class="section-label">parcerias_</div>
+        <div class="section-label">parcerias</div>
         <h2>Conectados aos melhores eventos.</h2>
         <p class="parceiros-sub">
           Espaço reservado para logos de produtoras, eventos e parceiros da
@@ -1558,7 +1675,7 @@
 
     <section class="feedbacks" id="feedbacks">
       <div class="feedbacks-inner">
-        <div class="section-label">feedbacks_</div>
+        <div class="section-label">feedbacks</div>
         <div class="feedback-track">
           <div class="feedback-card">
             ★★★★★
@@ -1578,7 +1695,7 @@
 
     <section class="faq" id="faq">
       <div class="faq-inner">
-        <div class="section-label">dúvidas_</div>
+        <div class="section-label">dúvidas</div>
         <h2>Perguntas frequentes</h2>
 
         <div class="faq-item">
@@ -1603,31 +1720,16 @@
           </div>
         </div>
         <div class="faq-item">
-          <button class="faq-q">Como consigo descontos?<span>▾</span></button>
-          <div class="faq-a">
-            Entre no Grupo VIP TicketX e acompanhe os eventos que possuem links
-            promocionais e condições especiais.
-          </div>
-        </div>
-        <div class="faq-item">
           <button class="faq-q">Como entro no Grupo VIP?<span>▾</span></button>
           <div class="faq-a">
             Clique no botão "Entrar no Grupo VIP" e siga o link disponibilizado.
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">
-            Posso comprar ingressos para mais de uma pessoa?<span>▾</span>
-          </button>
-          <div class="faq-a">
-            Sim, de acordo com as regras e disponibilidade de cada evento.
           </div>
         </div>
       </div>
     </section>
 
     <section class="cta-section">
-      <div class="section-label">garanta já_</div>
+      <div class="section-label">garanta já</div>
       <h2>Bora pro próximo <em>evento?</em></h2>
       <p>
         Chama a TicketX, encontre seu próximo evento e garanta seu ingresso.
@@ -1639,7 +1741,7 @@
           target="_blank"
           rel="noreferrer"
         >
-          <button class="btn-primary" style="cursor: none; border: none">
+          <button class="btn-primary" style="border: none">
             Comprar ingresso
           </button>
         </a>
@@ -1649,7 +1751,7 @@
           target="_blank"
           rel="noreferrer"
         >
-          <button class="btn-ghost" style="cursor: none">
+          <button class="btn-ghost">
             Entrar no Grupo VIP
           </button>
         </a>
@@ -1690,10 +1792,18 @@
           target="_blank"
           rel="noreferrer"
           class="credit-link"
-          >feito pela results.ag</a
         >
+          feito pela <span class="credit-name">results.ag</span>
+          <svg class="credit-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 2c2.7 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.22.6 1.77 1.15.55.55.9 1.11 1.15 1.77.25.64.42 1.37.47 2.43C21.99 8.94 22 9.3 22 12c0 2.7-.01 3.06-.06 4.12-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.64.25-1.37.42-2.43.47C15.06 21.99 14.7 22 12 22c-2.7 0-3.06-.01-4.12-.06-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.7 2 12c0-2.7.01-3.06.06-4.12.05-1.06.22-1.79.47-2.43.26-.66.6-1.22 1.15-1.77A4.9 4.9 0 0 1 5.45 2.53c.64-.25 1.37-.42 2.43-.47C8.94 2.01 9.3 2 12 2zm0 1.8c-2.65 0-2.99.01-4.03.06-.97.04-1.5.2-1.85.34a3.1 3.1 0 0 0-1.15.75 3.1 3.1 0 0 0-.75 1.15c-.14.35-.3.88-.34 1.85C3.83 9.01 3.82 9.35 3.82 12c0 2.65.01 2.99.06 4.03.04.97.2 1.5.34 1.85.16.42.4.79.75 1.15.36.35.73.6 1.15.75.35.14.88.3 1.85.34 1.04.05 1.38.06 4.03.06s2.99-.01 4.03-.06c.97-.04 1.5-.2 1.85-.34.42-.16.79-.4 1.15-.75.35-.36.6-.73.75-1.15.14-.35.3-.88.34-1.85.05-1.04.06-1.38.06-4.03s-.01-2.99-.06-4.03c-.04-.97-.2-1.5-.34-1.85a3.1 3.1 0 0 0-.75-1.15 3.1 3.1 0 0 0-1.15-.75c-.35-.14-.88-.3-1.85-.34C14.99 3.83 14.65 3.82 12 3.82zm0 3.06a5.12 5.12 0 1 1 0 10.24 5.12 5.12 0 0 1 0-10.24zm0 1.8a3.32 3.32 0 1 0 0 6.64 3.32 3.32 0 0 0 0-6.64zm5.33-1.98a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"
+            />
+          </svg>
+        </a>
       </div>
     </footer>
+
+    <div class="cupom-float">CUPOM: <span class="cupom-brand">TICKET</span>X</div>
 
     <a
       class="whatsapp-float"
@@ -1758,32 +1868,6 @@
           }
         })
       })
-
-      // ── Cursor customizado (desktop apenas) ──
-      if (window.matchMedia('(pointer: fine)').matches) {
-        const cursor = document.getElementById('cursor')
-        const ring = document.getElementById('cursorRing')
-        let mx = 0,
-          my = 0,
-          rx = 0,
-          ry = 0
-
-        document.addEventListener('mousemove', (e) => {
-          mx = e.clientX
-          my = e.clientY
-          cursor.style.left = e.clientX - 6 + 'px'
-          cursor.style.top = e.clientY - 6 + 'px'
-        })
-
-        function animRing() {
-          rx += (mx - rx) * 0.12
-          ry += (my - ry) * 0.12
-          ring.style.left = rx - 18 + 'px'
-          ring.style.top = ry - 18 + 'px'
-          requestAnimationFrame(animRing)
-        }
-        requestAnimationFrame(animRing)
-      }
     </script>
   </body>
 </html>
