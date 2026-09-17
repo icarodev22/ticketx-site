@@ -1,1575 +1,417 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TicketX — Seus ingressos, sem complicação</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      :root {
-        --blue: #2d00ff;
-        --cyan: #00c8ff;
-        --magenta: #c800ff;
-        --white: #ffffff;
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        font-family: 'Syne', sans-serif;
-        background: #000;
-        color: #fff;
-        overflow-x: hidden;
-      }
-
-      /* NAV */
-      nav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 100;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 20px 40px;
-        backdrop-filter: blur(20px);
-        background: rgba(0, 0, 0, 0.4);
-        border-bottom: 1px solid rgba(0, 200, 255, 0.1);
-      }
-
-      .nav-logo {
-        font-family: 'Syne', sans-serif;
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: #fff;
-        text-decoration: none;
-      }
-
-      .nav-logo span {
-        color: var(--cyan);
-      }
-
-      .nav-logo-group {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-      }
-
-      .nav-mosaico {
-        width: 28px;
-        height: 28px;
-        object-fit: contain;
-        opacity: 0.9;
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 36px;
-        list-style: none;
-      }
-
-      .nav-links a {
-        color: rgba(255, 255, 255, 0.6);
-        text-decoration: none;
-        font-size: 0.85rem;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        transition: color 0.2s;
-      }
-
-      .nav-links a:hover {
-        color: var(--cyan);
-      }
-
-      .nav-cta {
-        background: var(--blue);
-        color: #fff;
-        border: none;
-        padding: 10px 24px;
-        border-radius: 999px;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.85rem;
-        text-decoration: none;
-        display: inline-block;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease,
-          background 0.2s ease;
-      }
-
-      .nav-cta:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(45, 0, 255, 0.45);
-      }
-
-      .nav-cta:active {
-        transform: translateY(0);
-      }
-
-      /* HERO */
-      .hero {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        position: relative;
-        padding: 120px 40px 80px;
-        overflow: hidden;
-      }
-
-      .hero-bg {
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(
-          ellipse 80% 60% at 50% 40%,
-          #1a00aa 0%,
-          #000 70%
-        );
-      }
-
-      .hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 900px;
-      }
-
-      .hero-badge {
-        display: inline-block;
-        border: 1px solid var(--cyan);
-        color: var(--cyan);
-        font-family: 'Syne', sans-serif;
-        font-size: 0.72rem;
-        letter-spacing: 3px;
-        padding: 6px 18px;
-        border-radius: 999px;
-        margin-bottom: 32px;
-      }
-
-      .hero-title {
-        font-size: clamp(3.5rem, 10vw, 8rem);
-        font-weight: 800;
-        line-height: 0.95;
-        letter-spacing: -4px;
-        margin-bottom: 32px;
-      }
-
-      .line-blue {
-        color: var(--cyan);
-      }
-
-      .line-mag {
-        background: linear-gradient(90deg, var(--cyan), var(--magenta));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .hero-sub {
-        font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.65);
-        max-width: 560px;
-        margin: 0 auto 48px;
-        line-height: 1.7;
-      }
-
-      .hero-actions {
-        display: flex;
-        gap: 16px;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-
-      .btn-primary {
-        background: linear-gradient(135deg, var(--blue), var(--magenta));
-        color: #fff;
-        border: none;
-        padding: 16px 40px;
-        border-radius: 999px;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.9rem;
-        text-decoration: none;
-        display: inline-block;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 26px rgba(45, 0, 255, 0.4);
-      }
-
-      .btn-primary:active {
-        transform: translateY(-1px);
-      }
-
-      .btn-ghost {
-        background: transparent;
-        color: rgba(255, 255, 255, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 16px 40px;
-        border-radius: 999px;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.9rem;
-        text-decoration: none;
-        display: inline-block;
-        transition:
-          border-color 0.2s ease,
-          color 0.2s ease,
-          transform 0.2s ease;
-      }
-
-      .btn-ghost:hover {
-        border-color: var(--cyan);
-        color: var(--cyan);
-        transform: translateY(-3px);
-      }
-
-      /* SECTION LABEL */
-      .section-label {
-        display: inline-flex;
-        border: 1px solid var(--cyan);
-        color: var(--cyan);
-        border-radius: 999px;
-        padding: 6px 18px;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.8rem;
-        margin-bottom: 24px;
-      }
-
-      section {
-        padding: 100px 40px;
-      }
-
-      /* SOBRE */
-      .sobre {
-        background: radial-gradient(
-          ellipse 70% 80% at 20% 50%,
-          #1500aa 0%,
-          #000 60%
-        );
-      }
-
-      .sobre-inner {
-        max-width: 700px;
-        margin: auto;
-        text-align: center;
-      }
-
-      .sobre-text h2 {
-        font-size: clamp(2.5rem, 5vw, 4.5rem);
-        font-weight: 800;
-        line-height: 1;
-        letter-spacing: -3px;
-        margin-bottom: 32px;
-      }
-
-      .sobre-text h2 em {
-        font-style: normal;
-        background: linear-gradient(90deg, var(--cyan), var(--magenta));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .sobre-text p {
-        color: rgba(255, 255, 255, 0.7);
-        line-height: 1.8;
-        margin-bottom: 20px;
-      }
-
-      /* BENEFICIOS */
-      .conosco {
-        background: radial-gradient(
-          ellipse 70% 80% at 80% 30%,
-          #170045 0%,
-          #000 65%
-        );
-      }
-
-      .conosco-inner {
-        max-width: 1100px;
-        margin: auto;
-      }
-
-      .conosco-inner h2 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 800;
-        letter-spacing: -3px;
-        margin-bottom: 64px;
-      }
-
-      .benefits-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-auto-rows: 1fr;
-        gap: 20px;
-      }
-
-      .benefit-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 20px;
-        padding: 36px 30px;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        transition:
-          border-color 0.25s ease,
-          transform 0.25s ease,
-          background 0.25s ease;
-      }
-
-      .benefit-card:hover {
-        border-color: rgba(255, 255, 255, 0.18);
-        background: rgba(255, 255, 255, 0.05);
-        transform: translateY(-4px);
-      }
-
-      .benefit-card h3 {
-        font-size: 1.3rem;
-        font-weight: 700;
-        margin-bottom: 10px;
-        line-height: 1.3;
-      }
-
-      .benefit-card p {
-        color: rgba(255, 255, 255, 0.55);
-        line-height: 1.6;
-        font-size: 0.95rem;
-      }
-
-      /* EVENTOS */
-      .eventos {
-        background: radial-gradient(
-          ellipse 70% 80% at 50% 50%,
-          #0b0b25 0%,
-          #000 70%
-        );
-      }
-
-      .eventos-inner {
-        max-width: 1200px;
-        margin: auto;
-      }
-
-      .eventos-inner h2 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 800;
-        letter-spacing: -3px;
-        margin-bottom: 12px;
-      }
-
-      .eventos-inner h2 em {
-        font-style: normal;
-        background: linear-gradient(90deg, var(--cyan), var(--magenta));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .eventos-sub {
-        color: rgba(255, 255, 255, 0.5);
-        margin-bottom: 50px;
-      }
-
-      .eventos-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 28px;
-      }
-
-      .evento-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 20px;
-        overflow: hidden;
-        transition:
-          transform 0.3s,
-          border-color 0.3s;
-      }
-
-      .evento-card:hover {
-        transform: translateY(-6px);
-        border-color: rgba(255, 255, 255, 0.18);
-      }
-
-      .evento-card img {
-        width: 100%;
-        height: 420px;
-        object-fit: cover;
-      }
-
-      .evento-info {
-        padding: 24px;
-      }
-
-      .evento-info h3 {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-      }
-
-      .evento-local {
-        color: rgba(255, 255, 255, 0.55);
-        font-size: 0.9rem;
-      }
-
-      .evento-bottom {
-        margin-top: 28px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-
-      .evento-bottom > div:first-child {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-      }
-
-      .evento-bottom small {
-        display: block;
-        color: rgba(255, 255, 255, 0.4);
-        font-size: 0.75rem;
-      }
-
-      .evento-bottom strong {
-        font-size: 1.5rem;
-        color: var(--cyan);
-      }
-
-      .evento-acoes {
-        display: flex;
-        gap: 10px;
-      }
-
-      .evento-comprar {
-        flex: 1;
-        text-align: center;
-        background: linear-gradient(135deg, var(--blue), var(--magenta));
-        color: #fff;
-        text-decoration: none;
-        padding: 14px 20px;
-        border-radius: 999px;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.85rem;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-
-      .evento-comprar:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(45, 0, 255, 0.4);
-      }
-
-      .evento-duvida {
-        flex-shrink: 0;
-        text-align: center;
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: rgba(255, 255, 255, 0.75);
-        text-decoration: none;
-        padding: 14px 18px;
-        border-radius: 999px;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.85rem;
-        transition:
-          border-color 0.2s,
-          color 0.2s;
-      }
-
-      .evento-duvida:hover {
-        border-color: var(--cyan);
-        color: var(--cyan);
-      }
-
-      /* FAQ */
-      .faq {
-        background: radial-gradient(
-          ellipse 60% 70% at 80% 50%,
-          #1500aa 0%,
-          #000 60%
-        );
-      }
-
-      .faq-inner {
-        max-width: 800px;
-        margin: auto;
-      }
-
-      .faq-inner h2 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 800;
-        letter-spacing: -3px;
-        margin-bottom: 48px;
-      }
-
-      .faq-item {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .faq-q {
-        width: 100%;
-        background: none;
-        border: none;
-        color: #fff;
-        text-align: left;
-        padding: 24px 0;
-        font-size: 1rem;
-        display: flex;
-        justify-content: space-between;
-        font-family: 'Syne', sans-serif;
-      }
-
-      .faq-q span {
-        transition: transform 0.3s;
-      }
-
-      .faq-q.open span {
-        transform: rotate(180deg);
-      }
-
-      .faq-a {
-        max-height: 0;
-        overflow: hidden;
-        color: rgba(255, 255, 255, 0.6);
-        transition:
-          max-height 0.4s ease,
-          padding 0.4s ease;
-        line-height: 1.7;
-      }
-
-      .faq-a.open {
-        max-height: 280px;
-        padding-bottom: 24px;
-      }
-
-      /* FEEDBACKS */
-      .feedbacks {
-        background: radial-gradient(
-          ellipse 70% 80% at 50% 50%,
-          #0b0b25 0%,
-          #000 65%
-        );
-      }
-
-      .feedbacks-inner {
-        max-width: 1100px;
-        margin: auto;
-      }
-
-      .feedbacks-inner h2 {
-        font-size: clamp(2rem, 4vw, 3rem);
-        font-weight: 800;
-        letter-spacing: -2px;
-        margin-bottom: 8px;
-      }
-
-      .feedback-track {
-        display: flex;
-        gap: 24px;
-        overflow-x: auto;
-        padding-top: 40px;
-        padding-bottom: 16px;
-      }
-
-      .feedback-card {
-        min-width: 320px;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 20px;
-        padding: 28px;
-      }
-
-      .feedback-card p {
-        color: rgba(255, 255, 255, 0.75);
-        line-height: 1.6;
-        margin: 14px 0;
-      }
-
-      /* CTA */
-      .cta-section {
-        text-align: center;
-        background: radial-gradient(
-          ellipse 80% 80% at 50% 50%,
-          #1500aa 0%,
-          #000 70%
-        );
-        padding: 100px 40px;
-      }
-
-      .cta-section h2 {
-        font-size: clamp(2.5rem, 6vw, 5.5rem);
-        font-weight: 800;
-        line-height: 1;
-        margin-bottom: 24px;
-      }
-
-      .cta-section h2 em {
-        font-style: normal;
-        background: linear-gradient(90deg, var(--cyan), var(--magenta));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .cta-section p {
-        color: rgba(255, 255, 255, 0.6);
-        margin-bottom: 48px;
-      }
-
-      /* FOOTER */
-      footer {
-        background: #000;
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
-        padding: 48px 40px;
-        text-align: center;
-        color: rgba(255, 255, 255, 0.4);
-        font-family: 'Syne', sans-serif;
-        font-size: 0.85rem;
-      }
-
-      /* VIP MARQUEE */
-      .vip-marquee {
-        position: relative;
-        background: linear-gradient(90deg, #0a0040, #14005c, #0a0040);
-        border-top: 1px solid rgba(0, 200, 255, 0.25);
-        border-bottom: 1px solid rgba(0, 200, 255, 0.25);
-        padding: 18px 0;
-        overflow: hidden;
-        cursor: pointer;
-      }
-
-      .marquee-track {
-        display: flex;
-        width: max-content;
-        animation: marquee-scroll 26s linear infinite;
-      }
-
-      .marquee-track span {
-        display: inline-flex;
-        align-items: center;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.85rem;
-        letter-spacing: 2px;
-        color: rgba(255, 255, 255, 0.85);
-        padding: 0 28px;
-        white-space: nowrap;
-      }
-
-      .marquee-track span.vip-highlight {
-        color: var(--cyan);
-        font-weight: 700;
-      }
-
-      .marquee-track span.dot {
-        color: var(--magenta);
-        padding: 0 4px;
-      }
-
-      @keyframes marquee-scroll {
-        from {
-          transform: translateX(0);
-        }
-        to {
-          transform: translateX(-50%);
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .marquee-track {
-          animation: none;
-        }
-      }
-
-      /* OFERTAS */
-      .ofertas {
-        background: radial-gradient(
-          ellipse 70% 80% at 20% 70%,
-          #170045 0%,
-          #000 65%
-        );
-      }
-
-      .ofertas-inner {
-        max-width: 1200px;
-        margin: auto;
-      }
-
-      .ofertas-inner h2 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 800;
-        letter-spacing: -3px;
-        margin-bottom: 12px;
-      }
-
-      .ofertas-inner h2 em {
-        font-style: normal;
-        background: linear-gradient(90deg, var(--cyan), var(--magenta));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-
-      .ofertas-sub {
-        color: rgba(255, 255, 255, 0.5);
-        margin-bottom: 50px;
-        max-width: 500px;
-      }
-
-      .ofertas-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-      }
-
-      .oferta-card {
-        position: relative;
-        display: block;
-        border-radius: 24px;
-        overflow: hidden;
-        text-decoration: none;
-        aspect-ratio: 3 / 4;
-        transition: transform 0.25s ease;
-      }
-
-      .oferta-card:hover {
-        transform: translateY(-4px);
-      }
-
-      .oferta-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      .oferta-selo {
-        position: absolute;
-        top: 14px;
-        left: 14px;
-        z-index: 2;
-        display: inline-block;
-        background: var(--magenta);
-        color: #fff;
-        font-family: 'Syne', sans-serif;
-        font-weight: 700;
-        font-size: 0.7rem;
-        letter-spacing: 0.5px;
-        padding: 6px 14px;
-        border-radius: 999px;
-      }
-
-      .oferta-duvida:hover {
-        border-color: var(--cyan);
-        color: var(--cyan) !important;
-      }
-
-      /* EVENTO SELO / DATA */
-      .evento-media {
-        position: relative;
-      }
-
-      .evento-selo {
-        position: absolute;
-        top: 16px;
-        left: 16px;
-        background: var(--magenta);
-        color: #fff;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.68rem;
-        letter-spacing: 1px;
-        padding: 6px 14px;
-        border-radius: 999px;
-        z-index: 2;
-      }
-
-      .evento-data {
-        color: rgba(255, 255, 255, 0.4);
-        font-size: 0.85rem;
-        display: block;
-        margin-top: 4px;
-      }
-
-      .evento-data-tag {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        background: rgba(0, 0, 0, 0.55);
-        backdrop-filter: blur(6px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        color: #fff;
-        font-family: 'Syne', sans-serif;
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.3px;
-        padding: 6px 12px;
-        border-radius: 999px;
-        z-index: 2;
-      }
-
-      /* VIP SECTION */
-      .vip-section {
-        background: radial-gradient(
-          ellipse 70% 80% at 80% 50%,
-          #2a0060 0%,
-          #000 65%
-        );
-      }
-
-      .vip-inner {
-        max-width: 900px;
-        margin: auto;
-        text-align: center;
-      }
-
-      .vip-inner h2 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 800;
-        letter-spacing: -3px;
-        margin-bottom: 20px;
-      }
-
-      .vip-inner > p {
-        color: rgba(255, 255, 255, 0.65);
-        max-width: 560px;
-        margin: 0 auto 40px;
-        line-height: 1.7;
-      }
-
-      .vip-list {
-        list-style: none;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        max-width: 600px;
-        margin: 0 auto 44px;
-        text-align: left;
-      }
-
-      .vip-list li {
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 0.95rem;
-      }
-
-      .vip-check {
-        color: var(--cyan);
-        margin-right: 8px;
-      }
-
-      /* PARCEIROS */
-      .parceiros {
-        background: radial-gradient(
-          ellipse 70% 80% at 20% 50%,
-          #0b0b25 0%,
-          #000 60%
-        );
-      }
-
-      .parceiros-inner {
-        max-width: 1100px;
-        margin: auto;
-      }
-
-      .parceiros-inner h2 {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 800;
-        letter-spacing: -3px;
-        margin-bottom: 12px;
-      }
-
-      .parceiros-sub {
-        color: rgba(255, 255, 255, 0.5);
-        margin-bottom: 48px;
-      }
-
-      .parceiros-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 20px;
-      }
-
-      .parceiro-slot {
-        aspect-ratio: 1;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        color: rgba(255, 255, 255, 0.25);
-        font-family: 'Syne', sans-serif;
-        font-size: 0.7rem;
-        text-align: center;
-        transition: border-color 0.25s ease;
-      }
-
-      .parceiro-slot:hover {
-        border-color: rgba(255, 255, 255, 0.18);
-      }
-
-      .parceiro-slot img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        padding: 12px;
-      }
-
-      /* WHATSAPP FLOATING */
-      .whatsapp-float {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        width: 60px;
-        height: 60px;
-        background: var(--blue);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 200;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-        text-decoration: none;
-        font-size: 1.6rem;
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease;
-      }
-
-      .whatsapp-float:hover {
-        transform: scale(1.08) translateY(-2px);
-        box-shadow: 0 10px 28px rgba(45, 0, 255, 0.5);
-      }
-
-      .cupom-float {
-        position: fixed;
-        bottom: 24px;
-        left: 24px;
-        z-index: 200;
-        background: rgba(20, 20, 20, 0.85);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(8px);
-        color: #fff;
-        font-family: 'Syne', sans-serif;
-        font-weight: 700;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
-        padding: 10px 18px;
-        border-radius: 999px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-        pointer-events: none;
-      }
-
-      .cupom-float .cupom-brand {
-        color: var(--blue);
-      }
-
-      @media (max-width: 768px) {
-        .cupom-float {
-          bottom: 88px;
-          left: 16px;
-          font-size: 0.62rem;
-          padding: 6px 12px;
-        }
-      }
-
-      /* FOOTER (expandido) */
-      .footer-inner {
-        max-width: 1100px;
-        margin: auto;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 32px;
-        text-align: left;
-        margin-bottom: 32px;
-      }
-
-      .footer-brand .nav-logo {
-        display: block;
-        margin-bottom: 10px;
-      }
-
-      .footer-brand p {
-        color: rgba(255, 255, 255, 0.45);
-        font-size: 0.9rem;
-      }
-
-      .footer-links {
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .footer-links a {
-        color: rgba(255, 255, 255, 0.55);
-        text-decoration: none;
-        font-size: 0.85rem;
-      }
-
-      .footer-links a:hover {
-        color: var(--cyan);
-      }
-
-      .footer-bottom {
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        padding-top: 24px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        max-width: 1100px;
-        margin: auto;
-        color: rgba(255, 255, 255, 0.35);
-        font-size: 0.8rem;
-        text-align: center;
-      }
-
-      .footer-bottom a {
-        color: rgba(255, 255, 255, 0.4);
-        text-decoration: none;
-      }
-
-      .footer-bottom a:hover {
-        color: var(--cyan);
-      }
-
-      .footer-bottom a.credit-link,
-      .footer-bottom a.credit-link:hover {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: rgba(255, 255, 255, 0.35);
-        text-decoration: none;
-        cursor: pointer;
-      }
-
-      .credit-name {
-        color: #22c55e;
-        font-weight: 700;
-      }
-
-      .credit-icon {
-        width: 15px;
-        height: 15px;
-        fill: #22c55e;
-      }
-
-      /* MOBILE */
-      @media (max-width: 900px) {
-        .vip-list {
-          grid-template-columns: 1fr;
-        }
-
-        .ofertas-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        /* Cards de benefícios viram carrossel horizontal, igual aos feedbacks */
-        .benefits-grid {
-          display: flex;
-          grid-template-columns: unset;
-          gap: 16px;
-          overflow-x: auto;
-          scroll-snap-type: x mandatory;
-          padding-bottom: 8px;
-          -webkit-overflow-scrolling: touch;
-        }
-
-        .benefit-card {
-          min-width: 82%;
-          flex-shrink: 0;
-          scroll-snap-align: start;
-        }
-
-        .parceiros-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .footer-inner {
-          flex-direction: column;
-        }
-
-        /* Grupo VIP centralizado no mobile */
-        .vip-list {
-          text-align: center;
-          justify-items: center;
-        }
-
-        .vip-list li {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-      }
-
-      @media (max-width: 768px) {
-        nav {
-          padding: 16px 20px;
-        }
-
-        .nav-links {
-          display: none;
-        }
-
-        section {
-          padding: 70px 24px;
-        }
-
-        .hero {
-          padding: 100px 20px 60px;
-        }
-
-        .hero-title {
-          font-size: clamp(2.1rem, 11vw, 3.2rem);
-          letter-spacing: -1.5px;
-        }
-
-        .hero-sub {
-          font-size: 0.95rem;
-        }
-
-        .benefit-card {
-          padding: 28px 24px;
-        }
-
-        .benefit-card h3 {
-          font-size: 1.25rem;
-        }
-
-        /* Ofertas em grid 2 colunas compacto no mobile */
-        .ofertas-grid {
-          gap: 12px;
-        }
-
-        .oferta-selo {
-          font-size: 0.6rem;
-          padding: 4px 10px;
-          top: 10px;
-          left: 10px;
-        }
-
-        /* Grid de eventos: 2 colunas compactas no mobile */
-        .eventos-grid {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 12px;
-        }
-
-        .evento-card {
-          border-radius: 16px;
-        }
-
-        .evento-card img {
-          height: 140px;
-        }
-
-        .evento-info {
-          padding: 12px;
-        }
-
-        .evento-info h3 {
-          font-size: 0.95rem;
-          margin-bottom: 6px;
-          line-height: 1.2;
-        }
-
-        .evento-local {
-          font-size: 0.72rem;
-        }
-
-        .evento-bottom {
-          margin-top: 14px;
-          gap: 10px;
-        }
-
-        .evento-bottom small {
-          font-size: 0.62rem;
-        }
-
-        .evento-bottom strong {
-          font-size: 1rem;
-        }
-
-        .evento-bottom > div:first-child {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 2px;
-        }
-
-        .evento-acoes {
-          flex-direction: column;
-          gap: 6px;
-        }
-
-        .evento-comprar,
-        .evento-duvida {
-          padding: 10px 12px;
-          font-size: 0.7rem;
-        }
-      }
-
-      @media (max-width: 420px) {
-        .hero-title {
-          font-size: clamp(1.9rem, 12vw, 2.6rem);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <nav>
-      <a href="#" class="nav-logo-group">
-        <span class="nav-logo">Ticket<span>X</span></span>
-        <img
-          src="img/X_ticketX.png"
-          alt="TicketX Mosaico"
-          class="nav-mosaico"
-        />
-      </a>
-      <ul class="nav-links">
-        <li><a href="#sobre">Sobre nós</a></li>
-        <li><a href="#conosco">Benefícios</a></li>
-        <li><a href="#eventos">Eventos</a></li>
-        <li><a href="#vip">Grupo VIP</a></li>
-        <li><a href="#faq">Dúvidas</a></li>
-      </ul>
-      <a href="#eventos" class="nav-cta">Comprar ingresso</a>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TicketX — Conectando você às melhores experiências.</title>
+<meta name="description" content="A TicketX conecta você aos melhores eventos com praticidade, segurança e benefícios exclusivos.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#ffffff;
+  --line:rgba(91,33,255,.16);
+  --text:#160c33;
+  --muted:#655e78;
+  --blue:#0ea5e9;
+  --blue2:#1b82df;
+  --purple:#5b21ff;
+  --purple2:#7c31ff;
+  --mag:#e51cff;
+  --pink:#f14dff;
+  --green:#0fb87d;
+  --radius:22px;
+  --max:1220px;
+  --shadow:0 10px 30px rgba(70,30,180,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(circle at 12% -10%, rgba(91,33,255,.07), transparent 40%),
+    radial-gradient(circle at 100% 15%, rgba(229,28,255,.05), transparent 32%),
+    var(--bg);
+  color:var(--text);
+  font-family:"Poppins",Arial,sans-serif;
+  overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+button{font:inherit}
+.wrap{width:min(var(--max),calc(100% - 40px));margin:auto}
+.hidden{display:none !important}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+/* faixa superior */
+.promobar{
+  height:40px;overflow:hidden;
+  background:#150a30;
+  display:flex;align-items:center;white-space:nowrap;
+}
+.promobar-track{
+  display:flex;gap:50px;min-width:max-content;
+  animation:marquee 28s linear infinite;
+  font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;
+  color:#fff;
+}
+.promobar b{color:var(--mag)}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* header */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,.86);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+  transition:box-shadow .3s,background .3s;
+}
+header.scrolled{box-shadow:0 8px 26px rgba(91,33,255,.10);background:rgba(255,255,255,.96)}
+.nav{height:78px;display:flex;align-items:center;justify-content:space-between;gap:25px}
+.brand{display:flex;align-items:center;cursor:pointer}
+.brand-logo{height:26px;width:auto;object-fit:contain}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-links a{font-size:13px;font-weight:700;color:#5c5570;padding:9px 16px;border-radius:10px;transition:.2s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{background:rgba(91,33,255,.10);color:var(--purple);font-weight:800}
+.nav-cta,.btn-primary{
+  border:0;color:#fff;cursor:pointer;font-weight:800;
+  background:linear-gradient(110deg,var(--purple),var(--mag));
+  box-shadow:0 10px 24px rgba(98,33,255,.22);
+}
+.nav-cta{padding:13px 22px;border-radius:14px;font-size:13px}
+.vip-pill{background:linear-gradient(110deg,#16b87a,#0fd97e);box-shadow:0 10px 24px rgba(15,180,110,.28)}
+
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:38px;height:38px;border:0;background:none;cursor:pointer;padding:0}
+.hamburger span{display:block;height:2.5px;width:100%;background:var(--text);border-radius:2px}
+
+.drawer-overlay{position:fixed;inset:0;background:rgba(20,10,40,.35);z-index:198;opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:78vw;max-width:320px;background:#fff;z-index:199;
+  box-shadow:-14px 0 40px rgba(20,10,60,.18);padding:24px 22px;display:flex;flex-direction:column;gap:26px;
+  transform:translateX(100%);transition:transform .3s ease;
+}
+.drawer.open{transform:translateX(0)}
+.drawer-top{display:flex;align-items:center;justify-content:space-between}
+.drawer-close{border:0;background:none;font-size:18px;cursor:pointer;color:var(--text)}
+.drawer-links{display:flex;flex-direction:column;gap:4px}
+.drawer-links a{padding:14px 4px;border-bottom:1px solid var(--line);font-size:14px;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:.06em}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding:64px 0 58px}
+.hero-grid{display:block;max-width:820px;position:relative}
+.hero h1{
+  margin:0 0 22px;font-size:clamp(36px,5.4vw,74px);line-height:1.02;
+  letter-spacing:-.01em;font-weight:800;max-width:820px;color:var(--text);
+  text-transform:uppercase;
+}
+.hero h1 .grad{color:var(--purple)}
+.hero p{color:var(--muted);font-size:16px;line-height:1.8;max-width:600px;margin-bottom:24px}
+.highlight-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.highlight-chip{
+  display:inline-flex;align-items:center;padding:11px 18px;border-radius:12px;
+  background:rgba(91,33,255,.07);border:1px solid rgba(91,33,255,.16);
+  color:var(--purple);font-size:12px;font-weight:700;text-transform:none;letter-spacing:0;
+}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:27px}
+.btn-primary,.btn-secondary{padding:15px 21px;border-radius:14px;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn-secondary{border:1px solid rgba(91,33,255,.22);background:#fff;font-weight:800;color:var(--text);box-shadow:var(--shadow)}
+
+/* section */
+section{padding:64px 0;scroll-margin-top:96px}
+#inicio{scroll-margin-top:0}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:25px;margin-bottom:26px}
+.kicker{font-size:10px;letter-spacing:.20em;color:var(--purple);font-weight:900;text-transform:uppercase;margin-bottom:10px}
+h2{font-size:clamp(28px,3.6vw,46px);line-height:1.08;letter-spacing:-.03em;color:var(--text)}
+.section-head p{color:var(--muted);max-width:440px;font-size:14px;line-height:1.7}
+
+/* prateleiras de eventos (uma linha horizontal por categoria) */
+.event-shelf{margin-bottom:34px;scroll-margin-top:96px}
+.event-shelf:last-child{margin-bottom:0}
+.shelf-title{font-size:12.5px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--purple);margin-bottom:14px}
+.shelf-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.shelf-head .shelf-title{margin-bottom:0}
+.shelf-arrows{display:flex;gap:8px}
+.shelf-arrows button{
+  width:34px;height:34px;border-radius:50%;border:1.5px solid var(--mag);background:#fff;
+  color:var(--purple);font-size:17px;font-weight:900;cursor:pointer;display:grid;place-items:center;
+  transition:.2s;line-height:1;
+}
+.shelf-arrows button:hover{background:linear-gradient(110deg,var(--purple),var(--mag));border-color:transparent;color:#fff}
+.cat-nav{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}
+.cat-pill{
+  appearance:none;cursor:pointer;
+  padding:12px 20px;border-radius:999px;border:1px solid var(--line);background:#fff;
+  color:var(--text);font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;
+  box-shadow:var(--shadow);transition:.2s;
+}
+.cat-pill:hover{background:linear-gradient(110deg,var(--purple),var(--mag));color:#fff;border-color:transparent}
+.cat-pill.active{background:linear-gradient(110deg,var(--purple),var(--mag));color:#fff;border-color:transparent}
+.price{font-size:13px;font-weight:900;color:var(--text);margin-bottom:11px}
+.shelf-row{display:flex;gap:16px;overflow-x:auto;padding:2px 2px 16px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.shelf-row::-webkit-scrollbar{display:none}
+
+.event-card{
+  flex:none;width:220px;scroll-snap-align:start;overflow:hidden;border-radius:18px;
+  background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);
+  transition:transform .25s,box-shadow .25s;display:flex;flex-direction:column;
+}
+.event-card:hover{transform:translateY(-5px);box-shadow:0 16px 34px rgba(91,33,255,.16)}
+.event-img{
+  aspect-ratio:3/4;position:relative;overflow:hidden;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#261165,#0c6da8 55%,#38108b);
+}
+.event-img:before{
+  content:"TICKETX";font-size:30px;font-weight:900;letter-spacing:-3px;
+  color:rgba(255,255,255,.16);transform:rotate(-25deg);
+}
+.event-img:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 62%,rgba(6,3,18,.62));
+}
+.event-img img.flyer{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover}
+.event-swag{background:linear-gradient(145deg,#ff3b8d,#7a1fff 45%,#0e122f)}
+.event-vaq{background:linear-gradient(145deg,#e67823,#6c2a0d 48%,#160b05)}
+.event-amore{background:linear-gradient(145deg,#ff5b93,#f59b54 46%,#52105e)}
+.event-wedo{background:linear-gradient(145deg,#19a6df,#134c9d 50%,#27137a)}
+.event-carv{background:linear-gradient(145deg,#d8ad41,#763b20 48%,#160d20)}
+.event-cbv{background:linear-gradient(145deg,#ff4a8b,#8233f3 48%,#0e102e)}
+.event-bikini{background:linear-gradient(145deg,#ff8fb3,#ff5f9e 46%,#2a0d3a)}
+.date-pill{
+  position:absolute;top:10px;left:10px;z-index:2;text-align:center;line-height:1.05;
+  background:#fff;color:#3d1a8f;border-radius:11px;padding:6px 9px;min-width:38px;
+  box-shadow:0 4px 12px rgba(0,0,0,.30);
+}
+.date-pill .day{display:block;font-size:16px;font-weight:900;letter-spacing:-.01em}
+.date-pill .mon{display:block;font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;opacity:.75}
+.status-badge{position:absolute;top:10px;right:10px;z-index:2}
+.badge{font-size:8.5px;font-weight:900;letter-spacing:.06em;padding:6px 8px;border-radius:999px;background:#0c0620;color:#fff;border:1px solid rgba(255,255,255,.18)}
+.badge.off{background:linear-gradient(90deg,var(--purple),var(--mag));border:0}
+.card-info{padding:14px 13px 15px;display:flex;flex-direction:column;flex:1}
+.event-name{font-size:15px;font-weight:900;line-height:1.2;letter-spacing:-.02em;margin-bottom:5px;color:var(--text)}
+.meta{color:var(--muted);font-size:11px;font-weight:600;margin-bottom:13px}
+.card-actions{margin-top:auto;display:flex;gap:7px}
+.card-actions a{flex:1;padding:10px 6px;border-radius:11px;text-align:center;font-size:10.5px;font-weight:900}
+.btn-buy{background:linear-gradient(110deg,#4e19e8,#bc1cf0);color:#fff}
+.btn-buy:hover{filter:brightness(1.1)}
+.btn-faq{border:1px solid rgba(91,33,255,.25);color:var(--muted);background:#fff}
+.btn-faq:hover{color:var(--text);border-color:rgba(91,33,255,.5)}
+.no-results{color:var(--muted);padding:20px 0;font-size:14px}
+
+/* benefits — redesenhado para fugir da cara de "card de IA" */
+.benefit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.benefit{
+  position:relative;overflow:hidden;border-radius:16px;padding:30px 24px 26px;
+  background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);
+  transition:transform .3s,box-shadow .3s;
+}
+.benefit:hover{transform:translateY(-6px);box-shadow:0 18px 36px rgba(91,33,255,.14)}
+.benefit:nth-child(1){border-top:4px solid var(--blue)}
+.benefit:nth-child(2){border-top:4px solid var(--purple)}
+.benefit:nth-child(3){border-top:4px solid var(--mag)}
+.benefit-num{
+  position:absolute;top:10px;right:18px;font-size:40px;font-weight:900;
+  color:rgba(91,33,255,.08);letter-spacing:-.03em;line-height:1;
+}
+.benefit h3{font-size:17px;margin-bottom:9px;color:var(--text);position:relative}
+.benefit p{color:var(--muted);font-size:13.5px;line-height:1.75;position:relative}
+
+/* VIP */
+.vip-box{
+  position:relative;overflow:hidden;border-radius:26px;
+  padding:44px;background:linear-gradient(125deg,#1a0b3e,#2c0d58,#5c0f5c);
+  display:grid;grid-template-columns:1.2fr .8fr;gap:36px;align-items:center;
+  box-shadow:0 20px 50px rgba(91,33,255,.20);
+}
+.vip-box:after{content:"";position:absolute;left:-110px;bottom:-150px;width:390px;height:390px;border-radius:50%;background:radial-gradient(circle,rgba(229,28,255,.28),transparent 67%)}
+.vip-box>*{position:relative;z-index:1;color:#fff}
+.vip-box h2{margin-bottom:14px;color:#fff}
+.vip-box>div:first-child>p{color:#d9d0f2;line-height:1.8;font-size:15px;max-width:520px;margin-bottom:22px}
+.vip-list{list-style:none;display:grid;gap:13px}
+.vip-list li{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#fff}
+.vip-check{color:var(--green);font-size:17px;font-weight:900;flex:none}
+
+/* instagram — mais animado */
+.insta-card{
+  position:relative;overflow:hidden;border-radius:22px;padding:44px 38px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;
+  background:linear-gradient(120deg,#5b21ff,#e51cff,#ff8a3d,#5b21ff);
+  background-size:300% 300%;animation:instaGrad 10s ease infinite;
+  box-shadow:0 18px 40px rgba(150,30,200,.22);
+}
+@keyframes instaGrad{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.insta-copy{color:#fff;display:flex;flex-direction:column;align-items:center;gap:14px}
+.insta-tagline{font-size:19px;font-weight:900;letter-spacing:.02em;text-transform:uppercase;max-width:360px;line-height:1.3}
+.insta-handle-row{display:flex;align-items:center;justify-content:center;gap:9px}
+.insta-icon{width:22px;height:22px;color:#fff;animation:instaPulse 2.4s ease-in-out infinite;flex:none}
+@keyframes instaPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.insta-at{font-size:17px;font-weight:900;letter-spacing:-.01em}
+.btn-follow{
+  padding:13px 26px;border-radius:12px;font-size:12.5px;font-weight:900;color:var(--purple);
+  background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:transform .2s;
+}
+.btn-follow:hover{transform:translateY(-2px) scale(1.03)}
+.insta-logo-badge{flex:none;width:88px;height:88px;display:grid;place-items:center;filter:drop-shadow(0 10px 22px rgba(0,0,0,.28))}
+.insta-logo-badge img{width:100%;height:100%;object-fit:contain}
+.insta-subtext{font-size:13px;font-weight:600;color:rgba(255,255,255,.92);max-width:300px;line-height:1.6}
+
+/* faq */
+.faq{display:grid;gap:10px}
+.faq details{border:1px solid var(--line);border-radius:16px;background:#fff;padding:18px 20px;box-shadow:var(--shadow)}
+.faq summary{cursor:pointer;font-size:14px;font-weight:800;color:var(--text)}
+.faq p{padding-top:12px;color:var(--muted);font-size:13px;line-height:1.7}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:48px 0 25px;background:#f9f7fd}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:35px}
+.footer-brand .brand{margin-bottom:15px}
+.footer-brand p,.footer-col a{color:var(--muted);font-size:12px;line-height:1.7}
+.footer-col{display:grid;align-content:start;gap:10px}
+.footer-col h4{font-size:11px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:5px;color:var(--text)}
+.footer-bottom{border-top:1px solid var(--line);margin-top:38px;padding-top:20px;color:#8a8298;font-size:10px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+
+/* página Agenda completa */
+.agenda-page{position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;padding:26px 0 60px}
+.agenda-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:30px}
+.back-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:12px;
+  border:1px solid var(--line);background:#fff;color:var(--text);font-weight:800;font-size:13px;cursor:pointer;box-shadow:var(--shadow);
+}
+.agenda-top .brand-logo{height:22px}
+
+/* floating instagram */
+.float-insta{
+  position:fixed;right:20px;bottom:20px;z-index:90;
+  display:inline-flex;align-items:center;gap:9px;padding:14px 20px;border-radius:999px;
+  color:#fff;font-weight:800;font-size:13.5px;
+  background:linear-gradient(110deg,#16b87a,#0fd97e);box-shadow:0 10px 30px rgba(15,180,110,.35)
+}
+.float-insta svg{width:20px;height:20px;flex:none}
+
+@media(max-width:850px){
+  .nav-links{display:none}
+  .nav-cta{display:none}
+  .hamburger{display:flex}
+  .hero{padding-top:56px}
+  .benefit-grid{grid-template-columns:1fr}
+  .vip-box{grid-template-columns:1fr;padding:32px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .wrap{width:min(100% - 28px,var(--max))}
+  .nav{height:64px}.brand-logo{height:20px}
+  .nav-cta{padding:11px 13px;font-size:11px}
+  .hero p{font-size:14px}.hero-actions{display:grid;grid-template-columns:1fr}
+  section{padding:44px 0}.section-head{align-items:start;flex-direction:column}
+  .event-card{width:64vw}
+  .insta-card{padding:30px 22px}
+  .insta-logo-badge{width:72px;height:72px}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:6px}
+  .agenda-top{flex-direction:column;align-items:flex-start;gap:14px}
+  .float-insta{padding:12px 16px;font-size:12px;right:14px;bottom:14px}
+}
+</style>
+</head>
+
+<body>
+<div class="promobar">
+  <div class="promobar-track">
+    <span>USE O GRUPO <b>VIP</b> TICKETX E GANHE DESCONTO NAS MELHORES FESTAS</span><span>USE O GRUPO <b>VIP</b> TICKETX E GANHE DESCONTO NAS MELHORES FESTAS</span>
+    <span>USE O GRUPO <b>VIP</b> TICKETX E GANHE DESCONTO NAS MELHORES FESTAS</span><span>USE O GRUPO <b>VIP</b> TICKETX E GANHE DESCONTO NAS MELHORES FESTAS</span>
+  </div>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#inicio" aria-label="TicketX">
+      <img class="brand-logo" src="assets/brand/logo.png" alt="TicketX">
+    </a>
+    <nav class="nav-links">
+      <a href="#inicio" class="active">Início</a>
+      <a href="javascript:void(0)" onclick="openAgenda()">Agenda</a>
+      <a href="#duvidas">Dúvidas</a>
     </nav>
+    <button class="nav-cta vip-pill" onclick="document.getElementById('vip').scrollIntoView({behavior:'smooth'})">Grupo VIP</button>
+    <button class="hamburger" aria-label="Abrir menu" onclick="openDrawer()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
 
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-top">
+    <img class="brand-logo" src="assets/brand/logo.png" alt="TicketX">
+    <button class="drawer-close" aria-label="Fechar menu" onclick="closeDrawer()">✕</button>
+  </div>
+  <nav class="drawer-links">
+    <a href="#inicio" onclick="closeDrawer()">Início</a>
+    <a href="#eventos" onclick="closeDrawer()">Eventos</a>
+    <a href="#beneficios" onclick="closeDrawer()">Benefícios</a>
+    <a href="#duvidas" onclick="closeDrawer()">Dúvidas</a>
+  </nav>
+  <button class="nav-cta vip-pill" style="width:100%" onclick="closeDrawer();document.getElementById('vip').scrollIntoView({behavior:'smooth'})">Grupo VIP</button>
+  <button class="nav-cta" style="width:100%;background:#fff;color:var(--purple);border:1.5px solid var(--line);box-shadow:none" onclick="closeDrawer();openAgenda()">Ver agenda completa</button>
+</aside>
 
-          <span class="line-blue"></span><br />
-          <span class="line-mag"></span><br />
-        </h1>
-        <p class="hero-sub">
-
-        </p>
-
-        
-          <a
-           
-            data-wa-msg="Olá, quero entrar no Grupo VIP da TicketX."
-            target="_blank"
-            rel="noreferrer"
-            ></a
-          >
+<main id="inicio">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Conectando você às<br><span class="grad">melhores experiências</span></h1>
+        <p>Carnaval, vaquejada, réveillon e as melhores festas: descubra os eventos de Pernambuco e garanta seu ingresso de forma fácil, segura e sem complicação.</p>
+        <div id="catNav" class="cat-nav"></div>
+        <div class="highlight-row">
+          <span class="highlight-chip">Grupo VIP = descontos exclusivos</span>
+          <span class="highlight-chip">Compra 100% segura, direto no link oficial</span>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="vip-marquee" id="vipMarquee">
-      <div class="marquee-track">
-        <span class="vip-highlight">🎟 GRUPO VIP TICKETX</span>
-        <span class="dot">•</span><span>DESCONTOS EXCLUSIVOS</span>
-        <span class="dot">•</span><span>PRÉ-VENDAS</span>
-        <span class="dot">•</span><span>EVENTOS EXCLUSIVOS</span>
-        <span class="dot">•</span><span>LINKS COM DESCONTO</span>
-        <span class="dot">•</span><span>BENEFÍCIOS VIP</span>
-        <span class="dot">•</span>
-        <span class="vip-highlight">🎟 GRUPO VIP TICKETX</span>
-        <span class="dot">•</span><span>DESCONTOS EXCLUSIVOS</span>
-        <span class="dot">•</span><span>PRÉ-VENDAS</span>
-        <span class="dot">•</span><span>EVENTOS EXCLUSIVOS</span>
-        <span class="dot">•</span><span>LINKS COM DESCONTO</span>
-        <span class="dot">•</span><span>BENEFÍCIOS VIP</span>
-        <span class="dot">•</span>
-      </div>
-    </section>
-
-    <section class="sobre" id="sobre">
-      <div class="sobre-inner">
-        <div class="sobre-text">
-          <div class="section-label">SOBRE NÓS</div>
-          <h2>Conectando você às <em>melhores experiências</em></h2>
-          <p>
-            A TicketX atua na venda de ingressos conectando você aos melhores
-            eventos.
-          </p>
-          <p>Segurança, praticidade e suporte real.</p>
+  <section id="eventos">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Agenda TicketX</div>
+          <h2>Festas disponíveis</h2>
+          <p>Garanta seu ingresso sem complicação.</p>
         </div>
       </div>
-    </section>
+      <div id="shelvesHome"></div>
+    </div>
+  </section>
 
-    <section class="conosco" id="conosco">
-      <div class="conosco-inner">
-        <div class="section-label">CONOSCO</div>
-        <h2>Por que escolher a TicketX?</h2>
-        <div class="benefits-grid">
-          <div class="benefit-card">
-            <h3>⚡ Compra rápida</h3>
-            <p>Processo simples, direto e sem complicação.</p>
-          </div>
-          <div class="benefit-card">
-            <h3>🏷️ Ingressos sem taxa</h3>
-            <p>Compre ingressos sem pagar taxas adicionais.</p>
-          </div>
-          <div class="benefit-card">
-            <h3>🔥 Descontos exclusivos</h3>
-            <p>Acesso a links promocionais e condições especiais.</p>
-          </div>
-          <div class="benefit-card">
-            <h3>🎟️ Acesso antecipado</h3>
-            <p>Membros do Grupo VIP recebem informações antecipadas.</p>
-          </div>
-          <div class="benefit-card">
-            <h3>💬 Suporte direto</h3>
-            <p>Atendimento rápido pelo WhatsApp.</p>
-          </div>
-          <div class="benefit-card">
-            <h3>🔒 Compra segura</h3>
-            <p>Processo confiável e ingressos validados.</p>
-
-          </a>
-        </div>
+  <section class="benefits" id="beneficios">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="kicker">Por que TicketX?</div><h2>Mais praticidade para curtir.</h2></div>
+        <p>Uma experiência pensada para deixar a busca pelo seu próximo evento mais simples.</p>
       </div>
-    </section>
-
-    <section class="eventos" id="eventos">
-      <div class="eventos-inner">
-        <div class="section-label">EVENTOS</div>
-        <h2>Festas <em>disponíveis</em></h2>
-        <p class="eventos-sub">Garanta seu ingresso sem complicação.</p>
-
-        <div class="eventos-grid">
-          <div class="evento-card">
-            <div class="evento-media">
-              <span class="evento-data-tag">19 SET</span>
-              <img src="assets/surubim.jpg" alt="Vaquejada Surubim" />
-            </div>
-            <div class="evento-info">
-              <h3>Vaquejada Surubim</h3>
-              <span class="evento-local">📍 Surubim, PE</span>
-              <span class="evento-data">19 de setembro de 2026</span>
-              <div class="evento-bottom">
-                <div>
-                  <small>Ingresso</small><strong>Consultar valor</strong>
-                </div>
-                <div class="evento-acoes">
-                  <a
-                    class="evento-comprar"
-                    href="#"
-                    data-comprar="Vaquejada Surubim"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Comprar ingresso</a
-                  >
-                  <a
-                    class="evento-duvida"
-                    href="#"
-                    data-duvida="Vaquejada Surubim"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Tirar dúvida</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="evento-card">
-            <div class="evento-media">
-
-              <span class="evento-data-tag">26 SET</span>
-              <img src="assets/swag.jpg" alt="SWAGG" />
-            </div>
-            <div class="evento-info">
-              <h3>SWAGG</h3>
-              <span class="evento-local">📍 Cachaçaria Carvalheira</span>
-              <span class="evento-data">26 de setembro de 2026</span>
-              <div class="evento-bottom">
-                <div>
-                  <small>Ingresso</small><strong>Link com Desconto</strong>
-                </div>
-                <div class="evento-acoes">
-                  <a
-                    class="evento-comprar"
-                    href="https://www.sympla.com.br/evento/swagg-v12026/3551630?d=ticketx"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Garantir com desconto</a
-                  >
-                  <a
-                    class="evento-duvida"
-                    href="#"
-                    data-duvida="SWAGG"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Tirar dúvida</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="evento-card">
-            <div class="evento-media">
-              <span class="evento-data-tag">27-31 DEZ</span>
-              <img src="assets/amore.jpg" alt="Réveillon Amoré 27" />
-            </div>
-            <div class="evento-info">
-              <h3>Réveillon Amoré 27</h3>
-              <span class="evento-local">📍 Maracaípe, PE</span>
-              <span class="evento-data">27 a 31 de dezembro de 2026</span>
-              <div class="evento-bottom">
-                <div>
-                  <small>Ingresso</small><strong>Link com Desconto</strong>
-                </div>
-                <div class="evento-acoes">
-                  <a
-                    class="evento-comprar"
-                    href="https://www.sympla.com.br/evento/reveillon-amore-2027/3390641?d=MILTONV"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Garantir com desconto</a
-                  >
-                  <a
-                    class="evento-duvida"
-                    href="#"
-                    data-duvida="Réveillon Amoré 27"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Tirar dúvida</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="evento-card">
-            <div class="evento-media">
-              <span class="evento-data-tag">16 JAN</span>
-              <img src="assets/wedo.jpg" alt="WeDo na Praia — 10 anos" />
-            </div>
-            <div class="evento-info">
-              <h3>WeDo na Praia — 10 anos</h3>
-              <span class="evento-local">📍 Maracaípe, PE</span>
-              <span class="evento-data">16 de janeiro de 2027</span>
-              <div class="evento-bottom">
-                <div>
-                  <small>Ingresso</small><strong>Vendas sem Taxa</strong>
-                </div>
-                <div class="evento-acoes">
-                  <a
-                    class="evento-comprar"
-                    href="#"
-                    data-comprar="WeDo na Praia — 10 anos"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Comprar ingresso</a
-                  >
-                  <a
-                    class="evento-duvida"
-                    href="#"
-                    data-duvida="WeDo na Praia — 10 anos"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Tirar dúvida</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="evento-card">
-            <div class="evento-media">
-              <span class="evento-data-tag">6-9 FEV</span>
-              <img src="assets/carvalheira.jpg" alt="Carvalheira na Ladeira" />
-            </div>
-            <div class="evento-info">
-              <h3>Carvalheira na Ladeira</h3>
-              <span class="evento-local">📍 Olinda, PE</span>
-              <span class="evento-data">6 a 9 de fevereiro de 2027</span>
-              <div class="evento-bottom">
-                <div>
-                  <small>Ingresso</small><strong>Link com Desconto</strong>
-                </div>
-                <div class="evento-acoes">
-                  <a
-                    class="evento-comprar"
-                    href="https://www.sympla.com.br/carvalheira-na-ladeira-2027__3314458?afid=109062"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Garantir com desconto</a
-                  >
-                  <a
-                    class="evento-duvida"
-                    href="#"
-                    data-duvida="Carvalheira na Ladeira"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Tirar dúvida</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="evento-card">
-            <div class="evento-media">
-              <span class="evento-data-tag">7-9 FEV</span>
-              <img src="assets/boaviagem.jpg" alt="Carnaval Boa Viagem" />
-            </div>
-            <div class="evento-info">
-              <h3>Carnaval Boa Viagem</h3>
-              <span class="evento-local">📍 Arena Boa Viagem, Recife</span>
-              <span class="evento-data">7 a 9 de fevereiro de 2027</span>
-              <div class="evento-bottom">
-                <div>
-                  <small>Ingresso</small><strong>Vendas sem Taxa</strong>
-                </div>
-                <div class="evento-acoes">
-                  <a
-                    class="evento-comprar"
-                    href="#"
-                    data-comprar="Carnaval Boa Viagem"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Comprar ingresso</a
-                  >
-                  <a
-                    class="evento-duvida"
-                    href="#"
-                    data-duvida="Carnaval Boa Viagem"
-                    target="_blank"
-                    rel="noreferrer"
-                    >Tirar dúvida</a
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="benefit-grid">
+        <article class="benefit"><span class="benefit-num">01</span><h3>Eventos selecionados</h3><p>Encontre em um só lugar os eventos e experiências que fazem parte da nossa agenda.</p></article>
+        <article class="benefit"><span class="benefit-num">02</span><h3>Compra rápida</h3><p>Acesse diretamente o link de compra disponível para cada evento vendido pela TicketX.</p></article>
+        <article class="benefit"><span class="benefit-num">03</span><h3>Benefícios exclusivos</h3><p>Quando houver parceria, mostramos claramente os links com desconto disponíveis.</p></article>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="vip-section" id="vip">
-      <div class="vip-inner">
-        <div class="section-label">VIP</div>
-        <h2>Entre para o Grupo VIP TicketX</h2>
-        <p>
-          Receba primeiro os melhores eventos, descontos exclusivos, links
-          promocionais e oportunidades especiais.
-        </p>
+  <section id="vip">
+    <div class="wrap">
+      <div class="vip-box">
+        <div>
+          <div class="kicker" style="color:#c9a8ff">Comunidade TicketX</div>
+          <h2>Entre para o Grupo VIP TICKETX</h2>
+          <p>Receba primeiro os melhores eventos, descontos exclusivos, links promocionais e oportunidades especiais.</p>
+          <a class="btn-primary" target="_blank" rel="noopener" href="https://wa.me/5581991017226?text=Ol%C3%A1,%20quero%20entrar%20no%20Grupo%20VIP%20da%20TicketX!">Entrar no Grupo VIP</a>
+        </div>
         <ul class="vip-list">
           <li><span class="vip-check">✓</span>Descontos exclusivos</li>
           <li><span class="vip-check">✓</span>Pré-vendas</li>
@@ -1577,190 +419,268 @@
           <li><span class="vip-check">✓</span>Avisos de novos eventos</li>
           <li><span class="vip-check">✓</span>Condições especiais</li>
         </ul>
-        <a
-          href="#"
-          data-wa-msg="Olá, quero entrar no Grupo VIP da TicketX."
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button class="btn-primary" style="border: none">
-            🎟 Entrar no Grupo VIP
-          </button>
-        </a>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="faq" id="faq">
-      <div class="faq-inner">
-        <div class="section-label">DÚVIDAS</div>
-        <h2>Perguntas frequentes</h2>
+  <section id="instagram">
+    <div class="wrap">
+      <div class="insta-card">
+        <div class="insta-logo-badge"><img src="assets/brand/icon.png" alt="TicketX"></div>
+        <div class="insta-copy">
+          <div class="insta-tagline">FIQUE POR DENTRO DO NOSSO INSTAGRAM</div>
+          <div class="insta-handle-row">
+            <svg class="insta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+            <span class="insta-at">@ticketx.co</span>
+          </div>
+          <p class="insta-subtext">Ingressos, promoções e descontos das melhores festas.</p>
+          <a class="btn-follow" target="_blank" rel="noopener" href="https://www.instagram.com/ticketx.co/">Seguir</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <div class="faq-item">
-          <button class="faq-q">Como funciona a compra?<span>▾</span></button>
-          <div class="faq-a">
-            Escolha o evento, siga o processo de compra e receba seu ingresso
-            digitalmente.
+  <section id="duvidas">
+    <div class="wrap">
+      <div class="section-head"><div><div class="kicker">FAQ</div><h2>Dúvidas frequentes</h2></div></div>
+      <div class="faq">
+        <details><summary>Como compro um ingresso?</summary><p>Abra o evento desejado e clique no botão de compra quando ele estiver disponível.</p></details>
+        <details><summary>Todos os eventos possuem link da TicketX?</summary><p>Não. Os eventos que não possuem link de compra ficam apenas como parte da agenda até que uma opção seja disponibilizada.</p></details>
+        <details><summary>Como funcionam os links com desconto?</summary><p>Quando houver uma parceria com benefício, o card do evento exibirá o selo correspondente, como "LINK COM 5% OFF".</p></details>
+        <details><summary>Onde acompanho as novidades?</summary><p>Pelo Instagram oficial da TicketX: @ticketx.co.</p></details>
+      </div>
+      <p style="margin-top:18px;font-size:13px;color:var(--muted)">Ainda com dúvida? <a href="https://api.whatsapp.com/send/?phone=5581991017226&text=Ol%C3%A1%2C+preciso+de+ajuda%21&type=phone_number&app_absent=0" target="_blank" rel="noopener" style="color:var(--purple);font-weight:800">Dúvidas</a></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="#inicio"><img class="brand-logo" src="assets/brand/logo.png" alt="TicketX"></a>
+        <p>Seus ingressos, experiências e próximos eventos em um só lugar.</p>
+      </div>
+      <div class="footer-col"><h4>Menu</h4><a href="#inicio">Início</a><a href="#eventos">Eventos</a><a href="#beneficios">Benefícios</a><a href="#vip">Grupo VIP</a><a href="#duvidas">Dúvidas</a></div>
+      <div class="footer-col"><h4>Redes</h4><a href="https://www.instagram.com/ticketx.co/" target="_blank" rel="noopener">@ticketx.co</a><a href="#eventos">Agenda de eventos</a></div>
+    </div>
+    <div class="footer-bottom"><span>© <span id="year"></span> TicketX. Todos os direitos reservados.</span><span>Seus ingressos, sem taxa.</span></div>
+  </div>
+</footer>
+
+<a class="float-insta" href="https://wa.me/5581991017226?text=Ol%C3%A1,%20preciso%20de%20ajuda!" target="_blank" rel="noopener" aria-label="Ajuda pelo WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.2 14.2c-.22.62-1.29 1.19-1.78 1.24-.46.05-.9.23-3.02-.63-2.56-1.05-4.2-3.66-4.33-3.83-.13-.17-1.03-1.37-1.03-2.61 0-1.24.65-1.85.88-2.1.22-.25.5-.3.66-.3.17 0 .33 0 .48.01.15.01.36-.06.56.43.22.53.74 1.83.8 1.96.06.13.1.28.02.45-.08.17-.13.28-.25.43-.13.15-.27.34-.38.46-.13.13-.26.27-.11.53.15.26.67 1.1 1.43 1.78.98.88 1.81 1.15 2.07 1.28.26.13.41.11.56-.07.15-.17.65-.75.82-1.01.17-.26.34-.21.56-.13.22.08 1.42.67 1.66.79.24.12.4.18.46.28.06.11.06.62-.16 1.24z"/>
+  </svg>
+  Precisa de ajuda?
+</a>
+
+<!-- Página Agenda completa -->
+<div class="agenda-page hidden" id="agendaPage">
+  <div class="wrap">
+    <div class="agenda-top">
+      <button class="back-btn" onclick="closeAgenda()">← Voltar para a agenda</button>
+      <img class="brand-logo" src="assets/brand/logo.png" alt="TicketX">
+    </div>
+    <div class="section-head">
+      <div><div class="kicker">Agenda TicketX</div><h2>Festas disponíveis</h2><p>Garanta seu ingresso sem complicação.</p></div>
+    </div>
+    <div id="catNavFull" class="cat-nav"></div>
+    <div id="shelvesFull"></div>
+  </div>
+</div>
+
+<script>
+/* -----------------------------------------------------------
+   FONTE ÚNICA DE DADOS DOS EVENTOS
+   Para adicionar um evento: copie um objeto abaixo e ajuste.
+   Para o flyer aparecer: salve a imagem em assets/events/<slug>.jpg
+   (veja assets/events/LEIA-ME.txt)
+------------------------------------------------------------ */
+const events = [
+  {
+    slug:'vaquejada-surubim', name:'Vaquejada Surubim', place:'Surubim',
+    dateBadge:'19 SET', dateFull:'19 de setembro de 2026', price:'X',
+    tags:[], fallbackClass:'event-vaq',
+    offer:null,
+    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20da%20Vaquejada%20de%20Surubim!%20'
+  },
+  {
+    slug:'swagg', name:'SWAGG', place:'Cachaçaria Carvalheira',
+    dateBadge:'26 SET', dateFull:'26 de setembro de 2026', price:'X',
+    tags:['carvalheira'], fallbackClass:'event-swag',
+    offer:'5% OFF',
+    url:'https://www.sympla.com.br/evento/swagg-v12026/3551630?d=ticketx'
+  },
+  {
+    slug:'bikini-memories', name:'Bikini Memories', place:'Maracaípe',
+    dateBadge:'20 E 22 NOV', dateFull:'20 e 22 de novembro de 2026', price:'X',
+    tags:['carvalheira'], fallbackClass:'event-bikini',
+    offer:'5% OFF',
+    url:'https://www.sympla.com.br/evento/bikini-memories-2026/3578485?d=TICKETX'
+  },
+  {
+    slug:'reveillon-amore', name:'Réveillon Amore', place:'Praia de Maracaípe',
+    dateBadge:'27–31 DEZ', dateFull:'27 a 31 de dezembro de 2026', price:'X',
+    tags:['reveillon'], fallbackClass:'event-amore',
+    offer:'5% OFF',
+    url:'https://www.sympla.com.br/evento/reveillon-amore-2027/3390641?d=MILTONV'
+  },
+  {
+    slug:'wedo-na-praia', name:'Wedo na Praia', place:'Maracaípe',
+    dateBadge:'16 JAN', dateFull:'16 de janeiro de 2027', price:'X',
+    tags:[], fallbackClass:'event-wedo',
+    offer:null,
+    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20do%20Wedo%20Na%20Praia%202k27!%20'
+  },
+  {
+    slug:'carvalheira-na-ladeira', name:'Carvalheira na Ladeira', place:'Olinda',
+    dateBadge:'6–9 FEV', dateFull:'6 a 9 de fevereiro de 2027', price:'X',
+    tags:['carvalheira'], fallbackClass:'event-carv',
+    offer:'5% OFF',
+    url:'https://www.sympla.com.br/carvalheira-na-ladeira-2027__3314458?afid=109062'
+  },
+  {
+    slug:'carnaval-boa-viagem', name:'Carnaval Boa Viagem', place:'Arena Boa Viagem',
+    dateBadge:'7–9 FEV', dateFull:'7 a 9 de fevereiro de 2027', price:'X',
+    tags:['carnaval'], fallbackClass:'event-cbv',
+    offer:null,
+    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20do%20CBV%202k27!'
+  }
+];
+
+// ordem das prateleiras: "todos" primeiro, depois as demais categorias
+const SHELVES = [
+  {id:'todos',       label:'Todos os eventos', match: ()=>true},
+  {id:'carvalheira', label:'Carvalheira',      match: e=>e.tags.includes('carvalheira')},
+  {id:'carnaval',     label:'Carnaval',         match: e=>e.tags.includes('carnaval')},
+  {id:'reveillon',   label:'Réveillon',        match: e=>e.tags.includes('reveillon')}
+];
+
+function eventCardHTML(ev){
+  const badge = ev.offer
+    ? `<span class="badge off">${ev.offer}</span>`
+    : `<span class="badge">EM BREVE</span>`;
+  // separa "27–31 DEZ" em dia "27–31" e mês "DEZ" para o selo de duas linhas
+  const parts = ev.dateBadge.split(' ');
+  const mon = parts.pop();
+  const day = parts.join(' ');
+  return `
+    <article class="event-card">
+      <div class="event-img ${ev.fallbackClass}">
+        <img class="flyer" src="assets/events/${ev.slug}.jpg" alt="${ev.name}" onerror="this.remove()">
+        <div class="date-pill"><span class="day">${day}</span><span class="mon">${mon}</span></div>
+        <div class="status-badge">${badge}</div>
+      </div>
+      <div class="card-info">
+        <h3 class="event-name">${ev.name}</h3>
+        <div class="meta">📍 ${ev.place}</div>
+        <div class="price">R$ ${ev.price}</div>
+        <div class="card-actions">
+          <a class="btn-buy" target="_blank" rel="noopener" href="${ev.url}">Comprar</a>
+          <a class="btn-faq" target="_blank" rel="noopener" href="https://api.whatsapp.com/send/?phone=5581991017226&text=Ol%C3%A1%2C+preciso+de+ajuda%21&type=phone_number&app_absent=0">Dúvidas</a>
+        </div>
+      </div>
+    </article>`;
+}
+
+function renderShelves(containerId){
+  const el = document.getElementById(containerId);
+  el.innerHTML = SHELVES.map(shelf=>{
+    const list = events.filter(shelf.match);
+    if(!list.length) return '';
+    return `
+      <div class="event-shelf" id="${containerId}-${shelf.id}">
+        <div class="shelf-head">
+          <div class="shelf-title">${shelf.label}</div>
+          <div class="shelf-arrows">
+            <button aria-label="Ver anteriores" onclick="scrollShelf(this,-1)">‹</button>
+            <button aria-label="Ver próximos" onclick="scrollShelf(this,1)">›</button>
           </div>
         </div>
-        <div class="faq-item">
-          <button class="faq-q">Os ingressos são seguros?<span>▾</span></button>
-          <div class="faq-a">
-            Sim. Os ingressos comercializados pela TicketX passam pelo processo
-            de validação correspondente ao evento.
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">A TicketX cobra taxa?<span>▾</span></button>
-          <div class="faq-a">
-            Sempre que houver a condição de ingresso sem taxa, ela será
-            informada no evento.
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">Como entro no Grupo VIP?<span>▾</span></button>
-          <div class="faq-a">
-            Clique no botão "Entrar no Grupo VIP" e siga o link disponibilizado.
-          </div>
-        </div>
-      </div>
-    </section>
+        <div class="shelf-row">${list.map(eventCardHTML).join('')}</div>
+      </div>`;
+  }).join('');
+}
 
-    <section class="cta-section">
-      <div class="section-label">garanta já</div>
-      <h2>Bora pro próximo <em>evento?</em></h2>
-      <p>
-        Chama a TicketX, encontre seu próximo evento e garanta seu ingresso.
-      </p>
-      <div class="hero-actions">
-        <a
-          href="#"
-          data-wa-msg="Olá! Vim pelo site da TicketX e gostaria de saber mais sobre os ingressos."
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button class="btn-primary" style="border: none">
-            Comprar ingresso
-          </button>
-        </a>
-        <a
-          href="#"
-          data-wa-msg="Olá, quero entrar no Grupo VIP da TicketX."
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button class="btn-ghost">Entrar no Grupo VIP</button>
-        </a>
-      </div>
-    </section>
+function renderCatNav(navId, containerId){
+  const el = document.getElementById(navId);
+  if(!el) return;
+  el.innerHTML = SHELVES.filter(s=>events.filter(s.match).length).map(s=>
+    `<button type="button" class="cat-pill${s.id==='todos' ? ' active' : ''}" data-shelf="${s.id}" onclick="filterEvents('${containerId}','${navId}','${s.id}')">${s.label}</button>`
+  ).join('');
+}
 
-    <footer>
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <a href="#" class="nav-logo">Ticket<span>X</span></a>
-          <p>Ingressos, eventos e experiências.</p>
-        </div>
+// mostra só a prateleira da categoria clicada; "Todos os eventos" mostra tudo de novo
+function filterEvents(containerId, navId, shelfId){
+  document.querySelectorAll(`#${navId} .cat-pill`).forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.shelf === shelfId);
+  });
+  document.querySelectorAll(`#${containerId} .event-shelf`).forEach(shelfEl=>{
+    const id = shelfEl.id.replace(`${containerId}-`, '');
+    shelfEl.classList.toggle('hidden', id !== shelfId);
+  });
+}
 
-        <ul class="footer-links">
-          <li><a href="#sobre">Sobre nós</a></li>
-          <li><a href="#conosco">Benefícios</a></li>
-          <li><a href="#eventos">Eventos</a></li>
-        </ul>
+function scrollShelf(btn, dir){
+  const row = btn.closest('.event-shelf').querySelector('.shelf-row');
+  row.scrollBy({left: dir * Math.round(row.clientWidth * 0.85), behavior:'smooth'});
+}
 
-        <ul class="footer-links">
-          <li><a href="#vip">Grupo VIP</a></li>
-          <li><a href="#faq">Dúvidas</a></li>
-          <li>
-            <a
-              href="https://wa.me/+5581991017226"
-              target="_blank"
-              rel="noreferrer"
-              >Contato</a
-            >
-          </li>
-        </ul>
-      </div>
+renderShelves('shelvesHome');
+renderShelves('shelvesFull');
+renderCatNav('catNav', 'shelvesHome');
+renderCatNav('catNavFull', 'shelvesFull');
+filterEvents('shelvesHome', 'catNav', 'todos');
+filterEvents('shelvesFull', 'catNavFull', 'todos');
 
-      <div class="footer-bottom">
-        <span>© 2026 TicketX — Todos os direitos reservados.</span>
-        <a
-          href="https://www.instagram.com/results.ag/?utm_source=ig_web_button_share_sheet"
-          target="_blank"
-          rel="noreferrer"
-          class="credit-link"
-        >
-          feito pela <span class="credit-name">results.ag</span>
-          <svg class="credit-icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M12 2c2.7 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.22.6 1.77 1.15.55.55.9 1.11 1.15 1.77.25.64.42 1.37.47 2.43C21.99 8.94 22 9.3 22 12c0 2.7-.01 3.06-.06 4.12-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.15 1.77 4.9 4.9 0 0 1-1.77 1.15c-.64.25-1.37.42-2.43.47C15.06 21.99 14.7 22 12 22c-2.7 0-3.06-.01-4.12-.06-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.77-1.15 4.9 4.9 0 0 1-1.15-1.77c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.7 2 12c0-2.7.01-3.06.06-4.12.05-1.06.22-1.79.47-2.43.26-.66.6-1.22 1.15-1.77A4.9 4.9 0 0 1 5.45 2.53c.64-.25 1.37-.42 2.43-.47C8.94 2.01 9.3 2 12 2zm0 1.8c-2.65 0-2.99.01-4.03.06-.97.04-1.5.2-1.85.34a3.1 3.1 0 0 0-1.15.75 3.1 3.1 0 0 0-.75 1.15c-.14.35-.3.88-.34 1.85C3.83 9.01 3.82 9.35 3.82 12c0 2.65.01 2.99.06 4.03.04.97.2 1.5.34 1.85.16.42.4.79.75 1.15.36.35.73.6 1.15.75.35.14.88.3 1.85.34 1.04.05 1.38.06 4.03.06s2.99-.01 4.03-.06c.97-.04 1.5-.2 1.85-.34.42-.16.79-.4 1.15-.75.35-.36.6-.73.75-1.15.14-.35.3-.88.34-1.85.05-1.04.06-1.38.06-4.03s-.01-2.99-.06-4.03c-.04-.97-.2-1.5-.34-1.85a3.1 3.1 0 0 0-.75-1.15 3.1 3.1 0 0 0-1.15-.75c-.35-.14-.88-.3-1.85-.34C14.99 3.83 14.65 3.82 12 3.82zm0 3.06a5.12 5.12 0 1 1 0 10.24 5.12 5.12 0 0 1 0-10.24zm0 1.8a3.32 3.32 0 1 0 0 6.64 3.32 3.32 0 0 0 0-6.64zm5.33-1.98a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"
-            />
-          </svg>
-        </a>
-      </div>
-    </footer>
+function openAgenda(){
+  document.getElementById('agendaPage').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+  window.scrollTo({top:0});
+}
+function closeAgenda(){
+  document.getElementById('agendaPage').classList.add('hidden');
+  document.body.style.overflow='';
+}
+function openDrawer(){
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
 
-    <a
-      class="whatsapp-float"
-      href="#"
-      data-wa-msg="Olá! Vim pelo site da TicketX e gostaria de saber mais sobre os ingressos."
-      target="_blank"
-      rel="noreferrer"
-      aria-label="Fale conosco no WhatsApp"
-      >💬</a
-    >
+document.getElementById('year').textContent = new Date().getFullYear();
 
-    <script>
-      // ── WhatsApp: base + helpers (mesma lógica do data.ts do projeto React) ──
-      const WHATSAPP_BASE = 'https://wa.me/+5581991017226'
+/* efeitos de scroll: header com sombra + elementos surgindo suavemente */
+window.addEventListener('scroll', ()=>{
+  document.querySelector('header').classList.toggle('scrolled', window.scrollY > 12);
+}, {passive:true});
 
-      function waLink(mensagem) {
-        return WHATSAPP_BASE + '?text=' + encodeURIComponent(mensagem)
-      }
-      function buyLink(nomeEvento) {
-        return waLink('Olá, gostaria de comprar o evento ' + nomeEvento + '?!')
-      }
-      function duvidaLink(nomeEvento) {
-        return waLink(
-          'Olá, tenho uma dúvida sobre o evento ' + nomeEvento + '?!',
-        )
-      }
+const revealTargets = document.querySelectorAll(
+  '.section-head, .benefit, .vip-box, .insta-card, .faq details, .event-shelf, .cat-nav'
+);
+revealTargets.forEach(el => el.classList.add('reveal'));
 
-      document.querySelectorAll('[data-wa-msg]').forEach((el) => {
-        el.href = waLink(el.dataset.waMsg)
-      })
-      document.querySelectorAll('[data-comprar]').forEach((el) => {
-        el.href = buyLink(el.dataset.comprar)
-      })
-      document.querySelectorAll('[data-duvida]').forEach((el) => {
-        el.href = duvidaLink(el.dataset.duvida)
-      })
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
 
-      // ── VIP marquee: clicar em qualquer ponto abre o WhatsApp do VIP ──
-      document.getElementById('vipMarquee').addEventListener('click', () => {
-        window.open(
-          waLink('Olá, quero entrar no Grupo VIP da TicketX.'),
-          '_blank',
-        )
-      })
+revealTargets.forEach(el => revealObserver.observe(el));
 
-      // ── FAQ accordion ──
-      document.querySelectorAll('.faq-q').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const answer = btn.nextElementSibling
-          const isOpen = btn.classList.contains('open')
-
-          document
-            .querySelectorAll('.faq-q')
-            .forEach((b) => b.classList.remove('open'))
-          document
-            .querySelectorAll('.faq-a')
-            .forEach((a) => a.classList.remove('open'))
-
-          if (!isOpen) {
-            btn.classList.add('open')
-            answer.classList.add('open')
-          }
-        })
-      })
-    </script>
-  </body>
+</script>
+</body>
 </html>
