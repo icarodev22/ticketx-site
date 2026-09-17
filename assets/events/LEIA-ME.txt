@@ -1,0 +1,18 @@
+Como adicionar o flyer de um evento:
+
+1. Salve a imagem do flyer nesta pasta (assets/events/).
+2. Nomeie o arquivo exatamente com o "slug" do evento, em minúsculas, sem acento, com hífen:
+
+   vaquejada-surubim.jpg
+   swagg.jpg
+   reveillon-amore.jpg
+   wedo-na-praia.jpg
+   carvalheira-na-ladeira.jpg
+   carnaval-boa-viagem.jpg
+
+3. Pronto — o card do site detecta a imagem sozinho e substitui o fundo colorido pelo flyer real.
+   Se o arquivo não existir, o card continua funcionando normalmente com o fundo colorido no lugar da foto.
+
+Para adicionar um evento novo:
+- Copie um objeto dentro de "const events = [...]" no index.html, ajuste os dados
+  e defina um "img" com o slug do novo evento. O card e o filtro aparecem sozinhos.
