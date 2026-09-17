@@ -303,7 +303,6 @@ footer{border-top:1px solid var(--line);padding:48px 0 25px;background:var(--sur
   .benefit-grid{grid-template-columns:1fr}
   .vip-box{grid-template-columns:1fr;padding:32px}
   .footer-grid{grid-template-columns:1fr 1fr}
-  .destaque-slide{min-height:340px}
 }
 @media(max-width:560px){
   .wrap{width:min(100% - 28px,var(--max))}
@@ -318,37 +317,7 @@ footer{border-top:1px solid var(--line);padding:48px 0 25px;background:var(--sur
   .footer-bottom{flex-direction:column;gap:6px}
   .agenda-top{flex-direction:column;align-items:flex-start;gap:14px}
   .float-insta{padding:12px 16px;font-size:12px;right:14px;bottom:14px}
-  .destaque-slide{min-height:300px}
-  .destaque-content{padding:22px 20px 26px}
-  .destaque-arrow{width:34px;height:34px;font-size:16px}
 }
-
-/* destaques */
-.destaques-carousel{position:relative;border-radius:26px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--line)}
-.destaques-track{display:flex;transition:transform .5s ease}
-.destaque-slide{flex:none;width:100%;position:relative;min-height:420px;display:flex;align-items:flex-end}
-.destaque-slide a.destaque-link{position:absolute;inset:0;z-index:3;display:block}
-.destaque-bg{position:absolute;inset:0;z-index:0}
-.destaque-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
-.destaque-bg:before{content:"TICKETX";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:60px;font-weight:900;letter-spacing:-4px;color:rgba(255,255,255,.10);transform:rotate(-20deg)}
-.destaque-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(0deg,rgba(6,3,18,.92),rgba(6,3,18,.35) 55%,transparent 85%)}
-.destaque-content{position:relative;z-index:2;padding:34px 40px 40px;max-width:560px;pointer-events:none}
-.destaque-kicker{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:linear-gradient(110deg,var(--purple),var(--mag));padding:6px 12px;border-radius:999px;margin-bottom:14px}
-.destaque-content h3{font-size:clamp(24px,3.4vw,38px);font-weight:900;color:#fff;line-height:1.08;margin-bottom:10px}
-.destaque-meta{color:rgba(255,255,255,.85);font-size:13px;font-weight:700;margin-bottom:16px}
-.destaque-cta{position:relative;z-index:4;display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:14px;font-size:13px;font-weight:900;color:#fff;background:linear-gradient(110deg,var(--purple),var(--mag));box-shadow:0 10px 24px rgba(98,33,255,.30);pointer-events:auto}
-.destaque-arrow{
-  position:absolute;top:50%;transform:translateY(-50%);z-index:5;
-  width:42px;height:42px;border-radius:50%;border:0;cursor:pointer;
-  background:rgba(11,7,22,.55);color:#fff;font-size:20px;font-weight:900;
-  display:grid;place-items:center;backdrop-filter:blur(6px);transition:.2s;
-}
-.destaque-arrow:hover{background:linear-gradient(110deg,var(--purple),var(--mag))}
-.destaque-arrow.prev{left:16px}
-.destaque-arrow.next{right:16px}
-.destaque-dots{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:5;display:flex;gap:8px}
-.destaque-dots button{width:8px;height:8px;border-radius:999px;border:0;background:rgba(255,255,255,.35);cursor:pointer;padding:0;transition:.2s}
-.destaque-dots button.active{width:22px;background:#fff}
 
 /* loader */
 #pageLoader{
@@ -425,23 +394,6 @@ Descubra as festas que vão marcar sua próxima experiência, escolha seu evento
       </div>
       <div id="catNav" class="cat-nav"></div>
       <div id="shelvesHome"></div>
-    </div>
-  </section>
-
-  <section id="destaques">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <div class="kicker">Selecionados pra você</div>
-          <h2>Destaques</h2>
-        </div>
-      </div>
-      <div class="destaques-carousel">
-        <button class="destaque-arrow prev" aria-label="Anterior" onclick="destaqueNav(-1)">‹</button>
-        <div class="destaques-track" id="destaquesTrack"></div>
-        <button class="destaque-arrow next" aria-label="Próximo" onclick="destaqueNav(1)">›</button>
-        <div class="destaque-dots" id="destaquesDots"></div>
-      </div>
     </div>
   </section>
 
@@ -718,73 +670,6 @@ function scrollShelf(btn, dir){
   const row = btn.closest('.event-shelf').querySelector('.shelf-row');
   row.scrollBy({left: dir * Math.round(row.clientWidth * 0.85), behavior:'smooth'});
 }
-
-/* -----------------------------------------------------------
-   DESTAQUES — carrossel com 3 eventos selecionados
-   Para trocar os destaques, edite a lista DESTAQUES_SLUGS abaixo
------------------------------------------------------------- */
-const DESTAQUES_SLUGS = ['carvalheira-na-ladeira', 'wedo-na-praia', 'bikini-memories'];
-let destaqueIndex = 0;
-
-function renderDestaques(){
-  const track = document.getElementById('destaquesTrack');
-  const dots = document.getElementById('destaquesDots');
-  if(!track || !dots) return;
-
-  const list = DESTAQUES_SLUGS
-    .map(slug => events.find(e => e.slug === slug))
-    .filter(Boolean);
-
-  track.innerHTML = list.map(ev => {
-    const badge = ev.offer
-      ? `<span class="destaque-kicker">${ev.offer}</span>`
-      : `<span class="destaque-kicker">SEM TAXA</span>`;
-    return `
-      <div class="destaque-slide">
-        <a class="destaque-link" target="_blank" rel="noopener" href="${ev.url}" aria-label="${ev.name}"></a>
-        <div class="destaque-bg ${ev.fallbackClass}">
-          <img src="assets/events/${ev.slug}-destaque.jpeg" alt="${ev.name}" onerror="this.remove()">
-        </div>
-        <div class="destaque-overlay"></div>
-        <div class="destaque-content">
-          ${badge}
-          <h3>${ev.name}</h3>
-          <div class="destaque-meta">📍 ${ev.place} · ${ev.dateFull}</div>
-          <a class="destaque-cta" target="_blank" rel="noopener" href="${ev.url}">Ver evento</a>
-        </div>
-      </div>`;
-  }).join('');
-
-  dots.innerHTML = list.map((_, i) =>
-    `<button aria-label="Ir para destaque ${i+1}" onclick="goToDestaque(${i})"></button>`
-  ).join('');
-
-  updateDestaqueUI();
-}
-
-function updateDestaqueUI(){
-  const track = document.getElementById('destaquesTrack');
-  const total = track.children.length;
-  if(!total) return;
-  destaqueIndex = (destaqueIndex + total) % total;
-  track.style.transform = `translateX(-${destaqueIndex * 100}%)`;
-  document.querySelectorAll('#destaquesDots button').forEach((dot, i)=>{
-    dot.classList.toggle('active', i === destaqueIndex);
-  });
-}
-
-function destaqueNav(dir){
-  destaqueIndex += dir;
-  updateDestaqueUI();
-}
-
-function goToDestaque(i){
-  destaqueIndex = i;
-  updateDestaqueUI();
-}
-
-renderDestaques();
-setInterval(()=>destaqueNav(1), 6000);
 
 renderShelves('shelvesHome');
 renderShelves('shelvesFull');
