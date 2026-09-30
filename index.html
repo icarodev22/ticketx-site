@@ -212,6 +212,7 @@ h2{font-size:clamp(28px,3.6vw,46px);line-height:1.08;letter-spacing:-.03em;color
    O flyer aparece inteiro na proporção original (sem cortar nem esticar);
    o fundo do slide é a própria arte borrada */
 #destaques{padding:26px 0 8px}
+.feature-head{margin-bottom:22px}
 .feature-carousel{--fslide:min(1220px,calc(100vw - 200px));--fgap:18px;position:relative;overflow:hidden}
 .feature-track{display:flex;gap:var(--fgap);transition:transform .6s cubic-bezier(.22,.61,.36,1)}
 .feature{
@@ -342,10 +343,6 @@ footer{border-top:1px solid var(--line);padding:48px 0 25px;background:var(--sur
     .feature-carousel{--fslide:calc(100vw - 48px);--fgap:10px}
   .feature{height:auto;display:flex;flex-direction:column}
   .feature:after{background:linear-gradient(180deg,rgba(11,7,22,0) 30%,rgba(11,7,22,.85) 75%)}
-  .feature-art{position:relative;inset:auto;height:clamp(300px,90vw,420px);margin:18px auto 0;justify-content:center}
-  .feature-info{height:auto;max-width:100%;padding:18px 18px 44px;gap:10px}
-  .feature-name{font-size:26px}
-  .feature-meta{font-size:13.5px}
   .feature-arrow{display:none}
   .footer-grid{grid-template-columns:1fr 1fr}
 }
@@ -431,6 +428,11 @@ Descubra as festas que vão marcar sua próxima experiência, escolha seu evento
   </section>
  <section class="hero">
       <section id="destaques" aria-label="Destaques">
+            <div class="wrap feature-head">
+      <div class="kicker">Escolhidos pela TicketX</div>
+      <h2>Destaques</h2>
+    </div>
+
     <div class="feature-carousel" id="featureShelf">
       <div class="feature-track" id="featureTrack"></div>
       <button class="feature-arrow prev" aria-label="Destaque anterior" onclick="scrollFeature(-1)">‹</button>
@@ -446,6 +448,7 @@ Descubra as festas que vão marcar sua próxima experiência, escolha seu evento
       <div class="feature-dots" id="featureDots"></div>
     </div>
   </section>
+  
   <section id="eventos">
     <div class="wrap">
       <div class="section-head">
