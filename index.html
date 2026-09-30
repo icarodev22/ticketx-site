@@ -6,6 +6,26 @@
 <title>TicketX — Conectando você às melhores experiências.</title>
 <meta name="description" content="A TicketX conecta você aos melhores eventos com praticidade, segurança e benefícios exclusivos.">
 
+<link rel="canonical" href="https://ticketxco.com.br/">
+<meta name="theme-color" content="#0b0716">
+
+<!-- prévia do link no WhatsApp, Instagram, Facebook e X.
+     A imagem precisa ter endereço completo (https://...) e 1200x630 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TicketX">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://ticketxco.com.br/">
+<meta property="og:title" content="TicketX: ingressos das melhores festas de Pernambuco">
+<meta property="og:description" content="Carvalheira, vaquejadas, Réveillon e Carnaval. Compre sem taxa ou com link de desconto e entre no Grupo VIP.">
+<meta property="og:image" content="https://ticketxco.com.br/assets/brand/og-share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="TicketX: ingressos sem taxa e com desconto">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TicketX: ingressos das melhores festas de Pernambuco">
+<meta name="twitter:description" content="Compre sem taxa ou com link de desconto e entre no Grupo VIP.">
+<meta name="twitter:image" content="https://ticketxco.com.br/assets/brand/og-share.jpg">
+
 <link rel="icon" type="image/png" href="assets/brand/icon.png">
 <link rel="apple-touch-icon" href="assets/brand/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -207,6 +227,103 @@ h2{font-size:clamp(28px,3.6vw,46px);line-height:1.08;letter-spacing:-.03em;color
 .btn-faq:hover{color:var(--text);border-color:rgba(91,33,255,.5)}
 .no-results{color:var(--muted);padding:20px 0;font-size:14px}
 
+/* economia em reais no card (item 2) */
+.price-compare{margin-bottom:11px;display:grid;gap:2px}
+.price-old{font-size:11px;font-weight:600;color:var(--muted)}
+.price-old s{opacity:.85}
+.price-new{font-size:16px;font-weight:900;color:var(--text);letter-spacing:-.01em}
+.price-new small{font-size:10px;font-weight:700;color:var(--muted);margin-left:3px}
+.price-save{
+  justify-self:start;margin-top:4px;padding:4px 8px;border-radius:8px;
+  font-size:10px;font-weight:900;letter-spacing:.02em;
+  color:#07130e;background:var(--green);
+}
+
+/* confiança (item 1) */
+.trust-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.trust-stat{
+  border-radius:16px;padding:22px 18px;background:var(--surface);border:1px solid var(--line);
+  box-shadow:var(--shadow);text-align:center;
+}
+.trust-stat b{display:block;font-size:clamp(26px,3vw,36px);font-weight:900;letter-spacing:-.03em;
+  background:linear-gradient(110deg,var(--purple2),var(--mag));-webkit-background-clip:text;background-clip:text;color:transparent}
+.trust-stat span{display:block;margin-top:4px;font-size:12px;font-weight:700;color:var(--muted)}
+.reviews{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.review{
+  border-radius:16px;padding:22px 20px;background:var(--surface);border:1px solid var(--line);
+  box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;
+}
+.review-stars{color:#ffc542;font-size:14px;letter-spacing:2px}
+.review p{color:var(--text);font-size:13.5px;line-height:1.7}
+.review-who{margin-top:auto;display:flex;align-items:center;gap:10px}
+.review-avatar{
+  width:36px;height:36px;border-radius:50%;flex:none;display:grid;place-items:center;
+  font-size:14px;font-weight:900;color:#fff;background:linear-gradient(110deg,var(--purple),var(--mag));
+}
+.review-who b{display:block;font-size:13px;color:var(--text)}
+.review-who span{display:block;font-size:11px;color:var(--muted)}
+.how-buy{
+  border-radius:20px;padding:26px;background:linear-gradient(125deg,#140a31,#1d0c45);
+  border:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+}
+.how-step{display:flex;gap:14px;align-items:flex-start}
+.how-step i{
+  font-style:normal;flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  font-size:14px;font-weight:900;color:#fff;background:linear-gradient(110deg,var(--purple),var(--mag));
+}
+.how-step h3{font-size:14px;color:var(--text);margin-bottom:4px}
+.how-step p{font-size:12.5px;line-height:1.6;color:var(--muted)}
+.footer-legal{margin-top:12px;display:grid;gap:4px}
+.footer-legal span{color:var(--muted);font-size:11px;line-height:1.6}
+
+/* página do evento (item 3): janela que abre ao clicar no card */
+.event-card{cursor:pointer}
+.card-more{font-size:10.5px;font-weight:800;color:var(--purple2);margin:-4px 0 12px}
+.ev-modal{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:24px}
+.ev-modal.hidden{display:none}
+.ev-backdrop{position:absolute;inset:0;background:rgba(6,3,16,.78);backdrop-filter:blur(6px)}
+.ev-sheet{
+  position:relative;width:min(980px,100%);max-height:calc(100vh - 48px);overflow:hidden;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
+  border-radius:24px;background:var(--surface);border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.6);
+  animation:evIn .28s ease;
+}
+@keyframes evIn{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+.ev-art{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:22px;min-height:320px}
+.ev-art-bg{position:absolute;inset:-12%;width:124%;height:124%;max-width:none;object-fit:cover;filter:blur(30px) brightness(.55)}
+.ev-art-img{position:relative;z-index:1;max-height:calc(100vh - 92px);width:auto;max-width:100%;border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.55)}
+.ev-body{overflow-y:auto;padding:34px 32px 30px;display:flex;flex-direction:column;gap:18px}
+.ev-close{
+  position:absolute;top:14px;right:14px;z-index:3;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;
+  background:rgba(11,7,22,.7);color:#fff;font-size:18px;display:grid;place-items:center;
+}
+.ev-body .badge{align-self:flex-start;font-size:10px;padding:7px 11px}
+.ev-title{font-size:clamp(26px,3vw,38px);line-height:1.05;font-weight:900;letter-spacing:-.03em;color:var(--text);text-transform:uppercase}
+.ev-facts{display:grid;gap:10px}
+.ev-fact{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--text);font-weight:600;line-height:1.5}
+.ev-fact i{font-style:normal;flex:none;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:rgba(139,92,246,.14);font-size:15px}
+.ev-fact small{display:block;color:var(--muted);font-size:12px;font-weight:600}
+.ev-fact a{color:var(--purple2);font-weight:800;font-size:12px}
+.ev-block h4{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+.ev-block p{color:var(--muted);font-size:13.5px;line-height:1.7}
+.ev-lineup{display:flex;flex-wrap:wrap;gap:8px}
+.ev-lineup span{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:12.5px;font-weight:700;color:var(--text)}
+.ev-body .price-compare,.ev-body .price{margin:0}
+.ev-body .price{font-size:14px}
+.ev-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto;padding-top:6px}
+.ev-actions a,.ev-actions button{padding:15px 10px;border-radius:13px;text-align:center;font-size:13px;font-weight:900;cursor:pointer}
+.ev-actions .btn-buy{grid-column:1 / -1;font-size:14px}
+.ev-actions button{border:1px solid var(--line);background:var(--surface);color:var(--muted);font-family:inherit}
+.ev-actions button:hover{color:var(--text)}
+@media(max-width:760px){
+  .ev-modal{padding:0;align-items:flex-end}
+  .ev-sheet{grid-template-columns:1fr;max-height:92vh;border-radius:22px 22px 0 0;overflow-y:auto}
+  .ev-art{min-height:0;padding:18px 18px 8px}
+  .ev-art-img{max-height:44vh}
+  .ev-body{overflow:visible;padding:18px 20px 0}
+  .ev-actions{position:sticky;bottom:0;margin:0 -20px;padding:12px 20px 16px;background:var(--surface);border-top:1px solid var(--line)}
+}
+
 /* benefits — redesenhado para fugir da cara de "card de IA" */
 .benefit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .benefit{
@@ -303,6 +420,9 @@ footer{border-top:1px solid var(--line);padding:48px 0 25px;background:var(--sur
   .hamburger{display:flex}
   .hero{padding-top:56px}
   .benefit-grid{grid-template-columns:1fr}
+  .trust-stats{grid-template-columns:1fr 1fr}
+  .reviews{grid-template-columns:1fr}
+  .how-buy{grid-template-columns:1fr}
   .vip-box{grid-template-columns:1fr;padding:32px}
   .footer-grid{grid-template-columns:1fr 1fr}
 }
@@ -506,6 +626,12 @@ Descubra as festas que vão marcar sua próxima experiência, escolha seu evento
 
 </a>
 
+<!-- Página do evento (preenchida pelo JS) -->
+<div class="ev-modal hidden" id="evModal" role="dialog" aria-modal="true" aria-labelledby="evTitle">
+  <div class="ev-backdrop" onclick="closeEvent()"></div>
+  <div class="ev-sheet" id="evSheet"></div>
+</div>
+
 <!-- Página Agenda completa -->
 <div class="agenda-page hidden" id="agendaPage">
   <div class="wrap">
@@ -527,6 +653,24 @@ Descubra as festas que vão marcar sua próxima experiência, escolha seu evento
    Para adicionar um evento: copie um objeto abaixo e ajuste.
    Para o flyer aparecer: salve a imagem em assets/events/<slug>.jpg
    (veja assets/events/LEIA-ME.txt)
+
+   ECONOMIA EM REAIS (opcional, por evento):
+     precoNormal:   quanto o ingresso custa fora da TicketX, JÁ com a taxa
+                    (ex.: Sympla com taxa de serviço). Ex.: precoNormal:132
+     precoTicketX:  quanto custa com a TicketX. Ex.: precoTicketX:120
+     setor:         nome do ingresso que o preço se refere. Ex.: setor:'Pista, 1º lote'
+   Se o evento tiver offer:'5% OFF' e você preencher só o precoNormal,
+   o site calcula o precoTicketX sozinho.
+   Sem precoNormal, o card continua igual ao de antes.
+
+   PÁGINA DO EVENTO (opcional, por evento). Aparecem na janela que abre
+   ao clicar no card. O que não for preenchido simplesmente não aparece.
+     horario:  'Das 16h às 04h'
+     endereco: 'Rua da Aurora, 123, Boa Vista, Recife'  (vira o botão "Abrir no mapa")
+     lineup:   ['Lipe Lucena', 'Nuzio Medeiros']
+               ou separado por dia: { '24/10': ['Lipe Lucena'], '31/10': ['Nuzio Medeiros'] }
+     info:     'Proibido para menores de 18 anos. Open bar de cerveja.'
+   O link direto de cada evento é ticketxco.com.br/#slug  (ex.: #barchef)
 ------------------------------------------------------------ */
 const events = [
 
@@ -535,70 +679,98 @@ const events = [
     dateBadge:'03 OUT', dateFull:'03 de outubro de 2026', price:'LINK DE DESCONTO:',
     tags:[ 'carvalheira' ], fallbackClass:'event-carv',
     offer:'5% OFF',
-    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20da%20Vaquejada%20de%20Vitoria!%20'
+    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20do%20Churras%20Carva!%20',
+    horario:'A partir das 13h',
+    endereco:'Shopping Recife, cobertura do Edf. Garagem (B4)',
+    lineup:['Máquinas na Pista', 'Macfly', 'Parachutes', 'No Money for Cash'],
+    info:'Open bar e open food.'
   },
    {
     slug:'vaquejada-vitoria', name:'Vaquejada Vitoria', place:'Vitoria',
     dateBadge:'10 OUT', dateFull:'10 de outubro de 2026', price:'VENDAS SEM TAXA:',
     tags:[ 'vaquejada' ], fallbackClass:'event-vaq',
     offer:null,
-    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20da%20Vaquejada%20de%20Vitoria!%20'
+    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20da%20Vaquejada%20de%20Vitoria!%20',
+    endereco:'Parque Roberta Urquiza, Vitória de Santo Antão',
+    lineup:['Lipe Lucena', 'Raí Saia Rodada', 'Tarcísio do Acordeon', 'Noara Marques']
   },
   {
     slug:'barchef', name:'Barchef Recife', place:'Recife',
-    dateBadge:'24 e 30 OUT', dateFull:'24 e 30 de outubro de 2026', price:'LINK DE DESCONTO:',
+    dateBadge:'24 e 31 OUT', dateFull:'24 e 31 de outubro de 2026', price:'LINK DE DESCONTO:',
     tags:[ 'barchef' ], fallbackClass:'event-barchef',
     offer:'5% OFF',
-    url:'https://www.sympla.com.br/evento/sambinha-do-barcha-2-anos/3583709?d=TicketX'
+    url:'https://www.sympla.com.br/evento/sambinha-do-barcha-2-anos/3583709?d=TicketX',
+    horario:'A partir das 17h',
+    endereco:'Travessa do Amorim, 75, Recife Antigo (Mirante do Paço)',
+    lineup:{ '24/10': ['Lipe Lucena', 'Felipe Farra', 'Vilx', 'De Cara com o Samba', 'Soundsbymaul', 'Mau Lopes'], '31/10': ['Nuzio Medeiros', 'Math Gomes', 'Roginho', 'Sambarrasta', 'Soundsbymaul', 'Mau Lopes'] },
+    info:'Samba do Barcha, edição especial de 2 anos. Tem ingresso para os dois dias juntos (casadinha).'
   },
 {
     slug:'vaquejada-caruaru', name:'Vaquejada Caruaru', place:'Caruaru',
     dateBadge:'31 OUT', dateFull:'31 de outubro de 2026', price:'VENDAS SEM TAXA:',
     tags:[ 'vaquejada' ], fallbackClass:'event-vaq',
     offer:null,
-    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20da%20Vaquejada%20de%20Caruaru!%20'
+    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20da%20Vaquejada%20de%20Caruaru!%20',
+    endereco:'Parque Fernando Lucena, Caruaru',
+    lineup:['Rey Vaqueiro', 'Wesley Safadão', 'Natanzinho Lima']
   },
    {
     slug:'vaquejada-garanhuns', name:'Vaquejada Garanhuns', place:'Garanhuns',
     dateBadge:'31 OUT', dateFull:'31 de outubro de 2026', price:'VENDAS SEM TAXA:',
     tags:[ 'vaquejada' ], fallbackClass:'event-vaq',
     offer:null,
-    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20da%20Vaquejada%20de%20Garanhuns!%20'
+    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20da%20Vaquejada%20de%20Garanhuns!%20',
+    endereco:'Parque Acauã, Garanhuns',
+    lineup:['Henrique & Juliano', 'Grelo', 'Mano Walter', 'Patrick Costa']
   },
   {
     slug:'bikini-memories', name:'Bikini Memories', place:'Maracaípe',
     dateBadge:'20 E 21 NOV', dateFull:'20 e 21 de novembro de 2026', price: 'LINK DE DESCONTO:',
     tags:['carvalheira'], fallbackClass:'event-bikini',
     offer:'5% OFF',
-    url:'https://www.sympla.com.br/evento/bikini-memories-2026/3578485?d=TICKETX'
+    url:'https://www.sympla.com.br/evento/bikini-memories-2026/3578485?d=TICKETX',
+    horario:'A partir das 16h',
+    endereco:'Praia de Maracaípe, Ipojuca',
+    lineup:{ '20/11 · Bololô': ['Felipe Amorim', 'Math Gomes', 'Lipe Napoli', 'Vilx'], '21/11 · Borogodó': ['Nattan', 'Zé Vaqueiro', 'Sambarrasta', 'Mau Lopes'] },
+    info:'Proibida a entrada de menores de 18 anos.'
   },
   {
     slug:'reveillon-amore', name:'Réveillon Amore', place:'Praia de Maracaípe',
     dateBadge:'27–31 DEZ', dateFull:'27 a 31 de dezembro de 2026', price:'LINK DE DESCONTO:',
     tags:['reveillon'], fallbackClass:'event-amore',
     offer:'5% OFF',
-    url:'https://www.sympla.com.br/evento/reveillon-amore-2027/3390641?d=MILTONV'
+    url:'https://www.sympla.com.br/evento/reveillon-amore-2027/3390641?d=MILTONV',
+    endereco:'Arena Amoré, Praia de Maracaípe, Ipojuca (ao lado da pousada Xalés de Maracaípe)',
+    lineup:['Ivete Sangalo', 'Nattan', 'Luan Santana', 'Pedro Sampaio', 'João Gomes', 'Menos É Mais', 'Léo Santana', 'Xand Avião', 'Matheus & Kauan', 'Belo', 'Dennis', 'Henry Freitas', 'Léo Foguete', 'Felipe Amorim', 'Timbalada', 'Matheus Fernandes', 'Tília', 'Math Gomes', 'e mais atrações'],
+    info:'Pacotes: 5 Festas Amoré, ou Festas + Moréa Beach Club.'
   },
   {
     slug:'wedo-na-praia', name:'Wedo na Praia', place:'Maracaípe',
     dateBadge:'16 JAN', dateFull:'16 de janeiro de 2027', price:'VENDAS SEM TAXA:',
     tags:[], fallbackClass:'event-wedo',
     offer:null,
-    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20do%20Wedo%20Na%20Praia%202k27!%20'
+    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20do%20Wedo%20Na%20Praia%202k27!%20',
+    endereco:'Maracaípe, Ipojuca',
+    info:'Edição de 10 anos. Line-up ainda não anunciado.'
   },
   {
     slug:'carvalheira-na-ladeira', name:'Carvalheira na Ladeira', place:'Olinda',
     dateBadge:'6–9 FEV', dateFull:'6 a 9 de fevereiro de 2027', price:'01/10 VENDAS ABERTAS:',
     tags:['carvalheira', 'carnaval'], fallbackClass:'event-carv',
     offer:'5% OFF',
-    url:'https://www.sympla.com.br/carvalheira-na-ladeira-2027__3314458?afid=109062'
+    url:'https://www.sympla.com.br/carvalheira-na-ladeira-2027__3314458?afid=109062',
+    horario:'A partir das 13h',
+    endereco:'Memorial Arcoverde, Av. Dom Hélder Câmara, Olinda',
+    info:'Open bar. Line-up ainda não anunciado. Acesso por reconhecimento facial (cadastro obrigatório). Menores de 18 só com termo assinado e acompanhados do responsável.'
   },
   {
     slug:'carnaval-boa-viagem', name:'Carnaval Boa Viagem', place:'Arena Boa Viagem',
     dateBadge:'7–9 FEV', dateFull:'7 a 9 de fevereiro de 2027', price:'Vendas sem taxa:',
     tags:['carnaval'], fallbackClass:'event-cbv',
     offer:null,
-    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20do%20CBV%202k27!'
+    url:'https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20do%20CBV%202k27!',
+    endereco:'Arena Boa Viagem, Recife',
+    lineup:{ 'Dom 7/2': ['Jorge & Mateus', 'Matheus & Kauan', 'João Gomes', 'Henry Freitas', 'Léo Foguete', 'Timbalada'], 'Seg 8/2': ['Wesley Safadão', 'Natanzinho Lima', 'Zé Neto & Cristiano', 'Rey Vaqueiro', 'Thiaguinho'], 'Ter 9/2': ['Xand Avião', 'Nattan', 'Zé Vaqueiro', 'Dennis', 'Panda', 'Eva'] }
   }
 ];
 
@@ -611,6 +783,24 @@ const SHELVES = [
   {id:'vaquejada',       label:'Vaquejada',            match: e=>e.tags.includes('vaquejada')}
 ];
 
+const brl = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+
+// bloco de preço: mostra a economia em reais quando o evento tem precoNormal
+function priceHTML(ev){
+  const normal = Number(ev.precoNormal);
+  if(!normal) return `<div class="price"> ${ev.price}</div>`;
+  const pct = ev.offer && /(\d+(?:[.,]\d+)?)\s*%/.exec(ev.offer);
+  const final = Number(ev.precoTicketX) || (pct ? normal * (1 - parseFloat(pct[1].replace(',','.'))/100) : 0);
+  if(!final || final >= normal) return `<div class="price"> ${ev.price}</div>`;
+  const setor = ev.setor ? `<small>${ev.setor}</small>` : '';
+  return `
+        <div class="price-compare">
+          <span class="price-old">Fora da TicketX: <s>${brl(normal)}</s></span>
+          <span class="price-new">${brl(final)}${setor}</span>
+          <span class="price-save">Você economiza ${brl(normal - final)}</span>
+        </div>`;
+}
+
 function eventCardHTML(ev){
   const badge = ev.offer
     ? `<span class="badge off">${ev.offer}</span>`
@@ -620,7 +810,7 @@ function eventCardHTML(ev){
   const mon = parts.pop();
   const day = parts.join(' ');
   return `
-    <article class="event-card">
+    <article class="event-card" data-slug="${ev.slug}">
       <div class="event-img ${ev.fallbackClass}">
         <img class="flyer" src="assets/events/${ev.slug}.jpg" alt="${ev.name}" onerror="this.remove()">
         <div class="date-pill"><span class="day">${day}</span><span class="mon">${mon}</span></div>
@@ -629,7 +819,8 @@ function eventCardHTML(ev){
       <div class="card-info">
         <h3 class="event-name">${ev.name}</h3>
         <div class="meta">📍 ${ev.place}</div>
-        <div class="price"> ${ev.price}</div>
+        ${priceHTML(ev)}
+        <div class="card-more">Ver detalhes ›</div>
         <div class="card-actions">
           <a class="btn-buy" target="_blank" rel="noopener" href="${ev.url}">Comprar</a>
           <a class="btn-faq" target="_blank" rel="noopener" href="https://api.whatsapp.com/send/?phone=5581991017226&text=Ol%C3%A1%2C+preciso+de+ajuda%21&type=phone_number&app_absent=0">Dúvidas</a>
@@ -693,6 +884,91 @@ function openAgenda(){
   document.body.style.overflow='hidden';
   window.scrollTo({top:0});
 }
+/* ---------- página do evento ---------- */
+const HELP_URL = 'https://api.whatsapp.com/send/?phone=5581991017226&text=Ol%C3%A1%2C+preciso+de+ajuda%21&type=phone_number&app_absent=0';
+let evLastFocus = null;
+
+function eventPageHTML(ev){
+  const badge = ev.offer ? `<span class="badge off">LINK COM ${ev.offer}</span>` : `<span class="badge">VENDAS SEM TAXA</span>`;
+  const mapa = ev.endereco || ev.place;
+  const facts = [
+    `<div class="ev-fact"><i>📅</i><div>${ev.dateFull}${ev.horario ? `<small>${ev.horario}</small>` : ''}</div></div>`,
+    `<div class="ev-fact"><i>📍</i><div>${ev.place}${ev.endereco ? `<small>${ev.endereco}</small>` : ''}
+      <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapa + ', Pernambuco')}">Abrir no mapa ›</a></div></div>`
+  ].join('');
+  const chips = list => `<div class="ev-lineup">${list.map(a=>`<span>${a}</span>`).join('')}</div>`;
+  let lineup = '';
+  if(Array.isArray(ev.lineup) && ev.lineup.length){
+    lineup = `<div class="ev-block"><h4>Line-up</h4>${chips(ev.lineup)}</div>`;
+  } else if(ev.lineup && typeof ev.lineup === 'object'){
+    lineup = Object.entries(ev.lineup).map(([dia,list])=>`<div class="ev-block"><h4>Line-up · ${dia}</h4>${chips(list)}</div>`).join('');
+  }
+  const info = ev.info ? `<div class="ev-block"><h4>Informações</h4><p>${ev.info}</p></div>` : '';
+  return `
+    <button class="ev-close" aria-label="Fechar" onclick="closeEvent()">✕</button>
+    <div class="ev-art ${ev.fallbackClass}">
+      <img class="ev-art-bg" src="assets/events/${ev.slug}.jpg" alt="" onerror="this.remove()">
+      <img class="ev-art-img" src="assets/events/${ev.slug}.jpg" alt="${ev.name}" onerror="this.remove()">
+    </div>
+    <div class="ev-body">
+      ${badge}
+      <h2 class="ev-title" id="evTitle">${ev.name}</h2>
+      <div class="ev-facts">${facts}</div>
+      ${priceHTML(ev)}
+      ${lineup}
+      ${info}
+      <div class="ev-actions">
+        <a class="btn-buy" target="_blank" rel="noopener" href="${ev.url}">Comprar ingresso</a>
+        <button type="button" onclick="copyEventLink('${ev.slug}', this)">Copiar link</button>
+        <a class="btn-faq" target="_blank" rel="noopener" href="${HELP_URL}">Dúvidas</a>
+      </div>
+    </div>`;
+}
+
+function openEvent(slug, fromHash){
+  const ev = events.find(e=>e.slug===slug);
+  if(!ev) return;
+  evLastFocus = document.activeElement;
+  document.getElementById('evSheet').innerHTML = eventPageHTML(ev);
+  document.getElementById('evModal').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+  if(!fromHash) history.replaceState(null, '', '#' + slug);
+  document.title = ev.name + ' | TicketX';
+  document.querySelector('#evSheet .ev-close').focus();
+}
+function closeEvent(){
+  const modal = document.getElementById('evModal');
+  if(modal.classList.contains('hidden')) return;
+  modal.classList.add('hidden');
+  if(document.getElementById('agendaPage').classList.contains('hidden')) document.body.style.overflow='';
+  history.replaceState(null, '', location.pathname + location.search);
+  document.title = DEFAULT_TITLE;
+  if(evLastFocus) evLastFocus.focus();
+}
+function copyEventLink(slug, btn){
+  const link = location.origin + location.pathname + '#' + slug;
+  const done = ()=>{ btn.textContent = 'Link copiado!'; setTimeout(()=>btn.textContent='Copiar link', 1800); };
+  if(navigator.clipboard) navigator.clipboard.writeText(link).then(done, ()=>prompt('Copie o link:', link));
+  else prompt('Copie o link:', link);
+}
+const DEFAULT_TITLE = document.title;
+
+// clique no card abre a página do evento (os botões Comprar/Dúvidas continuam indo direto)
+document.addEventListener('click', e=>{
+  if(e.target.closest('a,button')) return;
+  const card = e.target.closest('.event-card[data-slug]');
+  if(card) openEvent(card.dataset.slug);
+});
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeEvent(); });
+
+// link direto: ticketxco.com.br/#barchef abre o evento
+function openFromHash(){
+  const slug = decodeURIComponent(location.hash.slice(1));
+  if(events.some(e=>e.slug===slug)) openEvent(slug, true);
+}
+window.addEventListener('hashchange', openFromHash);
+openFromHash();
+
 function closeAgenda(){
   document.getElementById('agendaPage').classList.add('hidden');
   document.body.style.overflow='';
@@ -722,7 +998,7 @@ window.addEventListener('scroll', ()=>{
 }, {passive:true});
 
 const revealTargets = document.querySelectorAll(
-  '.section-head, .benefit, .vip-box, .insta-card, .faq details, .event-shelf, .cat-nav'
+  '.section-head, .benefit, .trust-stat, .review, .how-buy, .vip-box, .insta-card, .faq details, .event-shelf, .cat-nav'
 );
 revealTargets.forEach(el => el.classList.add('reveal'));
 
