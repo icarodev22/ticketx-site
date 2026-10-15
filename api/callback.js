@@ -18,7 +18,24 @@ function pagina(res, status, mensagem, origem) {
 <script>
 (function () {
   var msg = ${corpo}, aceitas = ${JSON.stringify(variantes(origem))};
-  if (!window.opener) return;
+  /* celular: a janela de login às vezes perde o vínculo com o painel
+     (abre em outra aba ou pelo app do GitHub). Aí o login é salvo direto
+     neste navegador e a pessoa volta para o painel já conectada. */
+  if (!window.opener) {
+    var pre = 'authorization:github:success:';
+    if (typeof msg === 'string' && msg.indexOf(pre) === 0) {
+      try {
+        var dados = JSON.parse(msg.slice(pre.length));
+        localStorage.setItem('decap-cms-user', JSON.stringify({ token: dados.token, backendName: 'github' }));
+        location.replace('/admin/');
+      } catch (e) {
+        document.body.textContent = 'Não consegui concluir o login neste navegador. Abra o painel no Chrome e tente de novo.';
+      }
+    } else if (typeof msg === 'string') {
+      document.body.textContent = 'Erro no login. Volte ao painel e tente de novo.';
+    }
+    return;
+  }
   window.addEventListener('message', function ok(e) {
     if (aceitas.indexOf(e.origin) < 0) return;
     window.removeEventListener('message', ok);
