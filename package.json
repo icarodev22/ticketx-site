@@ -1,0 +1,12 @@
+{
+  "name": "ticketx-site",
+  "private": true,
+  "type": "module",
+  "description": "Site da TicketX (ticketxco.com.br). HTML/CSS/JS estático gerado a partir de data/eventos.js.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs && npx --yes http-server . -p 8080 -c-1",
+    "test": "node scripts/build.mjs && node tests/site.test.mjs"
+  },
+  "engines": { "node": ">=18" }
+}
