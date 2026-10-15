@@ -124,12 +124,16 @@ const I = {
   ext: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
 };
 const EXT = 'target="_blank" rel="noopener noreferrer"';
+/* celular: carrossel de destaques e filtros compactos. Ficam embutidos no HTML
+   (e não em css/site.css e js/) para funcionar trocando só o index.html. */
+const CELULAR_CSS = `<style>${fs.readFileSync(arq('scripts/celular/celular.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s*\n\s*/g, '')}</style>`;
+const CARROSSEL_JS = ['carrossel.js', 'rotativo.js'].map(f => `<script type="module">\n${fs.readFileSync(arq('scripts/celular/' + f), 'utf8').replace(/<\/script/gi, '<\\/script')}</script>`).join('\n');
 const NOVA_ABA = '<span class="sr-only"> (abre em nova aba)</span>';
 
-/* script do <head>: decide se mostra a abertura e trata imagens quebradas desde o início */
-const HEAD_JS = `(function(d){var h=d.documentElement;h.classList.add('js');try{if(sessionStorage.getItem('tx-intro'))h.classList.add('no-intro')}catch(e){}d.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='IMG'){var p=t.closest('[data-fallback]');if(p)p.classList.add('img-failed');else t.style.visibility='hidden'}},true)})(document);`;
+/* script do <head>: decide se mostra a abertura (nunca no celular, para abrir mais rápido) e trata imagens quebradas desde o início */
+const HEAD_JS = `(function(d){var h=d.documentElement;h.classList.add('js');try{if(sessionStorage.getItem('tx-intro')||matchMedia('(max-width:767px)').matches)h.classList.add('no-intro')}catch(e){}d.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='IMG'){var p=t.closest('[data-fallback]');if(p)p.classList.add('img-failed');else t.style.visibility='hidden'}},true)})(document);`;
 
-function layout({ title, description, canonical, og = '/assets/brand/og-share.jpg', ogAlt = 'TicketX: ingressos das melhores festas de Pernambuco', current = '', main, bodyClass = '', headExtra = '', jsonld = [], scripts = ['/js/site.js'], noindex = false, preload = '' }) {
+function layout({ title, description, canonical, og = '/assets/brand/og-share.jpg', ogAlt = 'TicketX: ingressos das melhores festas de Pernambuco', current = '', main, bodyClass = '', headExtra = '', jsonld = [], scripts = ['/js/site.js'], noindex = false, preload = '', bodyEnd = '' }) {
   const abs = u => SITE.url + u;
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -176,6 +180,7 @@ ${footer()}
 <a class="fab" href="${esc(SITE.ajuda)}" ${EXT} aria-label="Falar com a TicketX no WhatsApp (abre em nova aba)">${I.wa}<span>Ajuda</span></a>
 <div class="toast" role="status" aria-live="polite"></div>
 ${scripts.map(s => `<script type="module" src="${s}"></script>`).join('\n')}
+${bodyEnd}
 </body>
 </html>
 `;
@@ -268,8 +273,10 @@ function dadosCliente() {
 function filtrosHTML(modo) {
   const comAtivos = CATEGORIAS.filter(c => ativos.some(e => e.categorias.includes(c.id)));
   const cidades = [...new Set(ativos.map(e => e.cidade))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  const chips = [`<button type="button" class="chip" data-cat="" aria-pressed="true">Todos <small>${ativos.length}</small></button>`]
-    .concat(comAtivos.map(c => `<button type="button" class="chip" data-cat="${c.id}" aria-pressed="false">${esc(c.nome)} <small>${ativos.filter(e => e.categorias.includes(c.id)).length}</small></button>`));
+  // no celular (CSS): só "Todos os eventos" e as categorias marcadas com celular:true, em versão compacta
+  const rotulo = (normal, celular) => celular && celular !== normal ? `<span class="chip-pc">${esc(normal)}</span><span class="chip-cel">${esc(celular)}</span>` : esc(normal);
+  const chips = [`<button type="button" class="chip chip-todos" data-cat="" aria-pressed="true">${rotulo('Todos', 'Todos os eventos')} <small>${ativos.length}</small></button>`]
+    .concat(comAtivos.map(c => `<button type="button" class="chip${c.celular ? ' chip-mobile' : ''}" data-cat="${c.id}" aria-pressed="false">${rotulo(c.nome, c.nomeCurto)} <small>${ativos.filter(e => e.categorias.includes(c.id)).length}</small></button>`));
   return `<form class="filters" role="search" data-filtros="${modo}" onsubmit="return false">
   <div class="filters-row">
     <div class="search">${I.search}<label class="sr-only" for="busca-${modo}">Buscar evento, artista, cidade ou local</label><input id="busca-${modo}" type="search" name="q" placeholder="Buscar festa, artista ou cidade" autocomplete="off" enterkeyhint="search"></div>
@@ -280,9 +287,9 @@ function filtrosHTML(modo) {
 </form>`;
 }
 
-function prateleira(id, titulo, lista, { sub = '' } = {}) {
+function prateleira(id, titulo, lista, { sub = '', rotativo = false } = {}) {
   if (!lista.length) return '';
-  return `<section class="shelf" aria-labelledby="sh-${id}">
+  return `<section class="shelf"${rotativo ? ' data-rotativo' : ''} aria-labelledby="sh-${id}">
   <div class="shelf-head">
     <h3 id="sh-${id}">${esc(titulo)}${sub ? ` <small>${esc(sub)}</small>` : ''}</h3>
     <div class="shelf-arrows"><button type="button" data-dir="-1" aria-label="Ver eventos anteriores em ${esc(titulo)}">${I.left}</button><button type="button" data-dir="1" aria-label="Ver próximos eventos em ${esc(titulo)}">${I.right}</button></div>
@@ -291,13 +298,8 @@ function prateleira(id, titulo, lista, { sub = '' } = {}) {
 </section>`;
 }
 function prateleirasHome() {
-  const out = [prateleira('proximos', 'Próximos eventos', ativos, { sub: `${ativos.length} na agenda` })];
-  for (const c of CATEGORIAS) {
-    // só categorias com 3+ eventos ganham fileira própria (as demais ficam nos filtros)
-    const l = ativos.filter(e => e.categorias.includes(c.id));
-    if (l.length >= 3) out.push(prateleira(c.id, c.nome, fixadosPrimeiro(l)));
-  }
-  return out.join('\n');
+  // uma fileira só, girando sozinha; as categorias ficam nos filtros acima
+  return prateleira('proximos', 'Próximos eventos', ativos, { sub: `${ativos.length} na agenda`, rotativo: true });
 }
 
 /* ------------------------------------------------------------------ */
@@ -324,13 +326,16 @@ function home() {
         <p class="spotlight-hint">${esc(a.dica)}</p>
       </div>
     </article>` })() : '';
+  /* carrossel de destaques do celular: só os flyers, cada um leva direto ao link de compra do evento */
+  const carrossel = fixadosPrimeiro(ativos).filter(e => e.img && acaoCompra(e, estado(e)).href).slice(0, 4);
+  const carrosselHTML = carrossel.length ? `<div class="mcar" data-carrossel aria-roledescription="carrossel" aria-label="Destaques: toque no flyer para comprar">
+      <div class="mcar-track" data-trilho>${carrossel.map((e, i) => `<a class="mcar-slide" href="${esc(acaoCompra(e, estado(e)).href)}" ${EXT} data-slug="${e.slug}" role="group" aria-roledescription="slide" aria-label="${i + 1} de ${carrossel.length}: comprar ingresso de ${esc(e.nome)} (abre em nova aba)"><picture><source media="(min-width:768px)" srcset="${blank}"><source type="image/webp" srcset="${e.img.webp.map(([u, w]) => `${u} ${w}w`).join(', ')}" sizes="(max-width:767px) calc(100vw - 32px), 1px"><img src="${e.img.jpg}" alt="${esc(e.nome)}" width="${e.img.w}" height="${e.img.h}" loading="lazy" decoding="async"></picture></a>`).join('')}</div>
+      <div class="mcar-dots" data-pontos hidden></div>
+    </div>` : '';
   const proxHTML = proximos.length ? `<div class="next-list">${proximos.map(e => `<a class="next-item" href="/eventos/${e.slug}/">${e.img ? `<span class="next-thumb" data-fallback="">${pictureHTML(e, { sizes: '64px', alt: '' })}</span>` : '<span class="next-thumb"></span>'}<div><b>${esc(e.nome)}</b><span>${esc(dataCurta(proximaData(e, HOJE)))} · ${esc(e.cidade)}</span></div></a>`).join('')}</div>` : '';
 
   const faq = [
-    ['Como compro um ingresso?', `Abra a página do evento e toque no botão de compra. Nos eventos com <strong>link de desconto</strong>, você vai para a plataforma de venda (como a Sympla) pelo link parceiro da TicketX. Nos eventos com <strong>vendas sem taxa</strong>, abre uma conversa no WhatsApp da TicketX com o nome da festa já escrito.`],
     ['O pagamento é feito no site da TicketX?', 'Não. Este site não processa pagamentos nem pede dados de cartão. A compra acontece na plataforma de venda oficial do evento ou é combinada com a equipe da TicketX pelo WhatsApp.'],
-    ['Como funcionam os links com desconto?', 'Quando o evento mostra um selo como “Link com 5% OFF”, o desconto é aplicado pela plataforma de venda ao usar o link da TicketX. Confira sempre o valor final na tela de pagamento antes de concluir.'],
-    ['O que significa “vendas sem taxa”?', 'Nesses eventos a compra é feita direto com a equipe da TicketX pelo WhatsApp, sem taxa de serviço.'],
     ['Todos os eventos têm link da TicketX?', 'Não. Eventos sem link de compra aparecem como “Em breve” até que uma opção seja disponibilizada.'],
     ['Onde acompanho as novidades?', `No Instagram oficial <a href="${esc(SITE.instagram)}" ${EXT}>${esc(SITE.instagramUser)}${NOVA_ABA}</a> e no <a href="${esc(SITE.grupoVip)}" ${EXT}>Grupo VIP${NOVA_ABA}</a>, onde saem primeiro os avisos de novos eventos e links promocionais.`],
   ];
@@ -354,9 +359,10 @@ function home() {
 
 <div class="promo" aria-hidden="true"><div class="promo-track">${'<span>Use o Grupo <b>VIP</b> TicketX e ganhe desconto nas melhores festas</span>'.repeat(6)}</div></div>
 
-<section class="section" id="destaques" aria-labelledby="destaques-title">
+<section class="section${carrossel.length ? ' tem-carrossel' : ''}" id="destaques" aria-labelledby="destaques-title">
   <div class="wrap">
     <div class="section-head"><div><span class="kicker">Destaques</span><h2 class="h2" id="destaques-title">Não fique de fora</h2></div></div>
+    ${carrosselHTML}
     ${spot}
     ${proxHTML}
   </div>
@@ -425,8 +431,9 @@ function home() {
     current: 'inicio',
     main,
     // links antigos ticketxco.com.br/#slug continuam funcionando
-    headExtra: `<script>(function(){var s=decodeURIComponent(location.hash.slice(1));if(${slugsJs}.indexOf(s)>-1)location.replace('/eventos/'+s+'/')})();</script>\n${dadosCliente()}`,
+    headExtra: `<script>(function(){var s=decodeURIComponent(location.hash.slice(1));if(${slugsJs}.indexOf(s)>-1)location.replace('/eventos/'+s+'/')})();</script>\n${dadosCliente()}\n${CELULAR_CSS}`,
     scripts: ['/js/site.js', '/js/agenda.js'],
+    bodyEnd: CARROSSEL_JS,
     jsonld: [
       { '@context': 'https://schema.org', '@type': 'Organization', name: 'TicketX', url: SITE.url + '/', logo: SITE.url + '/assets/brand/icon-512.png', sameAs: [SITE.instagram] },
       { '@context': 'https://schema.org', '@type': 'WebSite', name: 'TicketX', url: SITE.url + '/', inLanguage: 'pt-BR' },
@@ -463,7 +470,7 @@ function agenda() {
     canonical: '/agenda/',
     current: 'agenda',
     main,
-    headExtra: dadosCliente(),
+    headExtra: `${dadosCliente()}\n${CELULAR_CSS}`,
     scripts: ['/js/site.js', '/js/agenda.js'],
     jsonld: [{
       '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

@@ -28,7 +28,7 @@
 <link rel="preload" href="/assets/fonts/poppins-800.woff2" as="font" type="font/woff2" crossorigin>
 
 <link rel="stylesheet" href="/css/site.css">
-<script>(function(d){var h=d.documentElement;h.classList.add('js');try{if(sessionStorage.getItem('tx-intro'))h.classList.add('no-intro')}catch(e){}d.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='IMG'){var p=t.closest('[data-fallback]');if(p)p.classList.add('img-failed');else t.style.visibility='hidden'}},true)})(document);</script>
+<script>(function(d){var h=d.documentElement;h.classList.add('js');try{if(sessionStorage.getItem('tx-intro')||matchMedia('(max-width:767px)').matches)h.classList.add('no-intro')}catch(e){}d.addEventListener('error',function(e){var t=e.target;if(t&&t.tagName==='IMG'){var p=t.closest('[data-fallback]');if(p)p.classList.add('img-failed');else t.style.visibility='hidden'}},true)})(document);</script>
 
 
 </head>
@@ -162,5 +162,6 @@
 <a class="fab" href="https://api.whatsapp.com/send/?phone=5581991017226&amp;text=Ol%C3%A1%2C+preciso+de+ajuda%21&amp;type=phone_number&amp;app_absent=0" target="_blank" rel="noopener noreferrer" aria-label="Falar com a TicketX no WhatsApp (abre em nova aba)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.2 14.2c-.22.62-1.29 1.19-1.78 1.24-.46.05-.9.23-3.02-.63-2.56-1.05-4.2-3.66-4.33-3.83-.13-.17-1.03-1.37-1.03-2.61 0-1.24.65-1.85.88-2.1.22-.25.5-.3.66-.3.17 0 .33 0 .48.01.15.01.36-.06.56.43.22.53.74 1.83.8 1.96.06.13.1.28.02.45-.08.17-.13.28-.25.43-.13.15-.27.34-.38.46-.13.13-.26.27-.11.53.15.26.67 1.1 1.43 1.78.98.88 1.81 1.15 2.07 1.28.26.13.41.11.56-.07.15-.17.65-.75.82-1.01.17-.26.34-.21.56-.13.22.08 1.42.67 1.66.79.24.12.4.18.46.28.06.11.06.62-.16 1.24z"/></svg><span>Ajuda</span></a>
 <div class="toast" role="status" aria-live="polite"></div>
 <script type="module" src="/js/site.js"></script>
+
 </body>
 </html>

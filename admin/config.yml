@@ -238,3 +238,5 @@ collections:
             fields:
               - { label: Nome, name: nome, widget: string, hint: 'Ex.: Réveillon' }
               - { label: Código, name: id, widget: string, pattern: ['^[a-z0-9-]+$', 'Só minúsculas, números e hífen. Ex.: reveillon'] }
+              - { label: Filtro no celular, name: celular, widget: boolean, default: false, required: false, hint: 'No celular só "Todos os eventos" e as categorias marcadas aqui aparecem como filtro.' }
+              - { label: Nome curto no celular, name: nomeCurto, widget: string, required: false, hint: 'Ex.: Carva. Vazio usa o nome normal.' }

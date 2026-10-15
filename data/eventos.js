@@ -46,7 +46,12 @@ function limpar(v) {
 }
 
 const site = lerJSON(path.join(RAIZ, 'content', 'site.json'));
-export const CATEGORIAS = (site.categorias || []).map(c => ({ id: String(c.id).trim(), nome: String(c.nome).trim() }));
+// nomeCurto e celular: rótulo e visibilidade do filtro compacto no celular
+export const CATEGORIAS = (site.categorias || []).map(c => ({
+  id: String(c.id).trim(), nome: String(c.nome).trim(),
+  ...(c.nomeCurto && String(c.nomeCurto).trim() ? { nomeCurto: String(c.nomeCurto).trim() } : {}),
+  ...(c.celular === true ? { celular: true } : {}),
+}));
 export const SITE = { fuso: 'America/Recife', ...Object.fromEntries(Object.entries(site).filter(([k]) => k !== 'categorias')) };
 
 function normalizar(slug, bruto) {

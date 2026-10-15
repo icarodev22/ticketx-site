@@ -273,6 +273,109 @@ await teste('estado pela data: depois do evento a página mostra "encerrado" e t
   await ctx.close();
 });
 
+console.log('\nCelular: carrossel de destaques e filtros compactos');
+const CEL = { viewport: { width: 390, height: 844 } };
+const comLink = ativos.filter(e => e.compra && !['esgotado', 'cancelado'].includes(estadoEvento(e, hoje)));
+await teste('carrossel: só flyers, cada um com o link de compra oficial do evento', async () => {
+  const { page, ctx, erros } = await abrir('/', CEL);
+  await page.locator('[data-carrossel]').scrollIntoViewIfNeeded();
+  assert(await page.locator('[data-carrossel]').isVisible(), 'carrossel não aparece no celular');
+  assert(!(await page.locator('#destaques .spotlight').isVisible()), 'destaque grande deveria dar lugar ao carrossel');
+  const slides = await page.locator('.mcar-slide').evaluateAll(as => as.map(a => ({ slug: a.dataset.slug, href: a.getAttribute('href'), alvo: a.target, texto: a.innerText.trim(), img: !!a.querySelector('img') })));
+  assert(slides.length === Math.min(4, comLink.filter(e => fs.existsSync(path.join(RAIZ, (e.flyer || `assets/events/${e.slug}.jpg`).replace(/^\//, '')))).length), `esperava 4 destaques, achou ${slides.length}`);
+  for (const s of slides) {
+    const ev = EVENTOS.find(e => e.slug === s.slug);
+    assert(ev && s.href === ev.compra.url, `${s.slug}: link ${s.href} diferente do cadastrado`);
+    assert(s.alvo === '_blank' && s.img && !s.texto, `${s.slug}: slide deve ser só imagem e abrir em nova aba`);
+  }
+  // passa por todos os slides e confere que as imagens carregaram
+  const n = slides.length;
+  for (let i = 0; i < n; i++) {
+    await page.locator('.mcar-dots button').nth(i).click();
+    await page.waitForTimeout(450);
+  }
+  await page.waitForLoadState('networkidle');
+  const quebradas = await page.locator('.mcar-slide img').evaluateAll(is => is.filter(i => !i.complete || !i.naturalWidth).map(i => i.alt));
+  assert(!quebradas.length, 'imagens quebradas: ' + quebradas);
+  const proporcao = await page.locator('.mcar-slide').first().evaluate(a => a.getBoundingClientRect().height / a.getBoundingClientRect().width);
+  assert(Math.abs(proporcao - 1.25) < 0.02, 'slide fora da proporção 4:5: ' + proporcao);
+  const raio = await page.locator('.mcar-slide').first().evaluate(a => parseFloat(getComputedStyle(a).borderTopLeftRadius));
+  assert(raio >= 12, 'slide sem cantos arredondados');
+  assert(!erros.length, erros.join(' | '));
+  await ctx.close();
+});
+await teste('carrossel: troca sozinho e o indicador acompanha', async () => {
+  const { page, ctx } = await abrir('/', CEL);
+  await page.locator('[data-carrossel]').scrollIntoViewIfNeeded();
+  const ativo = () => page.locator('.mcar-dots button').evaluateAll(bs => bs.findIndex(b => b.getAttribute('aria-current') === 'true'));
+  const antes = await ativo();
+  await page.waitForTimeout(5600);
+  const depois = await ativo();
+  assert(depois === (antes + 1) % (await page.locator('.mcar-slide').count()), `não girou (${antes} → ${depois})`);
+  const naTela = await page.locator('[data-trilho]').evaluate(t => { const s = t.children; return Math.round(t.scrollLeft / (s[1].offsetLeft - s[0].offsetLeft)); });
+  assert(naTela === depois, `indicador ${depois} mas slide na tela ${naTela}`);
+  await ctx.close();
+});
+await teste('carrossel: parado com "reduzir movimento"', async () => {
+  const { page, ctx } = await abrir('/', { ...CEL, reducedMotion: 'reduce' });
+  await page.locator('[data-carrossel]').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(5600);
+  assert(await page.locator('[data-trilho]').evaluate(t => t.scrollLeft) === 0, 'girou com reduzir movimento');
+  await ctx.close();
+});
+for (const url of ['/', '/agenda/']) {
+  await teste(`${url} celular: só "Todos os eventos", Carva e Praia; filtros funcionam`, async () => {
+    const { page, ctx, erros } = await abrir(url, CEL);
+    const visiveis = async () => (await page.locator('.chips .chip:visible').allInnerTexts()).map(t => t.replace(/\s+/g, ' ').trim());
+    const v = await visiveis();
+    assert(v.length === 3 && v[0].startsWith('Todos os eventos') && v[1] === 'Carva' && v[2] === 'Praia', 'chips no celular: ' + v.join(' | '));
+    const total = ativos.length;
+    for (const [rotulo, cat] of [['Carva', 'carvalheira'], ['Praia', 'praia']]) {
+      await page.locator('.chips .chip:visible', { hasText: rotulo }).click();
+      await page.waitForTimeout(150);
+      const slugs = await page.locator('[data-resultados] .card').evaluateAll(cs => cs.map(c => c.dataset.slug));
+      const esperado = ativos.filter(e => e.categorias.includes(cat)).map(e => e.slug).sort();
+      assert(JSON.stringify([...slugs].sort()) === JSON.stringify(esperado), `${rotulo}: ${slugs} ≠ ${esperado}`);
+      assert(await page.locator(`.chip[data-cat="${cat}"]`).getAttribute('aria-pressed') === 'true', `${rotulo} não ficou marcado`);
+    }
+    await page.locator('.chips .chip-todos').click();
+    await page.waitForTimeout(150);
+    if (url === '/') assert(await page.locator('[data-prateleiras]').isVisible(), 'Todos não restaurou as fileiras da home');
+    else assert((await page.locator('[data-resultados] .card').count()) === total, 'Todos não restaurou a lista completa');
+    assert(await page.locator('.chip-todos').getAttribute('aria-pressed') === 'true', 'Todos não ficou marcado');
+    assert(!erros.length, erros.join(' | '));
+    await ctx.close();
+  });
+}
+for (const [w, h] of [[1280, 900], [390, 844]]) {
+  await teste(`home ${w}px: uma fileira só ("Próximos eventos") que gira sozinha`, async () => {
+    const { page, ctx } = await abrir('/', { viewport: { width: w, height: h } });
+    assert(await page.locator('[data-prateleiras] .shelf').count() === 1, 'deveria ter só uma fileira');
+    const row = page.locator('[data-rotativo] .shelf-row');
+    assert(await row.locator('.card').count() === ativos.length, 'fileira deveria ter todos os eventos à venda');
+    await row.scrollIntoViewIfNeeded();
+    await page.mouse.move(0, 0);
+    const antes = await row.evaluate(r => r.scrollLeft);
+    await page.waitForTimeout(4800);
+    assert(await row.evaluate(r => r.scrollLeft) > antes, 'não girou');
+    await ctx.close();
+  });
+}
+for (const largura of [1280, 1024, 768]) {
+  await teste(`${largura}px: sem carrossel, destaque e filtros como antes`, async () => {
+    const { page, ctx } = await abrir('/', { viewport: { width: largura, height: 900 } });
+    await page.locator('#destaques').scrollIntoViewIfNeeded();
+    assert(!(await page.locator('[data-carrossel]').isVisible()), 'carrossel apareceu no computador/tablet');
+    assert(await page.locator('#destaques .spotlight').isVisible(), 'destaque sumiu');
+    await page.evaluate(() => scrollTo(0, document.body.scrollHeight)); await page.waitForTimeout(600);
+    const baixadas = await page.locator('.mcar-slide img').evaluateAll(is => is.filter(i => i.currentSrc && !i.currentSrc.startsWith('data:')).length);
+    assert(!baixadas, `${baixadas} imagens do carrossel baixadas fora do celular`);
+    const v = (await page.locator('.chips .chip:visible').allInnerTexts()).map(t => t.replace(/\s+/g, ' ').trim());
+    assert(v.length === (await page.locator('.chips .chip').count()) && /^Todos \d+$/.test(v[0]) && v.some(t => t.startsWith('Carvalheira')), 'chips mudaram: ' + v.join(' | '));
+    await ctx.close();
+  });
+}
+
 console.log('\nResponsividade (sem rolagem horizontal)');
 const larguras = [320, 360, 375, 390, 414, 430, 768, 1024, 1280, 1440, 1920];
 for (const url of ['/', '/agenda/', '/eventos/carvalheira-na-ladeira/', '/eventos/barchef/', '/404.html']) {

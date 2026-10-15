@@ -1,12 +1,18 @@
-Flyers dos eventos
+Como adicionar o flyer de um evento:
 
-O jeito fácil: envie o flyer pelo painel (ticketxco.com.br/admin/), no campo
-"Flyer" do evento. Ele é salvo aqui e o caminho fica gravado no evento.
+1. Salve a imagem do flyer nesta pasta (assets/events/).
+2. Nomeie o arquivo exatamente com o "slug" do evento, em minúsculas, sem acento, com hífen:
 
-Sem o painel: salve aqui (ex.: assets/events/bololo.jpg) e coloque o caminho
-no campo "flyer" de content/eventos/<slug>.json ("/assets/events/bololo.jpg").
-De preferência vertical, proporção 4:5, com pelo menos 1080 px de largura.
+   vaquejada-surubim.jpg
+   swagg.jpg
+   reveillon-amore.jpg
+   wedo-na-praia.jpg
+   carvalheira-na-ladeira.jpg
+   carnaval-boa-viagem.jpg
 
-As versões leves (pasta opt/) e a prévia do WhatsApp (assets/og/) são geradas
-sozinhas pelo "npm run build". Não edite a pasta opt/ à mão.
-Sem o flyer, o card mostra o nome do evento no lugar da imagem.
+3. Pronto — o card do site detecta a imagem sozinho e substitui o fundo colorido pelo flyer real.
+   Se o arquivo não existir, o card continua funcionando normalmente com o fundo colorido no lugar da foto.
+
+Para adicionar um evento novo:
+- Copie um objeto dentro de "const events = [...]" no index.html, ajuste os dados
+  e defina um "img" com o slug do novo evento. O card e o filtro aparecem sozinhos.

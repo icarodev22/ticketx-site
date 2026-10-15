@@ -14,6 +14,8 @@ Dicas:
 - **Categorias novas:** em **Configurações do site** → Categorias.
 - **Aviso de urgência** (ex.: "Últimos ingressos"): só quando a produção confirmar. Aparece no card e na página e some sozinho depois da data.
 - **Fotos da festa:** aparecem em "Clima da festa" na página do evento.
+- **Carrossel do celular:** todo evento à venda com flyer e link de compra entra sozinho no carrossel de destaques do celular (os fixados em Destaques primeiro). O flyer leva direto ao link de compra.
+- **Filtros no celular:** só "Todos os eventos" e as categorias marcadas como "Filtro no celular" em **Configurações do site** aparecem (hoje Carva e Praia).
 
 ## Remover um evento
 Não precisa: depois da data ele vira "Evento encerrado" sozinho e continua no histórico da agenda, sem botão de compra. Se quiser tirar mesmo, abra o evento no painel e clique em **Excluir entrada**; a página dele some na próxima publicação.

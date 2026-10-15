@@ -559,3 +559,4 @@ a.tag:hover{border-color:var(--violet-2);color:#fff}
   .intro{animation:intro-auto-out .01ms linear 6s forwards!important}
   .card:hover,.btn:hover{transform:none}
 }
+

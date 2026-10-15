@@ -10,27 +10,34 @@
   "categorias": [
     {
       "id": "carvalheira",
-      "nome": "Carvalheira"
+      "nome": "Carvalheira",
+      "nomeCurto": "Carva",
+      "celular": true
     },
     {
       "id": "vaquejada",
-      "nome": "Vaquejada"
+      "nome": "Vaquejada",
+      "celular": false
     },
     {
       "id": "samba",
-      "nome": "Samba"
+      "nome": "Samba",
+      "celular": false
     },
     {
       "id": "praia",
-      "nome": "Praia"
+      "nome": "Praia",
+      "celular": true
     },
     {
       "id": "reveillon",
-      "nome": "Réveillon"
+      "nome": "Réveillon",
+      "celular": false
     },
     {
       "id": "carnaval",
-      "nome": "Carnaval"
+      "nome": "Carnaval",
+      "celular": false
     }
   ]
 }
