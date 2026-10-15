@@ -1,0 +1,109 @@
+{
+  "nome": "Carvalheira na Ladeira",
+  "datas": [
+    "2027-02-06",
+    "2027-02-07",
+    "2027-02-08",
+    "2027-02-09"
+  ],
+  "hora": "13:00",
+  "horario": "A partir das 13h",
+  "categorias": [
+    "carvalheira",
+    "carnaval"
+  ],
+  "local": "Memorial Arcoverde",
+  "endereco": "Av. Dom Hélder Câmara",
+  "cidade": "Olinda",
+  "flyer": "/assets/events/carvalheira-na-ladeira.jpg",
+  "compra": {
+    "tipo": "desconto",
+    "url": "https://www.sympla.com.br/carvalheira-na-ladeira-2027__3314458?afid=109062",
+    "plataforma": "Sympla",
+    "desconto": "5% OFF"
+  },
+  "status": "normal",
+  "destaque": true,
+  "lineup": [
+    {
+      "dia": "Sáb 6/2",
+      "artistas": [
+        "Sean Paul",
+        "Armin Van Buuren",
+        "Jorge e Mateus",
+        "Menos É Mais",
+        "Henry Freitas",
+        "Natanzinho Lima",
+        "Dubdogz",
+        "Felipe Amorim",
+        "MC Cabelinho",
+        "Syon Trio",
+        "Eric Land",
+        "Jammil",
+        "Raí Saia Rodada"
+      ]
+    },
+    {
+      "dia": "Dom 7/2",
+      "artistas": [
+        "Anitta",
+        "Fisher",
+        "Xand Avião",
+        "Matheus e Kauan",
+        "Belo",
+        "Léo Foguete",
+        "Dilsinho",
+        "Timbalada",
+        "Wiu",
+        "Kadu Martins",
+        "Locos",
+        "Lipe Lucena"
+      ]
+    },
+    {
+      "dia": "Seg 8/2",
+      "artistas": [
+        "Pedro Sampaio",
+        "Wesley Safadão",
+        "Thiaguinho",
+        "Léo Santana",
+        "Panda",
+        "Matheus Fernandes",
+        "Cat Dealers",
+        "Priscila Senna convida Joyce Alane",
+        "Teto",
+        "Nuzio Medeiros",
+        "Math Gomes",
+        "Matheus Alves"
+      ]
+    },
+    {
+      "dia": "Ter 9/2",
+      "artistas": [
+        "Vintage Culture",
+        "Nattan",
+        "Alceu Valença",
+        "Simone Mendes",
+        "Dennis",
+        "Zé Vaqueiro",
+        "Péricles",
+        "Mari Fernandez",
+        "Banda Eva",
+        "Kevin O Chris",
+        "Rogerinho",
+        "Doozie",
+        "Ariel B"
+      ]
+    }
+  ],
+  "lineupNota": "Residentes: Korossy, DaMata e Botelho.",
+  "condicoes": [
+    "Open bar.",
+    "Compra limitada a 2 ingressos por CPF (2 pacotes ou 2 ingressos)."
+  ],
+  "regras": [
+    "Acesso por reconhecimento facial (cadastro obrigatório).",
+    "Menores de 18 anos só com termo assinado e acompanhados do responsável."
+  ],
+  "fonte": "site anterior + página da Sympla (line-up e limite por CPF) em 14/10/2026"
+}

@@ -99,6 +99,12 @@ export function proximaData(ev, hoje) {
   return ev.datas.find(d => d >= hoje) || ev.datas[ev.datas.length - 1];
 }
 
+/* aviso de urgência ("Últimos ingressos"): só enquanto o evento está à venda */
+export function avisoAtivo(ev, estado) {
+  if (!ev.aviso || !ev.aviso.titulo) return null;
+  return ['proximo', 'hoje', 'andamento', 'adiado'].includes(estado) ? ev.aviso : null;
+}
+
 /* ---------- compra ---------- */
 /* Devolve o que o botão de compra deve mostrar. href null = sem link. */
 export function acaoCompra(ev, estado) {
@@ -156,8 +162,10 @@ export function cardHTML(ev, ctx) {
   const url = `/eventos/${ev.slug}/`;
   const passado = ['encerrado', 'cancelado'].includes(estado);
   const estadoTxt = ROTULO_ESTADO[estado];
+  const aviso = avisoAtivo(ev, estado);
   const badge = estadoTxt
     ? `<span class="badge badge-${estado}">${esc(estadoTxt)}</span>`
+    : aviso ? `<span class="badge badge-aviso"><i aria-hidden="true"></i>${esc(aviso.titulo)}</span>`
     : acao.selo ? `<span class="badge badge-${acao.tipo}">${esc(acao.selo)}</span>` : '';
   const cat = ev.categorias && ev.categorias[0] ? nomeCategoria(ev.categorias[0], categorias) : '';
   const quando = estado === 'andamento' ? 'Próxima data: ' + dataCurta(proximaData(ev, hoje)) : dataPorExtenso(ev.datas);

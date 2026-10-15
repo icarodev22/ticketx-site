@@ -1,0 +1,36 @@
+{
+  "url": "https://ticketxco.com.br",
+  "nome": "TicketX",
+  "instagram": "https://www.instagram.com/ticketx.co/",
+  "instagramUser": "@ticketx.co",
+  "grupoVip": "https://chat.whatsapp.com/EDg7C8wfqli3WE1woYBWOo?mode=gi_t",
+  "whatsappNumero": "5581991017226",
+  "ajuda": "https://api.whatsapp.com/send/?phone=5581991017226&text=Ol%C3%A1%2C+preciso+de+ajuda%21&type=phone_number&app_absent=0",
+  "fuso": "America/Recife",
+  "categorias": [
+    {
+      "id": "carvalheira",
+      "nome": "Carvalheira"
+    },
+    {
+      "id": "vaquejada",
+      "nome": "Vaquejada"
+    },
+    {
+      "id": "samba",
+      "nome": "Samba"
+    },
+    {
+      "id": "praia",
+      "nome": "Praia"
+    },
+    {
+      "id": "reveillon",
+      "nome": "Réveillon"
+    },
+    {
+      "id": "carnaval",
+      "nome": "Carnaval"
+    }
+  ]
+}

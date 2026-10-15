@@ -1,11 +1,12 @@
 Flyers dos eventos
 
-1. Salve o flyer nesta pasta com o mesmo "slug" do evento em data/eventos.js:
-     assets/events/<slug>.jpg      (ex.: assets/events/bololo.jpg)
-   De preferência vertical, proporção 4:5, com pelo menos 1080 px de largura.
-2. Opcional (deixa o site mais rápido e cria a prévia do WhatsApp do evento):
-     python3 scripts/otimizar-imagens.py
-3. Rode "npm run build".
+O jeito fácil: envie o flyer pelo painel (ticketxco.com.br/admin/), no campo
+"Flyer" do evento. Ele é salvo aqui e o caminho fica gravado no evento.
 
+Sem o painel: salve aqui (ex.: assets/events/bololo.jpg) e coloque o caminho
+no campo "flyer" de content/eventos/<slug>.json ("/assets/events/bololo.jpg").
+De preferência vertical, proporção 4:5, com pelo menos 1080 px de largura.
+
+As versões leves (pasta opt/) e a prévia do WhatsApp (assets/og/) são geradas
+sozinhas pelo "npm run build". Não edite a pasta opt/ à mão.
 Sem o flyer, o card mostra o nome do evento no lugar da imagem.
-Passo a passo completo: COMO-ADICIONAR-EVENTO.md

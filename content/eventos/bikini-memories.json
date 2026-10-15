@@ -1,0 +1,55 @@
+{
+  "nome": "Bikini Memories",
+  "datas": [
+    "2026-11-20",
+    "2026-11-21"
+  ],
+  "hora": "16:00",
+  "horario": "A partir das 16h",
+  "categorias": [
+    "carvalheira",
+    "praia"
+  ],
+  "local": "Praia de Maracaípe",
+  "cidade": "Ipojuca",
+  "flyer": "/assets/events/bikini-memories.jpg",
+  "compra": {
+    "tipo": "desconto",
+    "url": "https://www.sympla.com.br/evento/bikini-memories-2026/3578485?d=TICKETX",
+    "plataforma": "Sympla",
+    "desconto": "5% OFF"
+  },
+  "status": "normal",
+  "destaque": false,
+  "lineup": [
+    {
+      "dia": "Sex 20/11 · Bololô",
+      "artistas": [
+        "Felipe Amorim",
+        "Math Gomes",
+        "Lipe Napoli",
+        "Vilx"
+      ]
+    },
+    {
+      "dia": "Sáb 21/11 · Borogodó",
+      "artistas": [
+        "Nattan",
+        "Zé Vaqueiro",
+        "Sambarrasta",
+        "Mau Lopes"
+      ]
+    }
+  ],
+  "classificacao": "Proibida a entrada de menores de 18 anos.",
+  "condicoes": [
+    "Full open bar nos dias 20 e 21/11. Comidas e bebidas são para consumo no local."
+  ],
+  "regras": [
+    "Proibida a entrada com alimentos e bebidas de qualquer natureza.",
+    "Revista na entrada.",
+    "Proibido entrar com armas, coolers, fogos de artifício e objetos cortantes ou contundentes.",
+    "Quem sair do evento não pode voltar, mesmo com pulseira ou camisa."
+  ],
+  "fonte": "site anterior + página da Sympla (open bar e regras) em 14/10/2026"
+}

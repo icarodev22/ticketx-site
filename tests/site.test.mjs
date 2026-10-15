@@ -27,7 +27,7 @@ const servidor = http.createServer((req, res) => {
 await new Promise(r => servidor.listen(0, r));
 const BASE = `http://localhost:${servidor.address().port}`;
 
-const browser = await chromium.launch(fs.existsSync('/opt/pw-browsers/chromium') ? {} : {});
+const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 let ok = 0, falhas = 0;
 async function teste(nome, fn) {
   try { await fn(); ok++; console.log('  ✔', nome); }
@@ -98,6 +98,22 @@ for (const ev of EVENTOS) {
     await ctx.close();
   });
 }
+
+await teste('aviso "Últimos ingressos" aparece no card e na página e some depois da data', async () => {
+  const ev = EVENTOS.find(e => e.aviso && ativos.includes(e));
+  if (!ev) return;
+  const { page, ctx } = await abrir('/agenda/');
+  assert((await page.locator(`.card[data-slug="${ev.slug}"] .badge-aviso`).textContent()).includes(ev.aviso.titulo), 'sem selo no card');
+  await page.goto(`${BASE}/eventos/${ev.slug}/`);
+  assert(await page.locator('[data-aviso]').isVisible(), 'sem aviso na página');
+  if (ev.fotos?.length) assert(await page.locator('.photo img').count() === ev.fotos.length, 'fotos faltando');
+  await ctx.close();
+  const depois = new Date(Date.parse(ev.datas[ev.datas.length - 1] + 'T12:00:00-03:00') + 2 * 86400000);
+  const r = await abrir(`/eventos/${ev.slug}/`, { antes: async p => { await p.clock.setFixedTime(depois); } });
+  await r.page.waitForLoadState('networkidle');
+  assert(await r.page.locator('[data-aviso]').count() === 0, 'aviso continua depois do evento');
+  await r.ctx.close();
+});
 
 console.log('\nAgenda, busca e filtros');
 await teste('agenda lista todos os eventos (ativos + encerrados)', async () => {

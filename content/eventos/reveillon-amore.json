@@ -1,0 +1,59 @@
+{
+  "nome": "Réveillon Amoré",
+  "datas": [
+    "2026-12-27",
+    "2026-12-28",
+    "2026-12-29",
+    "2026-12-30",
+    "2026-12-31"
+  ],
+  "categorias": [
+    "reveillon",
+    "carvalheira",
+    "praia"
+  ],
+  "local": "Arena Amoré",
+  "endereco": "Praia de Maracaípe (ao lado da pousada Xalés de Maracaípe)",
+  "cidade": "Ipojuca",
+  "flyer": "/assets/events/reveillon-amore.jpg",
+  "compra": {
+    "tipo": "desconto",
+    "url": "https://www.sympla.com.br/evento/reveillon-amore-2027/3390641?d=MILTONV",
+    "plataforma": "Sympla",
+    "desconto": "5% OFF"
+  },
+  "status": "normal",
+  "destaque": false,
+  "lineup": [
+    {
+      "artistas": [
+        "Ivete Sangalo",
+        "Nattan",
+        "Luan Santana",
+        "Pedro Sampaio",
+        "João Gomes",
+        "Menos É Mais",
+        "Léo Santana",
+        "Xand Avião",
+        "Matheus & Kauan",
+        "Belo",
+        "Dennis",
+        "Henry Freitas",
+        "Léo Foguete",
+        "Felipe Amorim",
+        "Timbalada",
+        "Matheus Fernandes",
+        "Tília",
+        "Math Gomes"
+      ]
+    }
+  ],
+  "lineupNota": "e mais atrações",
+  "condicoes": [
+    "Pacotes: 5 Festas Amoré, ou Festas + Moréa Beach Club.",
+    "As festas noturnas de 27 a 31/12 são open bar.",
+    "O Moréa Beach Club não é open bar.",
+    "Os ingressos não incluem hospedagem nem transfer."
+  ],
+  "fonte": "site anterior + página da Sympla (condições) em 14/10/2026"
+}

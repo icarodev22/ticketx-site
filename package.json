@@ -2,11 +2,15 @@
   "name": "ticketx-site",
   "private": true,
   "type": "module",
-  "description": "Site da TicketX (ticketxco.com.br). HTML/CSS/JS estático gerado a partir de data/eventos.js.",
+  "description": "Site da TicketX (ticketxco.com.br). HTML/CSS/JS estático gerado a partir de content/ (editado pelo painel em /admin).",
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "dev": "node scripts/build.mjs && npx --yes http-server . -p 8080 -c-1",
-    "test": "node scripts/build.mjs && node tests/site.test.mjs"
+    "build": "node scripts/otimizar-imagens.mjs && node scripts/build.mjs",
+    "dev": "npm run build && npx --yes http-server . -p 8080 -c-1",
+    "painel": "node scripts/painel-local.mjs",
+    "test": "npm run build && node tests/site.test.mjs"
+  },
+  "devDependencies": {
+    "sharp": "0.35.5"
   },
   "engines": { "node": ">=18" }
 }

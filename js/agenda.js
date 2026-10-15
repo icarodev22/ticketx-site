@@ -1,5 +1,5 @@
 /* Busca, filtros e ordenação da agenda (home e /agenda/).
-   Os dados vêm do JSON embutido na página (#tx-dados), gerado de data/eventos.js. */
+   Os dados vêm do JSON embutido na página (#tx-dados), gerado de content/ pelo build. */
 import { cardHTML, estadoEvento, proximaData, textoBusca, semAcento, hojeRecife, esc } from './render.js';
 import { iniciarPrateleiras } from './shelves.js';
 

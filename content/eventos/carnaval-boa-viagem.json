@@ -1,0 +1,54 @@
+{
+  "nome": "Carnaval Boa Viagem",
+  "datas": [
+    "2027-02-07",
+    "2027-02-08",
+    "2027-02-09"
+  ],
+  "categorias": [
+    "carnaval"
+  ],
+  "local": "Arena Boa Viagem",
+  "cidade": "Recife",
+  "flyer": "/assets/events/carnaval-boa-viagem.jpg",
+  "compra": {
+    "tipo": "whatsapp",
+    "url": "https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20do%20CBV%202k27!"
+  },
+  "status": "normal",
+  "destaque": false,
+  "lineup": [
+    {
+      "dia": "Dom 7/2",
+      "artistas": [
+        "Jorge & Mateus",
+        "Matheus & Kauan",
+        "João Gomes",
+        "Henry Freitas",
+        "Léo Foguete",
+        "Timbalada"
+      ]
+    },
+    {
+      "dia": "Seg 8/2",
+      "artistas": [
+        "Wesley Safadão",
+        "Natanzinho Lima",
+        "Zé Neto & Cristiano",
+        "Rey Vaqueiro",
+        "Thiaguinho"
+      ]
+    },
+    {
+      "dia": "Ter 9/2",
+      "artistas": [
+        "Xand Avião",
+        "Nattan",
+        "Zé Vaqueiro",
+        "Dennis",
+        "Panda",
+        "Eva"
+      ]
+    }
+  ]
+}

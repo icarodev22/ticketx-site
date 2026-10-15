@@ -1,0 +1,30 @@
+{
+  "nome": "Wedo na Praia",
+  "datas": [
+    "2027-01-16"
+  ],
+  "categorias": [
+    "praia"
+  ],
+  "local": "Maracaípe",
+  "cidade": "Ipojuca",
+  "flyer": "/assets/events/wedo-na-praia.jpg",
+  "compra": {
+    "tipo": "whatsapp",
+    "url": "https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20do%20Wedo%20Na%20Praia%202k27!%20"
+  },
+  "status": "normal",
+  "destaque": false,
+  "lineup": [
+    {
+      "artistas": [
+        "Henrique e Juliano",
+        "Rey Vaqueiro",
+        "Henry Freitas",
+        "Léo Foguete",
+        "Patrick Costa"
+      ]
+    }
+  ],
+  "descricao": "Edição de 10 anos do Wedo na Praia."
+}

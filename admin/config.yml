@@ -1,0 +1,240 @@
+# Painel da TicketX (Decap CMS). Abre em https://ticketxco.com.br/admin/
+# Cada "Publicar" vira um commit no GitHub e a Vercel publica o site em ~1 minuto.
+# Configuração única (OAuth do GitHub): veja PAINEL-CONFIGURACAO.md.
+
+locale: pt
+
+backend:
+  name: github
+  repo: icarodev22/ticketx-site   # ao vender o site: troque pelo repositório do cliente
+  branch: main
+  base_url: https://ticketxco.com.br   # domínio onde estão as funções /api/auth e /api/callback
+  auth_endpoint: api/auth/
+  commit_messages:
+    create: 'Painel: novo evento "{{slug}}" ({{author-login}})'
+    update: 'Painel: atualiza "{{slug}}" ({{author-login}})'
+    delete: 'Painel: remove "{{slug}}" ({{author-login}})'
+    uploadMedia: 'Painel: envia imagem "{{path}}" ({{author-login}})'
+    deleteMedia: 'Painel: apaga imagem "{{path}}" ({{author-login}})'
+
+# Para testar no seu computador sem login: npm run painel (veja PAINEL-CONFIGURACAO.md).
+local_backend: true
+
+site_url: https://ticketxco.com.br
+display_url: https://ticketxco.com.br
+logo_url: /assets/brand/logo.png
+
+media_folder: assets/events
+public_folder: /assets/events
+
+# nomes de arquivo e endereços sem acento nem espaço
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: '-'
+
+collections:
+  - name: eventos
+    label: Eventos
+    label_singular: Evento
+    description: 'Cada evento vira uma página em ticketxco.com.br/eventos/... e aparece na home e na agenda. Depois da data ele vira "Evento encerrado" sozinho; não precisa apagar.'
+    folder: content/eventos
+    extension: json
+    format: json
+    create: true
+    delete: true
+    identifier_field: nome
+    slug: '{{slug}}'
+    preview_path: 'eventos/{{slug}}/'
+    summary: '{{nome}} · {{cidade}}'
+    sortable_fields: ['nome', 'cidade', 'local']
+    view_filters:
+      - { label: 'Destaques', field: destaque, pattern: true }
+      - { label: 'Esgotados', field: status, pattern: esgotado }
+    editor:
+      preview: false
+    fields:
+      - label: Nome do evento
+        name: nome
+        widget: string
+        hint: 'Na primeira vez que salvar, o endereço da página é criado a partir deste nome (ex.: "Bololô Verão" vira /eventos/bololo-verao/) e não muda mais, para não quebrar links já divulgados.'
+
+      - label: Datas
+        name: datas
+        widget: list
+        min: 1
+        add_to_top: false
+        allow_add: true
+        collapsed: false
+        hint: 'Um item por dia de evento. Dias seguidos aparecem como "6 a 9 de fevereiro".'
+        field:
+          label: Dia
+          name: dia
+          widget: datetime
+          format: YYYY-MM-DD
+          date_format: DD/MM/YYYY
+          time_format: false
+          picker_utc: true
+
+      - label: Horário (texto que aparece no site)
+        name: horario
+        widget: string
+        required: false
+        hint: 'Ex.: "A partir das 22h" ou "Das 23h às 5h". Deixe vazio se não estiver confirmado.'
+
+      - label: Hora de início (para o Google)
+        name: hora
+        widget: string
+        required: false
+        pattern: ['^([01]\d|2[0-3]):[0-5]\d$', 'Use o formato HH:MM, por exemplo 22:00']
+        hint: 'Só se confirmada. Formato 22:00.'
+
+      - label: Categorias
+        name: categorias
+        widget: relation
+        collection: configuracoes
+        file: site
+        search_fields: ['categorias.*.nome']
+        display_fields: ['categorias.*.nome']
+        value_field: 'categorias.*.id'
+        multiple: true
+        min: 1
+        hint: 'A primeira é a principal. Para criar uma categoria nova, vá em Configurações do site.'
+
+      - { label: Local, name: local, widget: string, hint: 'Nome do espaço. Ex.: Cachaçaria Carvalheira' }
+      - { label: Endereço, name: endereco, widget: string, required: false, hint: 'Rua, número e bairro. Só se confirmado.' }
+      - { label: Cidade, name: cidade, widget: string, hint: 'Usada no filtro da agenda. Escreva sempre igual (ex.: Recife, Ipojuca).' }
+
+      - label: Flyer
+        name: flyer
+        widget: image
+        choose_url: false
+        hint: 'Imagem vertical, de preferência 4:5 (ex.: 1080x1350), em JPG ou PNG. As versões leves e a prévia do WhatsApp são geradas sozinhas.'
+
+      - label: Como comprar
+        name: compra
+        widget: object
+        collapsed: false
+        fields:
+          - label: Tipo de venda
+            name: tipo
+            widget: select
+            default: nenhum
+            options:
+              - { label: 'Link com desconto (Sympla etc.)', value: desconto }
+              - { label: 'Vendas sem taxa pelo WhatsApp', value: whatsapp }
+              - { label: 'Link de venda comum', value: link }
+              - { label: 'Em breve (ainda sem link)', value: nenhum }
+          - label: Link de compra
+            name: url
+            widget: string
+            required: false
+            pattern: ['^$|^https://', 'O link precisa começar com https://']
+            hint: 'Cole exatamente como recebeu: os códigos ?d= e ?afid= garantem o desconto e a comissão. Para WhatsApp use https://wa.me/55819... com o nome da festa na mensagem. Sem link o evento aparece como "Em breve".'
+          - { label: Plataforma, name: plataforma, widget: string, required: false, hint: 'Ex.: Sympla. Aparece no botão.' }
+          - { label: Desconto, name: desconto, widget: string, required: false, hint: 'Ex.: 5% OFF. Só para o tipo "Link com desconto".' }
+
+      - label: Situação
+        name: status
+        widget: select
+        default: normal
+        options:
+          - { label: 'Normal', value: normal }
+          - { label: 'Esgotado', value: esgotado }
+          - { label: 'Cancelado', value: cancelado }
+          - { label: 'Adiado', value: adiado }
+        hint: 'Só mude quando for confirmado. "Encerrado" é automático depois da data.'
+
+      - { label: Fixar em Destaques, name: destaque, widget: boolean, default: false, required: false, hint: 'Aparece fixado em Destaques e primeiro nas fileiras.' }
+
+      - label: Line-up
+        name: lineup
+        widget: list
+        required: false
+        summary: '{{fields.dia}}'
+        hint: 'Um grupo só, sem dia, para festa de um dia. Para vários dias, um grupo por dia (ex.: "Sáb 6/2").'
+        fields:
+          - { label: Dia (opcional), name: dia, widget: string, required: false }
+          - label: Artistas
+            name: artistas
+            widget: list
+            field: { label: Artista, name: artista, widget: string }
+
+      - { label: Nota do line-up, name: lineupNota, widget: string, required: false, hint: 'Texto curto depois do line-up. Ex.: "e mais atrações".' }
+      - { label: Descrição, name: descricao, widget: text, required: false, hint: 'Um parágrafo sobre o evento.' }
+      - { label: Classificação etária, name: classificacao, widget: string, required: false, hint: 'Só se confirmada. Ex.: 18 anos.' }
+
+      - label: O que está incluso / condições
+        name: condicoes
+        widget: list
+        required: false
+        hint: 'Open bar, pacotes, limite por CPF...'
+        field: { label: Item, name: item, widget: string }
+
+      - label: Regras de entrada
+        name: regras
+        widget: list
+        required: false
+        field: { label: Regra, name: regra, widget: string }
+
+      - label: Ingressos e preços
+        name: ingressos
+        widget: list
+        required: false
+        summary: '{{fields.setor}} · {{fields.lote}} · R$ {{fields.preco}}'
+        hint: 'Só valores confirmados na plataforma de venda. Sem ingressos, a página explica onde consultar os valores.'
+        fields:
+          - { label: Setor, name: setor, widget: string, hint: 'Ex.: Pista, Camarote' }
+          - { label: Lote, name: lote, widget: string, required: false, hint: 'Ex.: 1º lote' }
+          - { label: Preço (R$), name: preco, widget: number, value_type: float, min: 0, required: false, hint: 'Só o número. Ex.: 120 ou 89.90' }
+          - { label: Observação, name: obs, widget: string, required: false, hint: 'Ex.: meia-entrada' }
+
+      - label: Aviso de urgência
+        name: aviso
+        widget: object
+        required: false
+        collapsed: true
+        summary: '{{fields.titulo}}'
+        hint: 'Só quando confirmado pela produção. Aparece como selo no card e faixa na página, e some sozinho depois da data. Deixe o título vazio para não mostrar.'
+        fields:
+          - { label: Título, name: titulo, widget: string, required: false, hint: 'Ex.: Últimos ingressos' }
+          - { label: Texto, name: texto, widget: string, required: false, hint: 'Ex.: Vai esgotar a qualquer momento' }
+
+      - label: Fotos da festa
+        name: fotos
+        widget: list
+        required: false
+        summary: '{{fields.alt}}'
+        hint: 'Aparecem na seção "Clima da festa" da página do evento.'
+        fields:
+          - { label: Foto, name: arquivo, widget: image, choose_url: false, media_folder: /assets/events/fotos, public_folder: /assets/events/fotos }
+          - { label: Descrição da foto, name: alt, widget: string, hint: 'Para quem usa leitor de tela. Ex.: Público curtindo o Bololô em frente ao letreiro neon' }
+          - { label: Legenda, name: legenda, widget: string, required: false }
+
+      - { label: Anotação interna, name: fonte, widget: string, required: false, hint: 'De onde veio a informação. Não aparece no site.' }
+
+  - name: configuracoes
+    label: Configurações do site
+    editor:
+      preview: false
+    files:
+      - name: site
+        label: Contatos e categorias
+        file: content/site.json
+        fields:
+          - { label: Nome do site, name: nome, widget: string }
+          - { label: Endereço do site, name: url, widget: string, pattern: ['^https://[^/]+$', 'Ex.: https://ticketxco.com.br (sem barra no final)'] }
+          - { label: Instagram (link), name: instagram, widget: string }
+          - { label: Instagram (@usuário), name: instagramUser, widget: string }
+          - { label: Grupo VIP do WhatsApp (link), name: grupoVip, widget: string }
+          - { label: Número do WhatsApp, name: whatsappNumero, widget: string, pattern: ['^\d{12,13}$', 'Só números, com 55 e DDD. Ex.: 5581991017226'] }
+          - { label: Link de ajuda no WhatsApp, name: ajuda, widget: string }
+          - { label: Fuso horário, name: fuso, widget: hidden, default: America/Recife }
+          - label: Categorias
+            name: categorias
+            widget: list
+            summary: '{{fields.nome}}'
+            hint: 'O código é o que fica gravado nos eventos: não mude o código de uma categoria que já está em uso.'
+            fields:
+              - { label: Nome, name: nome, widget: string, hint: 'Ex.: Réveillon' }
+              - { label: Código, name: id, widget: string, pattern: ['^[a-z0-9-]+$', 'Só minúsculas, números e hífen. Ex.: reveillon'] }

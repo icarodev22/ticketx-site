@@ -1,0 +1,27 @@
+{
+  "nome": "Vaquejada Caruaru",
+  "datas": [
+    "2026-10-31"
+  ],
+  "categorias": [
+    "vaquejada"
+  ],
+  "local": "Parque Fernando Lucena",
+  "cidade": "Caruaru",
+  "flyer": "/assets/events/vaquejada-caruaru.jpg",
+  "compra": {
+    "tipo": "whatsapp",
+    "url": "https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20da%20Vaquejada%20de%20Caruaru!%20"
+  },
+  "status": "normal",
+  "destaque": false,
+  "lineup": [
+    {
+      "artistas": [
+        "Rey Vaqueiro",
+        "Wesley Safadão",
+        "Natanzinho Lima"
+      ]
+    }
+  ]
+}

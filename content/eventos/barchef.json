@@ -1,0 +1,52 @@
+{
+  "nome": "Barchef Recife",
+  "datas": [
+    "2026-10-24",
+    "2026-10-31"
+  ],
+  "hora": "17:00",
+  "horario": "A partir das 17h",
+  "categorias": [
+    "samba"
+  ],
+  "local": "Mirante do Paço",
+  "endereco": "Travessa do Amorim, 75, Recife Antigo",
+  "cidade": "Recife",
+  "flyer": "/assets/events/barchef.jpg",
+  "compra": {
+    "tipo": "desconto",
+    "url": "https://www.sympla.com.br/evento/sambinha-do-barcha-2-anos/3583709?d=TicketX",
+    "plataforma": "Sympla",
+    "desconto": "5% OFF"
+  },
+  "status": "normal",
+  "destaque": false,
+  "lineup": [
+    {
+      "dia": "Sáb 24/10",
+      "artistas": [
+        "Lipe Lucena",
+        "Felipe Farra",
+        "Vilx",
+        "De Cara com o Samba",
+        "Soundsbymaul",
+        "Mau Lopes"
+      ]
+    },
+    {
+      "dia": "Sáb 31/10",
+      "artistas": [
+        "Nuzio Medeiros",
+        "Math Gomes",
+        "Roginho",
+        "Sambarrasta",
+        "Soundsbymaul",
+        "Mau Lopes"
+      ]
+    }
+  ],
+  "descricao": "Samba do Barcha, edição especial de 2 anos, em duas datas com line-ups diferentes.",
+  "condicoes": [
+    "Tem ingresso para os dois dias juntos (casadinha)."
+  ]
+}

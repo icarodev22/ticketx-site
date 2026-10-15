@@ -1,4 +1,4 @@
-/* Gera o site estático a partir de data/eventos.js.
+/* Gera o site estático a partir de content/ (lido por data/eventos.js).
    Uso: npm run build   (ou: node scripts/build.mjs)
    Gera: index.html, agenda/index.html, eventos/<slug>/index.html,
          404.html, sitemap.xml, robots.txt, site.webmanifest
@@ -6,10 +6,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EVENTOS, CATEGORIAS, SITE } from '../data/eventos.js';
+import { EVENTOS, CATEGORIAS, SITE, AVISOS_DADOS } from '../data/eventos.js';
 import {
   esc, urlSegura, hojeRecife, dataPorExtenso, diasDaSemana, estadoEvento, ROTULO_ESTADO, acaoCompra,
-  proximaData, nomeCategoria, artistas, pictureHTML, cardHTML, botaoCompraHTML, dataCurta,
+  proximaData, nomeCategoria, artistas, pictureHTML, avisoAtivo, cardHTML, botaoCompraHTML, dataCurta,
 } from '../js/render.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -25,7 +25,9 @@ const escrever = (p, conteudo) => {
 /* ------------------------------------------------------------------ */
 /* 1. VALIDAÇÃO DOS DADOS: o build para se algo estiver errado          */
 /* ------------------------------------------------------------------ */
-const erros = [], avisos = [];
+/* flyer: o painel grava o caminho em "flyer"; sem ele vale assets/events/<slug>.jpg */
+const flyerDe = ev => (ev.flyer || `assets/events/${ev.slug}.jpg`).replace(/^\//, '');
+const erros = [], avisos = [...AVISOS_DADOS];
 const slugs = new Set();
 const catIds = new Set(CATEGORIAS.map(c => c.id));
 for (const [i, ev] of EVENTOS.entries()) {
@@ -57,7 +59,12 @@ for (const [i, ev] of EVENTOS.entries()) {
     if (!t.setor) erros.push(`${q}: ingresso sem setor.`);
     if (t.preco != null && !(typeof t.preco === 'number' && t.preco >= 0)) erros.push(`${q}: preço do ingresso "${t.setor}" precisa ser número (ex.: 120 ou 89.9).`);
   }
-  if (!existe(`assets/events/${ev.slug}.jpg`)) avisos.push(`${q}: flyer assets/events/${ev.slug}.jpg não encontrado (o card mostra o nome no lugar).`);
+  if (ev.aviso && (typeof ev.aviso.titulo !== 'string' || !ev.aviso.titulo.trim())) erros.push(`${q}: aviso precisa de "titulo".`);
+  for (const f of ev.fotos || []) {
+    if (!f.arquivo || !existe(`assets/events/fotos/${f.arquivo}`)) erros.push(`${q}: foto assets/events/fotos/${f?.arquivo} não encontrada.`);
+    if (!f.alt) erros.push(`${q}: foto ${f?.arquivo} sem "alt" (descrição da imagem).`);
+  }
+  if (!existe(flyerDe(ev))) avisos.push(`${q}: flyer ${flyerDe(ev)} não encontrado (o card mostra o nome no lugar).`);
 }
 if (erros.length) {
   console.error('\n✖ Corrija antes de publicar:\n  - ' + erros.join('\n  - ') + '\n');
@@ -66,16 +73,17 @@ if (erros.length) {
 
 /* imagens: usa as versões otimizadas quando existem */
 for (const ev of EVENTOS) {
-  const base = `assets/events/${ev.slug}.jpg`;
+  const base = flyerDe(ev);
   if (!existe(base)) { ev.img = null; continue; }
   const webp = [480, 640, 960].filter(w => existe(`assets/events/opt/${ev.slug}-${w}.webp`)).map(w => [`/assets/events/opt/${ev.slug}-${w}.webp`, w]);
-  const jpg = existe(`assets/events/opt/${ev.slug}-960.jpg`) ? `/assets/events/opt/${ev.slug}-960.jpg` : `/${base}`;
-  const dim = jpegSize(arq(jpg.slice(1)));
-  ev.img = { webp, jpg, w: dim.w, h: dim.h };
+  const jpg = existe(`assets/events/opt/${ev.slug}-960.jpg`) ? `assets/events/opt/${ev.slug}-960.jpg` : base;
+  const dim = jpegSize(arq(jpg));
+  ev.img = { webp, jpg: '/' + jpg.split('/').map(encodeURIComponent).join('/'), w: dim.w, h: dim.h };
   ev.og = existe(`assets/og/${ev.slug}.jpg`) ? `/assets/og/${ev.slug}.jpg` : '/assets/brand/og-share.jpg';
 }
 function jpegSize(file) {
   const b = fs.readFileSync(file);
+  if (b[0] !== 0xff || b[1] !== 0xd8) return { w: 960, h: 1200 };
   let i = 2;
   while (i < b.length) {
     if (b[i] !== 0xff) { i++; continue; }
@@ -251,7 +259,7 @@ function footer() {
 
 /* dados enviados ao navegador para busca e filtros (só o necessário) */
 function dadosCliente() {
-  const campos = ['slug', 'nome', 'datas', 'categorias', 'local', 'endereco', 'cidade', 'compra', 'status', 'destaque', 'lineup', 'descricao', 'img'];
+  const campos = ['slug', 'nome', 'datas', 'categorias', 'local', 'endereco', 'cidade', 'compra', 'status', 'destaque', 'lineup', 'descricao', 'img', 'aviso'];
   const evs = EVENTOS.map(ev => Object.fromEntries(campos.filter(c => ev[c] != null).map(c => [c, ev[c]])));
   return `<script type="application/json" id="tx-dados">${JSON.stringify({ hojeBuild: HOJE, categorias: CATEGORIAS, eventos: evs }).replace(/</g, '\\u003c')}</script>`;
 }
@@ -484,7 +492,7 @@ function jsonLdEvento(ev, st) {
     '@context': 'https://schema.org', '@type': 'Event', name: ev.nome,
     eventStatus: status, eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: local, url: `${SITE.url}/eventos/${ev.slug}/`,
-    ...(ev.img ? { image: [SITE.url + '/assets/events/' + ev.slug + '.jpg'] } : {}),
+    ...(ev.img ? { image: [SITE.url + '/' + flyerDe(ev).split('/').map(encodeURIComponent).join('/')] } : {}),
     description: descricaoEvento(ev),
     ...(artistas(ev).length ? { performer: artistas(ev).map(n => ({ '@type': 'PerformingGroup', name: n })) } : {}),
     ...(a.href && a.tipo !== 'whatsapp' ? { offers: { '@type': 'Offer', url: a.href } } : {}),
@@ -506,6 +514,17 @@ function descricaoEvento(ev) {
   let s = partes.join(' ');
   if (s.length > 160) s = s.slice(0, 157).replace(/\s+\S*$/, '') + '...';
   return s;
+}
+
+function fotosHTML(ev) {
+  if (!ev.fotos?.length) return '';
+  const fig = f => {
+    const base = f.arquivo.replace(/\.jpe?g$/i, '');
+    const webp = [480, 640, 854, 960].filter(w => existe(`assets/events/fotos/${base}-${w}.webp`)).map(w => `/assets/events/fotos/${base}-${w}.webp ${w}w`);
+    const d = jpegSize(arq(`assets/events/fotos/${f.arquivo}`));
+    return `<figure class="photo"><picture>${webp.length ? `<source type="image/webp" srcset="${webp.join(', ')}" sizes="(max-width:860px) 92vw, 560px">` : ''}<img src="/assets/events/fotos/${esc(f.arquivo)}" alt="${esc(f.alt)}" width="${d.w}" height="${d.h}" loading="lazy" decoding="async"></picture>${f.legenda ? `<figcaption>${esc(f.legenda)}</figcaption>` : ''}</figure>`;
+  };
+  return `<section class="block" aria-labelledby="b-fotos"><h2 id="b-fotos">Clima da festa</h2><div class="photos">${ev.fotos.map(fig).join('')}</div></section>`;
 }
 
 function paginaEvento(ev) {
@@ -573,7 +592,7 @@ function paginaEvento(ev) {
   if (rel.length < 4) rel = rel.concat(ativos.filter(e => e !== ev && !rel.includes(e))).slice(0, 6);
   rel = rel.slice(0, 6);
 
-  const cliente = { slug: ev.slug, nome: ev.nome, datas: ev.datas, compra: ev.compra, status: ev.status, estadoBuild: st };
+  const cliente = { slug: ev.slug, nome: ev.nome, datas: ev.datas, compra: ev.compra, status: ev.status, aviso: ev.aviso, estadoBuild: st };
   const main = `
 <div class="ev-hero">
   ${ev.img ? `<div class="ev-bg" style="background-image:url('${esc(ev.img.webp[0]?.[0] || ev.img.jpg)}')" aria-hidden="true"></div>` : ''}
@@ -589,6 +608,7 @@ function paginaEvento(ev) {
           ${ev.horario ? `<li><span class="ico">${I.clock}</span><div><b>${esc(ev.horario)}</b><span>Horário informado pela organização</span></div></li>` : ''}
           <li><span class="ico">${I.pin}</span><div><b>${esc(ev.local)}</b><span>${esc([ev.endereco, ev.cidade + ' - PE'].filter(Boolean).join(', '))}</span><a href="${esc(mapa)}" ${EXT}>Abrir no Google Maps ${I.ext}${NOVA_ABA}</a></div></li>
         </ul>
+        ${avisoAtivo(ev, st) ? `<p class="alert-aviso" data-aviso><i aria-hidden="true"></i><span><strong>${esc(ev.aviso.titulo)}</strong>${ev.aviso.texto ? ` · ${esc(ev.aviso.texto)}` : ''}</span></p>` : ''}
         <div class="buybox" data-buybox>
           <div data-cta>${botaoCompraHTML(ev, st)}</div>
           <p class="buybox-hint" data-dica>${I.info}<span>${esc(a.dica)}</span></p>
@@ -608,6 +628,7 @@ function paginaEvento(ev) {
     <section class="block" aria-labelledby="b-ing"><h2 id="b-ing">Ingressos</h2>${ingressos}</section>
     ${info.length ? `<section class="block" aria-labelledby="b-info"><h2 id="b-info">Informações</h2><div style="display:grid;gap:14px">${info.join('')}</div></section>` : ''}
     ${lineup ? `<section class="block" aria-labelledby="b-line"><h2 id="b-line">Line-up</h2>${lineup}</section>` : ''}
+    ${fotosHTML(ev)}
     <section class="block" aria-labelledby="b-local"><h2 id="b-local">Local</h2>
       <div class="place-card"><b>${esc(ev.local)}</b><span>${esc([ev.endereco, ev.cidade + ' - PE'].filter(Boolean).join(', '))}</span><a class="btn btn-ghost btn-sm" href="${esc(mapa)}" ${EXT}>${I.pin} Ver no Google Maps${NOVA_ABA}</a></div>
     </section>
@@ -691,7 +712,7 @@ escrever('agenda/index.html', agenda());
 for (const ev of EVENTOS) escrever(`eventos/${ev.slug}/index.html`, paginaEvento(ev));
 escrever('404.html', pagina404());
 escrever('sitemap.xml', sitemap());
-escrever('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
+escrever('robots.txt', `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
 escrever('site.webmanifest', JSON.stringify({
   name: 'TicketX', short_name: 'TicketX', lang: 'pt-BR', start_url: '/', display: 'standalone',
   background_color: '#07040f', theme_color: '#07040f',

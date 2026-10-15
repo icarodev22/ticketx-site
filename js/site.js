@@ -157,6 +157,7 @@ document.addEventListener('click', async e => {
   const dica = document.querySelector('[data-dica] span');
   if (dica) dica.textContent = a.dica;
   if (!a.selo) document.querySelector('[data-selo]')?.remove();
+  if (!['proximo', 'hoje', 'andamento', 'adiado'].includes(st)) document.querySelector('[data-aviso]')?.remove();
 })();
 
 /* ---------- 5. BARRA DE COMPRA FIXA (celular) ---------- */

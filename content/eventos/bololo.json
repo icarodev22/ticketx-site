@@ -1,0 +1,38 @@
+{
+  "nome": "Bololô",
+  "datas": [
+    "2026-10-16"
+  ],
+  "hora": "23:00",
+  "horario": "Das 23h às 5h10",
+  "categorias": [
+    "carvalheira"
+  ],
+  "local": "Cachaçaria Carvalheira",
+  "endereco": "Av. Sul Governador Cid Sampaio, 4921, Imbiribeira",
+  "cidade": "Recife",
+  "flyer": "/assets/events/bololo.jpg",
+  "compra": {
+    "tipo": "desconto",
+    "url": "https://www.sympla.com.br/evento/bololo-v32026/3606265?d=TICKETX",
+    "plataforma": "Sympla",
+    "desconto": "5% OFF"
+  },
+  "status": "normal",
+  "destaque": false,
+  "lineup": [
+    {
+      "artistas": [
+        "Syon Trio",
+        "Vilx",
+        "Gordinho Bolado",
+        "Mau Lopes"
+      ]
+    }
+  ],
+  "classificacao": "18 anos. Proibida a entrada de menores, mesmo com autorização.",
+  "condicoes": [
+    "Open bar"
+  ],
+  "fonte": "site anterior + página da Sympla (endereço, horário e classificação) em 14/10/2026"
+}

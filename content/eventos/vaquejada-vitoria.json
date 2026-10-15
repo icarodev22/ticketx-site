@@ -1,0 +1,28 @@
+{
+  "nome": "Vaquejada Vitória",
+  "datas": [
+    "2026-10-10"
+  ],
+  "categorias": [
+    "vaquejada"
+  ],
+  "local": "Parque Roberta Urquiza",
+  "cidade": "Vitória de Santo Antão",
+  "flyer": "/assets/events/vaquejada-vitoria.jpg",
+  "compra": {
+    "tipo": "whatsapp",
+    "url": "https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20da%20Vaquejada%20de%20Vitoria!%20"
+  },
+  "status": "normal",
+  "destaque": false,
+  "lineup": [
+    {
+      "artistas": [
+        "Lipe Lucena",
+        "Raí Saia Rodada",
+        "Tarcísio do Acordeon",
+        "Noara Marques"
+      ]
+    }
+  ]
+}
