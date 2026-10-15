@@ -8,7 +8,7 @@ backend:
   name: github
   repo: icarodev22/ticketx-site   # ao vender o site: troque pelo repositório do cliente
   branch: main
-  base_url: https://ticketxco.com.br   # domínio onde estão as funções /api/auth e /api/callback
+  base_url: https://www.ticketxco.com.br   # domínio onde estão as funções /api/auth e /api/callback
   auth_endpoint: api/auth/
   commit_messages:
     create: 'Painel: novo evento "{{slug}}" ({{author-login}})'
