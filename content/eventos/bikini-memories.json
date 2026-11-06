@@ -21,6 +21,7 @@
   },
   "status": "normal",
   "destaque": false,
+  "ultimosIngressos": true,
   "lineup": [
     {
       "dia": "Sex 20/11 · Bololô",

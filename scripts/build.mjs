@@ -10,10 +10,13 @@ import { EVENTOS, CATEGORIAS, SITE, AVISOS_DADOS } from '../data/eventos.js';
 import {
   esc, urlSegura, hojeRecife, dataPorExtenso, diasDaSemana, estadoEvento, ROTULO_ESTADO, acaoCompra,
   proximaData, nomeCategoria, artistas, pictureHTML, avisoAtivo, cardHTML, botaoCompraHTML, dataCurta,
+  agoraRecife, selecionarDestaques, destaquesHTML, assinaturaDestaques, MAX_DESTAQUES,
 } from '../js/render.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const HOJE = process.env.TX_HOJE || hojeRecife();
+// data e hora usadas para escolher os destaques (o navegador confere de novo ao abrir)
+const AGORA = process.env.TX_AGORA || (process.env.TX_HOJE ? process.env.TX_HOJE + 'T00:00' : agoraRecife());
 const ANO = HOJE.slice(0, 4);
 const arq = p => path.join(RAIZ, p);
 const existe = p => fs.existsSync(arq(p.replace(/^\//, '')));
@@ -59,7 +62,8 @@ for (const [i, ev] of EVENTOS.entries()) {
     if (!t.setor) erros.push(`${q}: ingresso sem setor.`);
     if (t.preco != null && !(typeof t.preco === 'number' && t.preco >= 0)) erros.push(`${q}: preço do ingresso "${t.setor}" precisa ser número (ex.: 120 ou 89.9).`);
   }
-  if (ev.aviso && (typeof ev.aviso.titulo !== 'string' || !ev.aviso.titulo.trim())) erros.push(`${q}: aviso precisa de "titulo".`);
+  if (ev.ultimosIngressos != null && typeof ev.ultimosIngressos !== 'boolean') erros.push(`${q}: "ultimosIngressos" precisa ser true ou false.`);
+  if (ev.ultimosIngressos && ev.status === 'esgotado') avisos.push(`${q}: está como esgotado; a etiqueta "Últimos ingressos" não aparece.`);
   for (const f of ev.fotos || []) {
     if (!f.arquivo || !existe(`assets/events/fotos/${f.arquivo}`)) erros.push(`${q}: foto assets/events/fotos/${f?.arquivo} não encontrada.`);
     if (!f.alt) erros.push(`${q}: foto ${f?.arquivo} sem "alt" (descrição da imagem).`);
@@ -100,7 +104,6 @@ const ativos = EVENTOS.filter(ev => !['encerrado', 'cancelado'].includes(estado(
   .sort((a, b) => proximaData(a, HOJE).localeCompare(proximaData(b, HOJE)));
 const passados = EVENTOS.filter(ev => ['encerrado', 'cancelado'].includes(estado(ev)))
   .sort((a, b) => b.datas[b.datas.length - 1].localeCompare(a.datas[a.datas.length - 1]));
-const fixadosPrimeiro = lista => [...lista].sort((a, b) => (b.destaque === true) - (a.destaque === true));
 const ctx = { hoje: HOJE, categorias: CATEGORIAS };
 
 /* ------------------------------------------------------------------ */
@@ -264,7 +267,7 @@ function footer() {
 
 /* dados enviados ao navegador para busca e filtros (só o necessário) */
 function dadosCliente() {
-  const campos = ['slug', 'nome', 'datas', 'categorias', 'local', 'endereco', 'cidade', 'compra', 'status', 'destaque', 'lineup', 'descricao', 'img', 'aviso'];
+  const campos = ['slug', 'nome', 'datas', 'hora', 'horario', 'categorias', 'local', 'endereco', 'cidade', 'compra', 'status', 'destaque', 'lineup', 'descricao', 'img', 'aviso'];
   const evs = EVENTOS.map(ev => Object.fromEntries(campos.filter(c => ev[c] != null).map(c => [c, ev[c]])));
   return `<script type="application/json" id="tx-dados">${JSON.stringify({ hojeBuild: HOJE, categorias: CATEGORIAS, eventos: evs }).replace(/</g, '\\u003c')}</script>`;
 }
@@ -306,33 +309,14 @@ function prateleirasHome() {
 /* 3. HOME                                                             */
 /* ------------------------------------------------------------------ */
 function home() {
-  const fixados = ativos.filter(e => e.destaque);
-  const principal = fixados[0] || ativos[0];
-  const proximos = ativos.filter(e => e !== principal).slice(0, 3);
-  const arte = [principal, ...proximos].filter(e => e && e.img).slice(0, 3);
+  /* seção Destaques: regra única em js/render.js (selecionarDestaques) */
+  const destaques = selecionarDestaques(EVENTOS, AGORA);
+  const destaquesSel = destaques.slice(0, MAX_DESTAQUES);
+  const temCarrossel = destaquesSel.some(e => e.img && acaoCompra(e, estado(e)).href);
+  // artes do topo: os mesmos destaques (se não houver nenhum, os próximos da agenda)
+  const arte = (destaques.length ? destaques : ativos).filter(e => e.img).slice(0, 3);
   const blank = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
   const arteHTML = arte.map((e, i) => `<a href="/eventos/${e.slug}/" aria-label="${esc(e.nome)}"${i ? ' tabindex="-1"' : ''}><picture><source media="(max-width:1024px)" srcset="${blank}"><source type="image/webp" srcset="${e.img.webp.map(([u, w]) => `${u} ${w}w`).join(', ')}" sizes="300px"><img src="${e.img.jpg}" alt="" width="${e.img.w}" height="${e.img.h}" ${i === 0 ? 'fetchpriority="high"' : ''} data-critical decoding="async"></picture></a>`).join('');
-
-  const spot = principal ? (() => {
-    const st = estado(principal), a = acaoCompra(principal, st);
-    return `<article class="spotlight">
-      <a class="spotlight-media" href="/eventos/${principal.slug}/" tabindex="-1" aria-hidden="true" data-fallback="${esc(principal.nome)}">${pictureHTML(principal, { sizes: '(max-width:860px) 100vw, 340px', alt: '' })}</a>
-      <div class="spotlight-body">
-        <div class="ev-tags">${principal.destaque ? '<span class="tag" style="color:#ffd76a;border-color:rgba(255,197,66,.45)">★ Destaque TicketX</span>' : '<span class="tag">Próximo evento</span>'}${a.selo ? `<span class="tag ${a.tipo === 'desconto' ? 'tag-offer' : 'tag-free'}">${esc(a.selo)}</span>` : ''}</div>
-        <h3><a href="/eventos/${principal.slug}/">${esc(principal.nome)}</a></h3>
-        <div class="spotlight-facts"><span>${I.cal}${esc(dataPorExtenso(principal.datas))}</span><span>${I.pin}${esc(principal.local)} · ${esc(principal.cidade)}</span></div>
-        ${principal.lineup ? `<p class="lead">${esc(artistas(principal).slice(0, 6).join(', '))}${artistas(principal).length > 6 ? ' e mais' : ''}</p>` : ''}
-        <div class="spotlight-actions">${botaoCompraHTML(principal, st, { classe: '' })}<a class="btn btn-ghost" href="/eventos/${principal.slug}/">Ver detalhes</a></div>
-        <p class="spotlight-hint">${esc(a.dica)}</p>
-      </div>
-    </article>` })() : '';
-  /* carrossel de destaques do celular: só os flyers, cada um leva direto ao link de compra do evento */
-  const carrossel = fixadosPrimeiro(ativos).filter(e => e.img && acaoCompra(e, estado(e)).href).slice(0, 4);
-  const carrosselHTML = carrossel.length ? `<div class="mcar" data-carrossel aria-roledescription="carrossel" aria-label="Destaques: toque no flyer para comprar">
-      <div class="mcar-track" data-trilho>${carrossel.map((e, i) => `<a class="mcar-slide" href="${esc(acaoCompra(e, estado(e)).href)}" ${EXT} data-slug="${e.slug}" role="group" aria-roledescription="slide" aria-label="${i + 1} de ${carrossel.length}: comprar ingresso de ${esc(e.nome)} (abre em nova aba)"><picture><source media="(min-width:768px)" srcset="${blank}"><source type="image/webp" srcset="${e.img.webp.map(([u, w]) => `${u} ${w}w`).join(', ')}" sizes="(max-width:767px) calc(100vw - 32px), 1px"><img src="${e.img.jpg}" alt="${esc(e.nome)}" width="${e.img.w}" height="${e.img.h}" loading="lazy" decoding="async"></picture></a>`).join('')}</div>
-      <div class="mcar-dots" data-pontos hidden></div>
-    </div>` : '';
-  const proxHTML = proximos.length ? `<div class="next-list">${proximos.map(e => `<a class="next-item" href="/eventos/${e.slug}/">${e.img ? `<span class="next-thumb" data-fallback="">${pictureHTML(e, { sizes: '64px', alt: '' })}</span>` : '<span class="next-thumb"></span>'}<div><b>${esc(e.nome)}</b><span>${esc(dataCurta(proximaData(e, HOJE)))} · ${esc(e.cidade)}</span></div></a>`).join('')}</div>` : '';
 
   const faq = [
     ['O pagamento é feito no site da TicketX?', 'Não. Este site não processa pagamentos nem pede dados de cartão. A compra acontece na plataforma de venda oficial do evento ou é combinada com a equipe da TicketX pelo WhatsApp.'],
@@ -359,12 +343,12 @@ function home() {
 
 <div class="promo" aria-hidden="true"><div class="promo-track">${'<span>Use o Grupo <b>VIP</b> TicketX e ganhe desconto nas melhores festas</span>'.repeat(6)}</div></div>
 
-<section class="section${carrossel.length ? ' tem-carrossel' : ''}" id="destaques" aria-labelledby="destaques-title">
+<section class="section" id="destaques" aria-labelledby="destaques-title">
   <div class="wrap">
     <div class="section-head"><div><span class="kicker">Destaques</span><h2 class="h2" id="destaques-title">Não fique de fora</h2></div></div>
-    ${carrosselHTML}
-    ${spot}
-    ${proxHTML}
+    <div class="destaques${temCarrossel ? ' tem-carrossel' : ''}" data-destaques data-assinatura="${esc(assinaturaDestaques(destaques, HOJE))}">
+    ${destaquesHTML(destaques, ctx)}
+    </div>
   </div>
 </section>
 

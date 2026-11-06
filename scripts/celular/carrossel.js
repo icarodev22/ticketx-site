@@ -2,25 +2,16 @@
    Só flyers; cada um leva direto ao link de compra do evento (montado no build).
    Troca sozinho a cada 4,5 s, para quando a pessoa toca, quando sai da tela ou
    com "reduzir movimento" ligado. No computador fica escondido e parado. */
-const raiz = document.querySelector('[data-carrossel]');
-if (raiz) iniciar(raiz);
+// antes de montar: a seção Destaques é conferida com a data/hora de agora
+// (tira eventos que encerraram, cancelaram ou esgotaram depois da publicação)
+import('/js/destaques.js').then(m => m.atualizarDestaques()).catch(() => { /* fica o que veio do build */ })
+  .finally(() => { const raiz = document.querySelector('[data-carrossel]'); if (raiz) iniciar(raiz); });
 
-async function iniciar(raiz) {
+function iniciar(raiz) {
   const trilho = raiz.querySelector('[data-trilho]');
   const pontos = raiz.querySelector('[data-pontos]');
   const celular = matchMedia('(max-width:767px)');
   const reduzido = matchMedia('(prefers-reduced-motion: reduce)');
-
-  // tira eventos que encerraram/esgotaram depois que a página foi gerada
-  try {
-    const { hojeRecife, estadoEvento, acaoCompra } = await import('/js/render.js');
-    const dados = JSON.parse(document.getElementById('tx-dados')?.textContent || '{}');
-    const hoje = hojeRecife();
-    for (const a of trilho.querySelectorAll('[data-slug]')) {
-      const ev = (dados.eventos || []).find(e => e.slug === a.dataset.slug);
-      if (ev && !acaoCompra(ev, estadoEvento(ev, hoje)).href) a.remove();
-    }
-  } catch { /* sem dados: mantém o que veio do build */ }
 
   const slides = [...trilho.children];
   if (!slides.length) { raiz.closest('.tem-carrossel')?.classList.remove('tem-carrossel'); raiz.remove(); return; }

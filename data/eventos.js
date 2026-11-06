@@ -54,7 +54,7 @@ export const CATEGORIAS = (site.categorias || []).map(c => ({
 }));
 export const SITE = { fuso: 'America/Recife', ...Object.fromEntries(Object.entries(site).filter(([k]) => k !== 'categorias')) };
 
-function normalizar(slug, bruto) {
+export function normalizar(slug, bruto) {
   const ev = limpar(bruto) || {};
   const q = `content/eventos/${slug}.json`;
   const out = { slug, ...ev };
@@ -95,8 +95,17 @@ function normalizar(slug, bruto) {
     }
   }
 
-  // aviso de urgência ("Últimos ingressos"): sem título não aparece
-  if (out.aviso && !out.aviso.titulo) delete out.aviso;
+  // etiqueta "Últimos ingressos": liga/desliga em ultimosIngressos (true/false).
+  // Eventos antigos com só o objeto aviso { titulo, texto } continuam funcionando.
+  // Internamente vira ev.aviso = { titulo, texto }, que é o que o site desenha.
+  const legado = out.aviso && out.aviso.titulo ? out.aviso : null;
+  const ligado = typeof out.ultimosIngressos === 'boolean' ? out.ultimosIngressos : !!legado;
+  const texto = out.ultimosIngressosTexto || (out.aviso && out.aviso.texto);
+  delete out.aviso; delete out.ultimosIngressosTexto;
+  if (ligado) {
+    out.ultimosIngressos = true;
+    out.aviso = { titulo: (legado && legado.titulo) || 'Últimos ingressos', ...(texto ? { texto } : {}) };
+  } else delete out.ultimosIngressos;
 
   // fotos: o painel grava o caminho inteiro; o build usa o nome dentro de assets/events/fotos/
   if (Array.isArray(out.fotos)) {

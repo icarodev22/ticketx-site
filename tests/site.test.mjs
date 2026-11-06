@@ -7,8 +7,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
-import { EVENTOS } from '../data/eventos.js';
-import { estadoEvento, hojeRecife } from '../js/render.js';
+import { EVENTOS, normalizar } from '../data/eventos.js';
+import { estadoEvento, hojeRecife, agoraRecife, selecionarDestaques, podeSerDestaque, avisoAtivo, acaoCompra, cardHTML, destaquesHTML, MAX_DESTAQUES } from '../js/render.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const TIPOS = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.png': 'image/png', '.woff2': 'font/woff2', '.xml': 'application/xml', '.txt': 'text/plain', '.webmanifest': 'application/manifest+json' };
@@ -26,6 +26,7 @@ const servidor = http.createServer((req, res) => {
 });
 await new Promise(r => servidor.listen(0, r));
 const BASE = `http://localhost:${servidor.address().port}`;
+const CEL_ = { viewport: { width: 390, height: 844 } };
 
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 let ok = 0, falhas = 0;
@@ -47,6 +48,8 @@ async function abrir(url, opts = {}) {
 }
 const hoje = hojeRecife();
 const ativos = EVENTOS.filter(e => !['encerrado', 'cancelado'].includes(estadoEvento(e, hoje)));
+// categoria com eventos ativos hoje (os testes não dependem de uma festa específica)
+const CAT = ['vaquejada', 'praia', 'carvalheira', 'carnaval', 'samba', 'reveillon'].find(c => ativos.some(e => e.categorias.includes(c)));
 const paginas = ['/', '/agenda/', ...EVENTOS.map(e => `/eventos/${e.slug}/`)];
 
 console.log('\nPáginas e console');
@@ -115,6 +118,153 @@ await teste('aviso "Últimos ingressos" aparece no card e na página e some depo
   await r.ctx.close();
 });
 
+console.log('\nDestaques: regra (eventos de teste, não vão para o site)');
+{
+  // eventos fictícios só para testar a regra; nada disto é gravado no site
+  const AGORA = '2027-01-10T15:00';
+  const base = { local: 'Local teste', cidade: 'Recife', compra: { tipo: 'link', url: 'https://exemplo.com/compra' } };
+  const mk = (slug, extra) => normalizar(slug, { nome: slug, ...base, ...extra });
+  const T = {
+    carvaEncerrado: mk('t-carva-encerrado', { datas: ['2027-01-05'], categorias: ['carvalheira'] }),
+    carvaAtivo: mk('t-carva-ativo', { datas: ['2027-03-20'], categorias: ['carvalheira'] }),
+    carvaPerto: mk('t-carva-perto', { datas: ['2027-02-01'], categorias: ['carvalheira'] }),
+    carnaval: mk('t-carnaval', { datas: ['2027-01-20'], categorias: ['carnaval'] }),
+    carnavalNome: mk('t-previa', { nome: 'Prévia de Carnaval Teste', datas: ['2027-01-22'], categorias: ['samba'] }),
+    outro: mk('t-outro', { datas: ['2027-01-11'], categorias: ['samba'] }),
+    outroSemLink: mk('t-outro-sem-link', { datas: ['2027-01-12'], categorias: ['praia'], compra: { tipo: 'nenhum' } }),
+    ultimosSim: mk('t-ultimos-sim', { datas: ['2027-01-15'], categorias: ['praia'], ultimosIngressos: true }),
+    ultimosNao: mk('t-ultimos-nao', { datas: ['2027-01-16'], categorias: ['praia'], ultimosIngressos: false }),
+    esgotado: mk('t-esgotado', { datas: ['2027-01-18'], categorias: ['carvalheira'], status: 'esgotado', ultimosIngressos: true }),
+    cancelado: mk('t-cancelado', { datas: ['2027-01-19'], categorias: ['carvalheira'], status: 'cancelado' }),
+    adiado: mk('t-adiado', { datas: ['2027-01-19'], categorias: ['carnaval'], status: 'adiado' }),
+    hojeMaisTarde: mk('t-hoje-20h', { datas: ['2027-01-10'], hora: '20:00', categorias: ['carvalheira'] }),
+    hojeJaComecou: mk('t-hoje-14h', { datas: ['2027-01-10'], hora: '14:00', categorias: ['carvalheira'] }),
+    legado: mk('t-legado', { datas: ['2027-01-25'], categorias: ['praia'], aviso: { titulo: 'Últimos ingressos', texto: 'quase no fim' } }),
+  };
+  const todos = Object.values(T);
+  const lista = selecionarDestaques(todos, AGORA).map(e => e.slug);
+  const pos = slug => lista.indexOf(slug);
+  const ctxT = { hoje: AGORA.slice(0, 10), categorias: [{ id: 'carvalheira', nome: 'Carvalheira' }, { id: 'carnaval', nome: 'Carnaval' }, { id: 'samba', nome: 'Samba' }, { id: 'praia', nome: 'Praia' }] };
+
+  await teste('1. Carvalheira encerrado não aparece nos destaques', async () => {
+    assert(pos('t-carva-encerrado') === -1, lista.join());
+  });
+  await teste('2. Carvalheira ativo vem antes de todos os outros', async () => {
+    const carva = lista.filter(s => T[Object.keys(T).find(k => T[k].slug === s)].categorias.includes('carvalheira'));
+    assert(lista.slice(0, carva.length).join() === carva.join(), lista.join());
+    assert(pos('t-carva-perto') < pos('t-carva-ativo'), 'Carvalheira mais próximo deveria vir primeiro');
+  });
+  await teste('3. Carnaval vem depois da Carvalheira (categoria ou nome com "Carnaval")', async () => {
+    assert(pos('t-carnaval') > pos('t-carva-ativo') && pos('t-previa') > pos('t-carva-ativo'), lista.join());
+    assert(pos('t-carnaval') < pos('t-outro') && pos('t-previa') < pos('t-outro'), lista.join());
+  });
+  await teste('4. demais eventos vêm por último; com link de compra antes de "Em breve"', async () => {
+    assert(pos('t-outro') > pos('t-previa'), lista.join());
+    assert(pos('t-outro-sem-link') === lista.length - 1, 'sem link deveria ser o último: ' + lista.join());
+  });
+  await teste('5. ultimosIngressos: true mostra a etiqueta (card e destaques)', async () => {
+    assert(avisoAtivo(T.ultimosSim, 'proximo')?.titulo === 'Últimos ingressos', 'sem aviso');
+    assert(cardHTML(T.ultimosSim, ctxT).includes('data-ultimos'), 'card sem etiqueta');
+    assert(destaquesHTML([T.ultimosSim], ctxT).includes('data-ultimos'), 'destaque sem etiqueta');
+    assert(avisoAtivo(T.legado, 'proximo')?.texto === 'quase no fim', 'formato antigo (aviso) parou de funcionar');
+  });
+  await teste('6. ultimosIngressos: false não mostra a etiqueta', async () => {
+    assert(!T.ultimosNao.aviso && !cardHTML(T.ultimosNao, ctxT).includes('data-ultimos'), 'etiqueta indevida');
+    assert(!cardHTML(T.outro, ctxT).includes('data-ultimos'), 'etiqueta em evento sem a opção');
+  });
+  await teste('7. esgotado: sem etiqueta, sem link e fora dos destaques (mesmo com ultimosIngressos)', async () => {
+    const st = estadoEvento(T.esgotado, ctxT.hoje);
+    assert(st === 'esgotado' && !avisoAtivo(T.esgotado, st), 'etiqueta em esgotado');
+    assert(!cardHTML(T.esgotado, ctxT).includes('data-ultimos'), 'card esgotado com etiqueta');
+    assert(acaoCompra(T.esgotado, st).href === null, 'esgotado com link de compra');
+    assert(pos('t-esgotado') === -1 && pos('t-cancelado') === -1 && pos('t-adiado') === -1, lista.join());
+  });
+  await teste('8. evento que acabou de passar do horário sai dos destaques', async () => {
+    assert(pos('t-hoje-14h') === -1, 'começou às 14h e às 15h ainda está nos destaques');
+    assert(pos('t-hoje-20h') === 0, 'evento de hoje às 20h deveria estar em destaque (Carvalheira mais próximo)');
+    assert(!podeSerDestaque(T.hojeMaisTarde, '2027-01-10T20:00'), 'às 20:00 deveria sair');
+    assert(podeSerDestaque(T.hojeMaisTarde, '2027-01-10T19:59'), 'às 19:59 ainda vale');
+    const semHora = mk('t-sem-hora', { datas: ['2027-01-10'], categorias: ['praia'] });
+    assert(podeSerDestaque(semHora, '2027-01-10T23:59') && !podeSerDestaque(semHora, '2027-01-11T00:00'), 'sem hora vale até o fim do dia');
+  });
+  await teste('agoraRecife usa o fuso de Recife (UTC-3)', async () => {
+    assert(agoraRecife(new Date('2026-11-06T02:30:00Z')) === '2026-11-05T23:30', agoraRecife(new Date('2026-11-06T02:30:00Z')));
+  });
+}
+
+console.log('\nDestaques: home');
+const esperados = () => selecionarDestaques(EVENTOS, agoraRecife()).slice(0, MAX_DESTAQUES).map(e => e.slug);
+await teste('home mostra os destaques na ordem da regra e nenhum encerrado', async () => {
+  const { page, ctx } = await abrir('/');
+  await page.waitForLoadState('networkidle');
+  const vistos = await page.locator('#destaques .spotlight, #destaques .next-item').evaluateAll(xs => xs.map(x => x.dataset.slug));
+  assert(vistos.join() === esperados().join(), `${vistos} != ${esperados()}`);
+  for (const s of vistos) {
+    const ev = EVENTOS.find(e => e.slug === s);
+    assert(!['encerrado', 'cancelado', 'esgotado'].includes(estadoEvento(ev, hojeRecife())), s + ' não deveria estar em destaque');
+  }
+  await ctx.close();
+});
+await teste('página aberta depois do evento: o navegador tira o evento dos destaques sem novo build', async () => {
+  const primeiro = esperados()[0];
+  if (!primeiro) return;
+  const ev = EVENTOS.find(e => e.slug === primeiro);
+  // 1 minuto depois do início da última sessão (ou do fim do dia, sem hora)
+  const fim = ev.datas[ev.datas.length - 1] + 'T' + (ev.hora || '23:59') + ':00-03:00';
+  const depois = new Date(Date.parse(fim) + 2 * 60000);
+  for (const opts of [{}, CEL_]) {
+    const { page, ctx, erros } = await abrir('/', { ...opts, antes: async p => { await p.clock.setFixedTime(depois); } });
+    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(s => !document.querySelector(`#destaques [data-slug="${s}"]`), primeiro, { timeout: 5000 });
+    assert(!erros.length, erros.join(' | '));
+    await ctx.close();
+  }
+});
+await teste('9. etiqueta bem posicionada no celular e no computador (carrossel, destaque, cards)', async () => {
+  const alvo = esperados()[0];
+  if (!alvo) return;
+  // liga a etiqueta só nesta cópia da página (o arquivo não muda)
+  const antes = async p => {
+    await p.route(BASE + '/', async r => {
+      const resp = await r.fetch();
+      let html = await resp.text();
+      html = html.replace(/(<script type="application\/json" id="tx-dados">)([\s\S]*?)(<\/script>)/, (m, a, json, c) => {
+        const d = JSON.parse(json);
+        d.eventos.find(e => e.slug === alvo).aviso = { titulo: 'Últimos ingressos', texto: 'Teste' };
+        return a + JSON.stringify(d).replace(/</g, '\\u003c') + c;
+      });
+      await r.fulfill({ response: resp, body: html });
+    });
+  };
+  for (const [nome, opts, sel] of [['celular', CEL_, `.mcar-slide[data-slug="${alvo}"]`], ['computador', {}, `.spotlight[data-slug="${alvo}"] .spotlight-media`]]) {
+    const { page, ctx, erros } = await abrir('/', { ...opts, antes });
+    await page.locator('#destaques').scrollIntoViewIfNeeded();
+    const flag = page.locator(`${sel} [data-ultimos]`);
+    await flag.waitFor({ timeout: 5000 });
+    const [f, c] = [await flag.boundingBox(), await page.locator(sel).boundingBox()];
+    assert(f.x >= c.x && f.x + f.width <= c.x + c.width && f.y >= c.y && f.y - c.y < 30, `${nome}: etiqueta fora do topo do flyer`);
+    assert((await flag.textContent()).trim().toUpperCase() === 'ÚLTIMOS INGRESSOS', `${nome}: texto errado`);
+    const cor = await flag.evaluate(el => getComputedStyle(el).textTransform);
+    assert(cor === 'uppercase', 'etiqueta deveria estar em maiúsculas');
+    // card gerado no navegador (busca da home)
+    await page.locator('#agenda input[type=search]').fill(EVENTOS.find(e => e.slug === alvo).nome);
+    const card = page.locator(`[data-resultados] .card[data-slug="${alvo}"]`);
+    await card.waitFor({ timeout: 5000 });
+    await card.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(700); // espera a entrada suave do card terminar
+    const cf = await card.locator('[data-ultimos]').boundingBox(), cc = await card.boundingBox();
+    const data = await card.locator('.card-date').boundingBox();
+    assert(Math.abs(cf.y - cc.y) < 2 && Math.abs(cf.width - cc.width) < 3, `${nome}: faixa do card fora do topo ${JSON.stringify([cf, cc])}`);
+    assert(data.y >= cf.y + cf.height, `${nome}: selo de data por baixo da etiqueta`);
+    const corte = await card.locator('[data-ultimos]').evaluate(el => el.scrollWidth > el.clientWidth + 1);
+    assert(!corte, `${nome}: texto da etiqueta cortado`);
+    const sw = await page.evaluate(() => document.documentElement.scrollWidth);
+    assert(sw <= (opts.viewport?.width || 1280), `${nome}: rolagem horizontal`);
+    assert(!erros.length, erros.join(' | '));
+    await ctx.close();
+  }
+});
+
 console.log('\nAgenda, busca e filtros');
 await teste('agenda lista todos os eventos (ativos + encerrados)', async () => {
   const { page, ctx } = await abrir('/agenda/');
@@ -162,10 +312,10 @@ await teste('ordenação por data (mais distantes primeiro)', async () => {
 });
 await teste('home: filtro troca prateleiras por resultados e volta', async () => {
   const { page, ctx } = await abrir('/');
-  await page.locator('#agenda .chip[data-cat=vaquejada]').click();
+  await page.locator(`#agenda .chip[data-cat=${CAT}]`).click();
   assert(await page.locator('[data-prateleiras]').isHidden(), 'prateleiras continuam');
   const n = await page.locator('[data-resultados] .card').count();
-  assert(n === ativos.filter(e => e.categorias.includes('vaquejada')).length, 'contagem errada ' + n);
+  assert(n === ativos.filter(e => e.categorias.includes(CAT)).length, 'contagem errada ' + n);
   await page.locator('#agenda .chip[data-cat=""]').click();
   assert(await page.locator('[data-prateleiras]').isVisible(), 'prateleiras não voltaram');
   await ctx.close();
@@ -174,9 +324,12 @@ await teste('setas da prateleira rolam os cards', async () => {
   const { page, ctx } = await abrir('/');
   const row = page.locator('.shelf').first().locator('.shelf-row');
   await row.scrollIntoViewIfNeeded();
+  // com poucos eventos todos cabem na tela e as setas ficam escondidas: nada para rolar
+  if (await page.locator('.shelf').first().locator('.shelf-arrows').isHidden()) { await ctx.close(); return; }
   await page.locator('.shelf').first().locator('button[data-dir="1"]').click();
   await page.waitForTimeout(700);
-  assert(await row.evaluate(r => r.scrollLeft) > 50, 'não rolou');
+  // rola pelo menos 50px, ou até o fim quando sobra pouco para rolar
+  assert(await row.evaluate(r => r.scrollLeft >= Math.min(50, r.scrollWidth - r.clientWidth - 2)), 'não rolou');
   await ctx.close();
 });
 
@@ -193,12 +346,12 @@ await teste('evento inexistente mostra a página 404', async () => {
   await ctx.close();
 });
 await teste('voltar do evento para a agenda mantém o filtro', async () => {
-  const { page, ctx } = await abrir('/agenda/?categoria=vaquejada');
+  const { page, ctx } = await abrir(`/agenda/?categoria=${CAT}`);
   await page.locator('[data-resultados] .card-link').first().click();
   await page.waitForURL('**/eventos/**');
   await page.goBack();
-  await page.waitForURL('**/agenda/?categoria=vaquejada');
-  assert(await page.locator('.chip[data-cat=vaquejada]').getAttribute('aria-pressed') === 'true', 'filtro perdido');
+  await page.waitForURL(`**/agenda/?categoria=${CAT}`);
+  assert(await page.locator(`.chip[data-cat=${CAT}]`).getAttribute('aria-pressed') === 'true', 'filtro perdido');
   await ctx.close();
 });
 await teste('menu mobile abre, fecha com Esc e devolve o foco', async () => {
@@ -281,7 +434,7 @@ await teste('carrossel: só flyers, cada um com o link de compra oficial do even
   await page.locator('[data-carrossel]').scrollIntoViewIfNeeded();
   assert(await page.locator('[data-carrossel]').isVisible(), 'carrossel não aparece no celular');
   assert(!(await page.locator('#destaques .spotlight').isVisible()), 'destaque grande deveria dar lugar ao carrossel');
-  const slides = await page.locator('.mcar-slide').evaluateAll(as => as.map(a => ({ slug: a.dataset.slug, href: a.getAttribute('href'), alvo: a.target, texto: a.innerText.trim(), img: !!a.querySelector('img') })));
+  const slides = await page.locator('.mcar-slide').evaluateAll(as => as.map(a => ({ slug: a.dataset.slug, href: a.getAttribute('href'), alvo: a.target, texto: [...a.childNodes].filter(n => !(n.dataset && 'ultimos' in n.dataset)).map(n => n.textContent).join('').trim(), img: !!a.querySelector('img') })));
   assert(slides.length === Math.min(4, comLink.filter(e => fs.existsSync(path.join(RAIZ, (e.flyer || `assets/events/${e.slug}.jpg`).replace(/^\//, '')))).length), `esperava 4 destaques, achou ${slides.length}`);
   for (const s of slides) {
     const ev = EVENTOS.find(e => e.slug === s.slug);

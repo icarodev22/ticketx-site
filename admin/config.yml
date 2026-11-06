@@ -51,6 +51,7 @@ collections:
     view_filters:
       - { label: 'Destaques', field: destaque, pattern: true }
       - { label: 'Esgotados', field: status, pattern: esgotado }
+      - { label: 'Últimos ingressos', field: ultimosIngressos, pattern: true }
     editor:
       preview: false
     fields:
@@ -99,7 +100,7 @@ collections:
         value_field: 'categorias.*.id'
         multiple: true
         min: 1
-        hint: 'A primeira é a principal. Para criar uma categoria nova, vá em Configurações do site.'
+        hint: 'A primeira é a principal. Marque Carvalheira em todo evento da Carvalheira e Carnaval em festas, prévias e camarotes de Carnaval: é isso que define a ordem em Destaques (Carvalheira, depois Carnaval, depois os demais). Para criar uma categoria nova, vá em Configurações do site.'
 
       - { label: Local, name: local, widget: string, hint: 'Nome do espaço. Ex.: Cachaçaria Carvalheira' }
       - { label: Endereço, name: endereco, widget: string, required: false, hint: 'Rua, número e bairro. Só se confirmado.' }
@@ -145,7 +146,7 @@ collections:
           - { label: 'Adiado', value: adiado }
         hint: 'Só mude quando for confirmado. "Encerrado" é automático depois da data.'
 
-      - { label: Fixar em Destaques, name: destaque, widget: boolean, default: false, required: false, hint: 'Aparece fixado em Destaques e primeiro nas fileiras.' }
+      - { label: Fixar em Destaques, name: destaque, widget: boolean, default: false, required: false, hint: 'Sobe para o topo do seu grupo em Destaques (a ordem dos grupos é sempre Carvalheira, depois Carnaval, depois os demais). Encerrado, cancelado, esgotado ou adiado nunca aparece em Destaques.' }
 
       - label: Line-up
         name: lineup
@@ -189,16 +190,13 @@ collections:
           - { label: Preço (R$), name: preco, widget: number, value_type: float, min: 0, required: false, hint: 'Só o número. Ex.: 120 ou 89.90' }
           - { label: Observação, name: obs, widget: string, required: false, hint: 'Ex.: meia-entrada' }
 
-      - label: Aviso de urgência
-        name: aviso
-        widget: object
+      - label: Últimos ingressos
+        name: ultimosIngressos
+        widget: boolean
+        default: false
         required: false
-        collapsed: true
-        summary: '{{fields.titulo}}'
-        hint: 'Só quando confirmado pela produção. Aparece como selo no card e faixa na página, e some sozinho depois da data. Deixe o título vazio para não mostrar.'
-        fields:
-          - { label: Título, name: titulo, widget: string, required: false, hint: 'Ex.: Últimos ingressos' }
-          - { label: Texto, name: texto, widget: string, required: false, hint: 'Ex.: Vai esgotar a qualquer momento' }
+        hint: 'Ligue só quando a produção confirmar que está perto de esgotar. Mostra a etiqueta ÚLTIMOS INGRESSOS no card, nos Destaques e na página do evento. Some sozinha se o evento estiver esgotado, cancelado ou encerrado. Desligue quando não valer mais.'
+      - { label: Texto extra da etiqueta (opcional), name: ultimosIngressosTexto, widget: string, required: false, hint: 'Aparece na página do evento junto da etiqueta. Ex.: Lote atual quase no fim. Deixe vazio se não tiver.' }
 
       - label: Fotos da festa
         name: fotos

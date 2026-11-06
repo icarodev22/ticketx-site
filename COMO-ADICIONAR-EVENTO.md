@@ -12,9 +12,14 @@ Dicas:
 - **Endereço da página:** é criado a partir do nome na primeira vez que você salva e não muda mais, para não quebrar links já divulgados.
 - **Preços:** só preencha valores confirmados na plataforma de venda.
 - **Categorias novas:** em **Configurações do site** → Categorias.
-- **Aviso de urgência** (ex.: "Últimos ingressos"): só quando a produção confirmar. Aparece no card e na página e some sozinho depois da data.
+- **Últimos ingressos** (liga/desliga): só quando a produção confirmar que está perto de esgotar. Mostra a etiqueta ÚLTIMOS INGRESSOS no topo do card, nos Destaques, no carrossel do celular e na página do evento. Some sozinha se o evento ficar esgotado, cancelado ou encerrado. No arquivo do evento é `"ultimosIngressos": true` (ou `false`); o texto extra opcional é `"ultimosIngressosTexto"`. Eventos antigos com `"aviso": { "titulo": ... }` continuam funcionando.
 - **Fotos da festa:** aparecem em "Clima da festa" na página do evento.
-- **Carrossel do celular:** todo evento à venda com flyer e link de compra entra sozinho no carrossel de destaques do celular (os fixados em Destaques primeiro). O flyer leva direto ao link de compra.
+- **Seção Destaques (home):** escolhida sozinha, sem mexer em código, pela regra em `js/render.js` (`selecionarDestaques`), usada no build e de novo no navegador ao abrir a página:
+  1. sai quem está encerrado, cancelado, esgotado ou adiado. "Encerrado" conta o horário: com **Hora de início** preenchida, o evento sai dos Destaques quando começa a última data; sem hora, à meia-noite depois do último dia;
+  2. ordem dos grupos: **Carvalheira** (categoria Carvalheira), depois **Carnaval** (categoria Carnaval ou "Carnaval" no nome), depois os demais;
+  3. dentro de cada grupo: com link de compra antes de "Em breve", depois os marcados em **Fixar em Destaques**, depois a data mais próxima e, no empate, os com Últimos ingressos.
+  O primeiro vira o destaque grande; os 4 seguintes aparecem ao lado. Por isso marque sempre a categoria Carvalheira nos eventos da Carvalheira e Carnaval nas festas, prévias e camarotes de Carnaval.
+- **Carrossel do celular:** os mesmos destaques, na mesma ordem, que tenham flyer e link de compra (até 4). O flyer leva direto ao link de compra.
 - **Filtros no celular:** só "Todos os eventos" e as categorias marcadas como "Filtro no celular" em **Configurações do site** aparecem (hoje Carva e Praia).
 
 ## Remover um evento
