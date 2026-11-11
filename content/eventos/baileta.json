@@ -1,0 +1,19 @@
+{
+  "nome": "Baileta",
+  "datas": [
+    "2026-12-12"
+  ],
+  "categorias": [
+    "carvalheira"
+  ],
+  "flyer": "/assets/events/baileta.jpg",
+  "compra": {
+    "tipo": "desconto",
+    "url": "https://www.sympla.com.br/evento/baileta--1212/3626757?d=TICKETX",
+    "plataforma": "Sympla"
+  },
+  "status": "normal",
+  "destaque": false,
+  "descricao": "Carvalab e Aumma apresentam a Baileta. Alto astral pega.",
+  "fonte": "flyer e link enviados pelo icarodev em 10/11/2026; local e cidade ainda não informados"
+}

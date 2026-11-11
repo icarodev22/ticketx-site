@@ -48,8 +48,8 @@ for (const [i, ev] of EVENTOS.entries()) {
     if ([...ev.datas].sort().join() !== ev.datas.join()) erros.push(`${q}: as datas precisam estar em ordem.`);
   }
   if (ev.hora && !/^([01]\d|2[0-3]):[0-5]\d$/.test(ev.hora)) erros.push(`${q}: hora inválida "${ev.hora}". Use HH:MM.`);
-  if (!ev.local) erros.push(`${q}: falta o local.`);
-  if (!ev.cidade) erros.push(`${q}: falta a cidade.`);
+  if (ev.localAConfirmar) avisos.push(`${q}: sem local (vai aparecer "Local a confirmar").`);
+  if (!ev.cidade) avisos.push(`${q}: sem cidade.`);
   if (!Array.isArray(ev.categorias) || !ev.categorias.length) erros.push(`${q}: falta "categorias".`);
   else for (const c of ev.categorias) if (!catIds.has(c)) erros.push(`${q}: categoria "${c}" não existe em CATEGORIAS.`);
   if (ev.compra) {
@@ -275,7 +275,7 @@ function dadosCliente() {
 /* barra de filtros (home e agenda) */
 function filtrosHTML(modo) {
   const comAtivos = CATEGORIAS.filter(c => ativos.some(e => e.categorias.includes(c.id)));
-  const cidades = [...new Set(ativos.map(e => e.cidade))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const cidades = [...new Set(ativos.map(e => e.cidade).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
   // no celular (CSS): só "Todos os eventos" e as categorias marcadas com celular:true, em versão compacta
   const rotulo = (normal, celular) => celular && celular !== normal ? `<span class="chip-pc">${esc(normal)}</span><span class="chip-cel">${esc(celular)}</span>` : esc(normal);
   const chips = [`<button type="button" class="chip chip-todos" data-cat="" aria-pressed="true">${rotulo('Todos', 'Todos os eventos')} <small>${ativos.length}</small></button>`]
@@ -472,7 +472,7 @@ const brl = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' 
 
 function jsonLdEvento(ev, st) {
   // só gera dados estruturados com nome, data e local confirmados
-  if (!ev.nome || !ev.datas?.length || !ev.local || !ev.cidade) return [];
+  if (!ev.nome || !ev.datas?.length || ev.localAConfirmar || !ev.cidade) return [];
   const status = { cancelado: 'https://schema.org/EventCancelled', adiado: 'https://schema.org/EventPostponed' }[st] || 'https://schema.org/EventScheduled';
   const local = {
     '@type': 'Place', name: ev.local,
@@ -497,7 +497,7 @@ function jsonLdEvento(ev, st) {
 
 function descricaoEvento(ev) {
   const a = artistas(ev);
-  const partes = [`${ev.nome} em ${ev.local}, ${ev.cidade}: ${dataPorExtenso(ev.datas)}.`];
+  const partes = [`${ev.nome}${ev.localAConfirmar ? '' : ` em ${[ev.local, ev.cidade].filter(Boolean).join(', ')}`}: ${dataPorExtenso(ev.datas)}.`];
   if (a.length) partes.push(`Line-up: ${a.slice(0, 4).join(', ')}${a.length > 4 ? ' e mais' : ''}.`);
   const t = ev.compra?.tipo;
   if (t === 'desconto') partes.push(`Ingressos com link de ${ev.compra.desconto || 'desconto'} na TicketX.`);
@@ -527,7 +527,9 @@ function paginaEvento(ev) {
   const semana = diasDaSemana(ev.datas);
   const mapaQ = encodeURIComponent([ev.local, ev.endereco, ev.cidade, 'PE'].filter(Boolean).join(', '));
   const mapa = `https://www.google.com/maps/search/?api=1&query=${mapaQ}`;
-  const textoShare = `${ev.nome} · ${quando} · ${ev.local}, ${ev.cidade}. Ingressos na TicketX: ${abs}`;
+  const ondeTxt = ev.localAConfirmar ? '' : ` · ${[ev.local, ev.cidade].filter(Boolean).join(', ')}`;
+  const textoShare = `${ev.nome} · ${quando}${ondeTxt}. Ingressos na TicketX: ${abs}`;
+  const linhaLocal = ev.localAConfirmar ? 'Será divulgado pela organização' : [ev.endereco, ev.cidade && ev.cidade + ' - PE'].filter(Boolean).join(', ');
   const waShare = `https://wa.me/?text=${encodeURIComponent(textoShare)}`;
   const ajuda = `https://wa.me/${SITE.whatsappNumero}?text=${encodeURIComponent(`Olá! Tenho uma dúvida sobre o evento ${ev.nome}.`)}`;
   const cats = ev.categorias.map(c => `<a class="tag" href="/agenda/?categoria=${c}">${esc(nomeCategoria(c, CATEGORIAS))}</a>`).join('');
@@ -597,7 +599,7 @@ function paginaEvento(ev) {
         <ul class="facts" role="list">
           <li><span class="ico">${I.cal}</span><div><b>${esc(quando)}</b><span>${esc(semana)}</span></div></li>
           ${ev.horario ? `<li><span class="ico">${I.clock}</span><div><b>${esc(ev.horario)}</b><span>Horário informado pela organização</span></div></li>` : ''}
-          <li><span class="ico">${I.pin}</span><div><b>${esc(ev.local)}</b><span>${esc([ev.endereco, ev.cidade + ' - PE'].filter(Boolean).join(', '))}</span><a href="${esc(mapa)}" ${EXT}>Abrir no Google Maps ${I.ext}${NOVA_ABA}</a></div></li>
+          <li><span class="ico">${I.pin}</span><div><b>${esc(ev.local)}</b><span>${esc(linhaLocal)}</span>${ev.localAConfirmar ? '' : `<a href="${esc(mapa)}" ${EXT}>Abrir no Google Maps ${I.ext}${NOVA_ABA}</a>`}</div></li>
         </ul>
         ${avisoAtivo(ev, st) ? `<p class="alert-aviso" data-aviso><i aria-hidden="true"></i><span><strong>${esc(ev.aviso.titulo)}</strong>${ev.aviso.texto ? ` · ${esc(ev.aviso.texto)}` : ''}</span></p>` : ''}
         <div class="buybox" data-buybox>
@@ -605,7 +607,7 @@ function paginaEvento(ev) {
           <p class="buybox-hint" data-dica>${I.info}<span>${esc(a.dica)}</span></p>
         </div>
         <div class="share">
-          <button class="btn btn-ghost btn-sm" type="button" data-share data-title="${esc(ev.nome + ' | TicketX')}" data-text="${esc(`${ev.nome} · ${quando} · ${ev.local}, ${ev.cidade}`)}" data-url="${esc(abs)}">${I.share} Compartilhar</button>
+          <button class="btn btn-ghost btn-sm" type="button" data-share data-title="${esc(ev.nome + ' | TicketX')}" data-text="${esc(`${ev.nome} · ${quando}${ondeTxt}`)}" data-url="${esc(abs)}">${I.share} Compartilhar</button>
           <a class="btn btn-ghost btn-sm" href="${esc(waShare)}" ${EXT}>${I.wa} Enviar no WhatsApp${NOVA_ABA}</a>
           <button class="btn btn-ghost btn-sm" type="button" data-copy="${esc(abs)}">${I.link} Copiar link</button>
         </div>
@@ -621,7 +623,7 @@ function paginaEvento(ev) {
     ${lineup ? `<section class="block" aria-labelledby="b-line"><h2 id="b-line">Line-up</h2>${lineup}</section>` : ''}
     ${fotosHTML(ev)}
     <section class="block" aria-labelledby="b-local"><h2 id="b-local">Local</h2>
-      <div class="place-card"><b>${esc(ev.local)}</b><span>${esc([ev.endereco, ev.cidade + ' - PE'].filter(Boolean).join(', '))}</span><a class="btn btn-ghost btn-sm" href="${esc(mapa)}" ${EXT}>${I.pin} Ver no Google Maps${NOVA_ABA}</a></div>
+      <div class="place-card"><b>${esc(ev.local)}</b><span>${esc(linhaLocal)}</span>${ev.localAConfirmar ? '' : `<a class="btn btn-ghost btn-sm" href="${esc(mapa)}" ${EXT}>${I.pin} Ver no Google Maps${NOVA_ABA}</a>`}</div>
     </section>
     ${faq.length >= 2 ? `<section class="block" aria-labelledby="b-faq"><h2 id="b-faq">Dúvidas sobre ${esc(ev.nome)}</h2><div class="faq">${faq.map(([q, r]) => `<details><summary>${esc(q)}</summary><div><p>${r}</p></div></details>`).join('')}</div></section>` : ''}
   </div>

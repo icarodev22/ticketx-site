@@ -170,16 +170,16 @@ export function acaoCompra(ev, estado) {
   const href = c && urlSegura(c.url);
   if (!c || !href) return { tipo: 'em-breve', rotulo: 'Em breve', href: null, dica: 'Os ingressos ainda não estão disponíveis pela TicketX.' };
   if (c.tipo === 'desconto') return {
-    tipo: 'desconto', rotulo: 'Comprar com desconto', curto: 'Comprar com ' + (c.desconto || 'desconto'), href,
+    tipo: 'desconto', rotulo: 'LINK COM DESCONTO', curto: 'LINK COM DESCONTO', href,
     selo: 'Link com ' + (c.desconto || 'desconto'),
     dica: `Abre a ${c.plataforma || 'plataforma de venda'} pelo link de desconto da TicketX. Confira o valor final antes de pagar.`,
   };
   if (c.tipo === 'whatsapp') return {
-    tipo: 'whatsapp', rotulo: 'Pedir pelo WhatsApp', curto: 'Pedir no WhatsApp', href, selo: 'Vendas sem taxa',
+    tipo: 'whatsapp', rotulo: 'COMPRE SEM TAXA', curto: 'COMPRE SEM TAXA', href, selo: 'Vendas sem taxa',
     dica: 'Abre uma conversa com a TicketX no WhatsApp, com o nome do evento já escrito. Vendas sem taxa.',
   };
   return {
-    tipo: 'link', rotulo: 'Comprar ingresso', curto: 'Comprar ingresso', href,
+    tipo: 'link', rotulo: 'COMPRAR INGRESSO', curto: 'COMPRAR INGRESSO', href,
     dica: `Abre a página oficial de venda${c.plataforma ? ' na ' + c.plataforma : ''}.`,
   };
 }
@@ -254,7 +254,7 @@ export function cardHTML(ev, ctx) {
 /* botão principal de compra (página do evento e barra fixa) */
 export function botaoCompraHTML(ev, estado, { classe = 'btn-lg btn-block', curto = false } = {}) {
   const a = acaoCompra(ev, estado);
-  const txt = curto ? (a.curto || a.rotulo) : (a.tipo === 'desconto' && ev.compra.desconto ? `Comprar com ${ev.compra.desconto}` : a.rotulo);
+  const txt = curto ? (a.curto || a.rotulo) : a.rotulo;
   if (!a.href) return `<span class="btn btn-off ${classe}" data-compra>${esc(a.rotulo)}</span>`;
   return `<a class="btn btn-${a.tipo} ${classe}" data-compra href="${esc(a.href)}" target="_blank" rel="noopener noreferrer">${esc(txt)}<span class="sr-only"> (abre em nova aba)</span></a>`;
 }
@@ -306,7 +306,7 @@ export function destaquesHTML(lista, { hoje, categorias }) {
       <div class="spotlight-body">
         <div class="ev-tags">${principal.destaque ? '<span class="tag tag-pin">★ Destaque TicketX</span>' : '<span class="tag">Em destaque</span>'}${grupo ? `<span class="tag">${esc(grupo)}</span>` : ''}${ROTULO_ESTADO[st] ? `<span class="tag tag-state s-${st}">${esc(ROTULO_ESTADO[st])}</span>` : ''}${a.selo ? `<span class="tag ${a.tipo === 'desconto' ? 'tag-offer' : 'tag-free'}">${esc(a.selo)}</span>` : ''}</div>
         <h3><a href="/eventos/${esc(principal.slug)}/">${esc(principal.nome)}</a></h3>
-        <div class="spotlight-facts"><span>${ICO_CAL}${esc(quando)}${principal.hora ? ' · ' + esc(principal.horario || principal.hora) : ''}</span><span>${ICO_PIN}${esc(principal.local)} · ${esc(principal.cidade)}</span></div>
+        <div class="spotlight-facts"><span>${ICO_CAL}${esc(quando)}${principal.hora ? ' · ' + esc(principal.horario || principal.hora) : ''}</span><span>${ICO_PIN}${esc(principal.local)}${principal.cidade ? ' · ' + esc(principal.cidade) : ''}</span></div>
         ${nomes.length ? `<p class="lead">${esc(nomes.slice(0, 6).join(', '))}${nomes.length > 6 ? ' e mais' : ''}</p>` : ''}
         ${av && av.texto ? `<p class="spotlight-urg"><i aria-hidden="true"></i>${esc(av.texto)}</p>` : ''}
         <div class="spotlight-actions">${botaoCompraHTML(principal, st, { classe: '' })}<a class="btn btn-ghost" href="/eventos/${esc(principal.slug)}/">Ver detalhes</a></div>
@@ -318,7 +318,7 @@ export function destaquesHTML(lista, { hoje, categorias }) {
   const proxHTML = outros.length ? `<div class="next-list" data-n="${outros.length}">${outros.map(e => {
     const st = estadoEvento(e, hoje), a = acaoCompra(e, st), av = avisoAtivo(e, st);
     const grupo = rotuloGrupo(e, categorias);
-    return `<a class="next-item${av ? ' next-ultimos' : ''}" href="/eventos/${esc(e.slug)}/" data-slug="${esc(e.slug)}">${e.img ? `<span class="next-thumb" data-fallback="">${pictureHTML(e, { sizes: '72px', alt: '' })}</span>` : '<span class="next-thumb"></span>'}<div>${av ? seloUltimosHTML(av, 'next-flag') : grupo ? `<small class="next-cat">${esc(grupo)}</small>` : ''}<b>${esc(e.nome)}</b><span>${esc(dataCurta(proximaData(e, hoje)))} · ${esc(e.cidade)}</span><em class="next-cta next-${a.tipo}">${esc(a.href ? (a.curto || a.rotulo) : a.rotulo)}</em></div></a>`;
+    return `<a class="next-item${av ? ' next-ultimos' : ''}" href="/eventos/${esc(e.slug)}/" data-slug="${esc(e.slug)}">${e.img ? `<span class="next-thumb" data-fallback="">${pictureHTML(e, { sizes: '72px', alt: '' })}</span>` : '<span class="next-thumb"></span>'}<div>${av ? seloUltimosHTML(av, 'next-flag') : grupo ? `<small class="next-cat">${esc(grupo)}</small>` : ''}<b>${esc(e.nome)}</b><span>${esc(dataCurta(proximaData(e, hoje)))}${e.cidade ? ' · ' + esc(e.cidade) : ''}</span><em class="next-cta next-${a.tipo}">${esc(a.href ? (a.curto || a.rotulo) : a.rotulo)}</em></div></a>`;
   }).join('')}</div>` : '';
 
   if (!principal) return `<p class="lead destaques-vazio">Nenhum evento em destaque agora. Veja a <a href="/agenda/">agenda completa</a>.</p>`;

@@ -102,9 +102,9 @@ collections:
         min: 1
         hint: 'A primeira é a principal. Marque Carvalheira em todo evento da Carvalheira e Carnaval em festas, prévias e camarotes de Carnaval: é isso que define a ordem em Destaques (Carvalheira, depois Carnaval, depois os demais). Para criar uma categoria nova, vá em Configurações do site.'
 
-      - { label: Local, name: local, widget: string, hint: 'Nome do espaço. Ex.: Cachaçaria Carvalheira' }
+      - { label: Local, name: local, widget: string, required: false, hint: 'Nome do espaço. Ex.: Cachaçaria Carvalheira. Vazio aparece como "Local a confirmar".' }
       - { label: Endereço, name: endereco, widget: string, required: false, hint: 'Rua, número e bairro. Só se confirmado.' }
-      - { label: Cidade, name: cidade, widget: string, hint: 'Usada no filtro da agenda. Escreva sempre igual (ex.: Recife, Ipojuca).' }
+      - { label: Cidade, name: cidade, widget: string, required: false, hint: 'Usada no filtro da agenda. Escreva sempre igual (ex.: Recife, Ipojuca). Deixe vazio se ainda não foi divulgada.' }
 
       - label: Flyer
         name: flyer

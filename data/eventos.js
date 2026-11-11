@@ -59,6 +59,9 @@ export function normalizar(slug, bruto) {
   const q = `content/eventos/${slug}.json`;
   const out = { slug, ...ev };
 
+  // local/cidade ainda não divulgados: o site mostra "Local a confirmar" e esconde o mapa
+  if (!out.local) { out.local = 'Local a confirmar'; out.localAConfirmar = true; }
+
   if (Array.isArray(out.datas)) out.datas = [...new Set(out.datas.map(d => String(d).slice(0, 10)))].sort();
 
   if (out.hora && !/^([01]\d|2[0-3]):[0-5]\d$/.test(out.hora)) {

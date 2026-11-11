@@ -1,0 +1,28 @@
+{
+  "nome": "WeSamba Natal",
+  "datas": [
+    "2026-12-19"
+  ],
+  "categorias": [
+    "samba"
+  ],
+  "flyer": "/assets/events/wesamba-natal.jpg",
+  "compra": {
+    "tipo": "whatsapp",
+    "url": "https://wa.me/5581991017226?text=Ol%C3%A1,%20gostaria%20de%20comprar%20o%20ingresso%20do%20WeSamba%20Natal!"
+  },
+  "status": "normal",
+  "destaque": false,
+  "lineup": [
+    {
+      "artistas": [
+        "Timbalada",
+        "Pedro Guerra",
+        "Nuzio Medeiros",
+        "Helton Lima"
+      ]
+    }
+  ],
+  "lineupNota": "e mais. Pickup: Bayma x Garcez e Vilx",
+  "fonte": "flyer enviado pelo icarodev em 10/11/2026 (vendas sem taxa pelo WhatsApp); local e cidade ainda não informados"
+}
